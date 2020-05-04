@@ -1,0 +1,16 @@
+name: Selene
+on:
+  push:
+    branches: master
+  pull_request:
+    branches: master
+jobs:
+  Lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: 'Run Selene'
+        run: |
+          wget -O selene https://github.com/Kampfkarren/selene/releases/latest/download/selene-linux
+          chmod +x ./selene
+          ./selene .
