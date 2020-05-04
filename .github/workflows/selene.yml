@@ -2,8 +2,10 @@ name: Selene
 on:
   push:
     branches: master
+    paths: 'init.lua'
   pull_request:
     branches: master
+    paths: 'init.lua'
 jobs:
   Lint:
     runs-on: ubuntu-latest
