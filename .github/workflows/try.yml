@@ -1,0 +1,24 @@
+name: Tests
+on:
+  push:
+    branches: master
+    paths: '**.lua'
+  pull_request:
+    branches: master
+    paths: '**.lua'
+jobs:
+  Vanilla:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Run Tests in Vanilla'
+
+      - uses: actions/checkout@v1
+
+      - uses: leafo/gh-actions-lua@v5
+        with:
+          luaVersion: "5.2.4"
+
+        run: |
+          cp src/vanilla/init.lua src/vanilla/tests/bitBuffer.lua
+          cd ./src/vanilla/tests
+          lua init.lua
