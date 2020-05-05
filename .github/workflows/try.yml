@@ -15,11 +15,9 @@ jobs:
         with:
           luaVersion: "5.2.4"
 
-      - name: 'Setup tests'
+      - name: 'Run Tests'
         run: |
-          cp src/vanilla/init.lua src/vanilla/tests/bitBuffer.lua
+          cp ./src/vanilla/init.lua ./src/vanilla/tests/bitBuffer.lua
+          tree -a ./src/vanilla/init
           cd ./src/vanilla/tests
-
-      - name: 'Run Tests in Vanilla'
-        run: |
           lua init.lua
