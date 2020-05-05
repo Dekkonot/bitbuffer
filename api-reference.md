@@ -1,4 +1,4 @@
-The following is a list of all the built-in API for the main module, followed by all of the additional API that is present in the Roblox version of the file.
+The following is a list of all the built-in API for the module.
 
 ## Type Information
 
