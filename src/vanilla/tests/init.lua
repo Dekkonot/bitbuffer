@@ -24,4 +24,10 @@ for _, v in ipairs(specs) do
     test(try.new)
 end
 
-print(string.format("FINAL COUNT: %i PASSED, %s FAILED, %s DISABLED", try.reportFinal()))
+local finalPass, finalFail, finalDisabled = try.reportFinal()
+
+print(string.format("FINAL COUNT: %i PASSED, %s FAILED, %s DISABLED", finalPass, finalFail, finalDisabled))
+
+if finalFail ~= 0 then
+    os.exit(false)
+end
