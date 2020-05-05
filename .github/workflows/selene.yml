@@ -1,18 +1,24 @@
 name: Selene
 on:
   push:
-    branches: master
     paths: '**.lua'
   pull_request:
-    branches: master
     paths: '**.lua'
 jobs:
   Lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-      - name: 'Run Selene'
+
+      - name: 'Install Selene'
         run: |
           wget -O selene https://github.com/Kampfkarren/selene/releases/latest/download/selene-linux
           chmod +x ./selene
+
+      - name: 'Generate Roblox Std'
+        run: |
+          ./selene generate-roblox-std
+
+      - name: 'Run Selene'
+        run: |
           ./selene . --pattern src/**/init.lua 
