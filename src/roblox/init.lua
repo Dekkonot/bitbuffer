@@ -56,6 +56,8 @@ local function bitBuffer(stream)
         byteCount = #stream
         bitCount = byteCount*8
 
+        bytes = table.create(#stream)
+
         for i = 1, byteCount do
             bytes[i] = string.byte(stream, i, i)
         end
@@ -65,7 +67,7 @@ local function bitBuffer(stream)
         -- This function is for debugging or analysis purposes. 
         -- It dumps the contents of the byte array and the remaining bits into a string of binary digits.
         -- Thus, bytes [97, 101] with bits [1, 1, 0] would output "01100001 01100101 110"
-        local output = {}--!
+        local output = table.create(byteCount)--!
         for i, v in ipairs(bytes) do
             output[i] = string.gsub(string.format("%02x", v), "%x", HEX_TO_BIN)
         end
@@ -81,7 +83,7 @@ local function bitBuffer(stream)
         -- This function is for accessing the total contents of the bitbuffer.
         -- This function combines all the bytes, including the last byte, into a string of binary data.
         -- Thus, bytes [97, 101] and bits [1, 1, 0] would become (in hex) "0x61 0x65 0x06"
-        local output = {}--!
+        local output = table.create(byteCount)--!
         for i, v in ipairs(bytes) do
             output[i] = string.char(v)
         end
@@ -91,7 +93,7 @@ local function bitBuffer(stream)
 
     local function dumpHex()
         -- This function is for getting the hex of the bitbuffer's contents, should that be desired
-        local output = {}--!
+        local output = table.create(byteCount)--!
         for i, v in ipairs(bytes) do
             output[i] = string.format("%02x", v)
         end
@@ -105,7 +107,7 @@ local function bitBuffer(stream)
         -- And 2^6 is a mere 64, far less than the number of printable characters.
         -- If there are any missing bytes, `=` is added to the end as padding.
         -- Base64 increases the size of its input by 33%.
-        local output = {}--!
+        local output = table.create(math.ceil(byteCount*0.333))--!
 
         local c = 1
         for i = 1, byteCount, 3 do
@@ -243,7 +245,7 @@ local function bitBuffer(stream)
 
         -- Get the number of bytes and number of floating bits in the specified width
         local bytesInN, bitsInN = math.floor(width/8), width%8
-        local extractedBits = {}--!
+        local extractedBits = table.create(bitsInN)--!
 
         -- If the width is less than or equal to 32-bits, bit32 can be used without any problem.
         if width <= 32 then
@@ -482,7 +484,7 @@ local function bitBuffer(stream)
         if pointer+n > bitCount then return false end
         -- The first of two main functions for the actual 'reading' of the bitbuffer.
         -- Reads `n` bits and returns an array of their values.
-        local output = {}--!
+        local output = table.create(n)--!
         local byte = bytes[pointerByte] -- For the sake of efficiency, the current byte that the bits are coming from is stored
         local c = pointer%8 -- A counter is set with the current position of the pointer in the byte
         for i = 1, n do
@@ -623,7 +625,7 @@ local function bitBuffer(stream)
         local stringLength = readUnsigned(24)
         assert(pointer+(stringLength*8) <= bitCount, "readString cannot read past the end of the stream")
 
-        local outputCharacters = {} --!
+        local outputCharacters = table.create(stringLength) --!
 
         for i = 1, stringLength do
             outputCharacters[i] = string.char(readByte())
@@ -658,7 +660,7 @@ local function bitBuffer(stream)
         assert(pointer+(length*8) <= bitCount, "readSetLengthString cannot read past the end of the stream")
         -- `length` number of bytes are read and put into a string
 
-        local outputCharacters = {} --!
+        local outputCharacters = table.create(length) --!
 
         for i = 1, length do
             outputCharacters[i] = string.char(readByte())
@@ -675,7 +677,7 @@ local function bitBuffer(stream)
         assert(pointer+n <= bitCount, "readBools cannot read past the end of the stream")
         -- Reading a bit field is again rather simple. You read the actual field, then take the bits out.
         local readInt = readUnsigned(n)
-        local output = {}--!
+        local output = table.create(n)--!
 
         for i = n, 1, -1 do -- In reverse order since we're pulling bits out from lsb to msb
             output[i] = readInt%2 == 1 -- Equivalent to an extraction of the lsb
