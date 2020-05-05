@@ -2,10 +2,10 @@ name: Selene
 on:
   push:
     branches: master
-    paths: 'init.lua'
+    paths: '**.lua'
   pull_request:
     branches: master
-    paths: 'init.lua'
+    paths: '**.lua'
 jobs:
   Lint:
     runs-on: ubuntu-latest
@@ -15,4 +15,4 @@ jobs:
         run: |
           wget -O selene https://github.com/Kampfkarren/selene/releases/latest/download/selene-linux
           chmod +x ./selene
-          ./selene .
+          ./selene . --pattern src/**/init.lua 
