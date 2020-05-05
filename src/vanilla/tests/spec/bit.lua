@@ -8,7 +8,7 @@ local function makeTests(try)
         local buffer = BitBuffer()
 
         buffer.writeBits({})
-    end).fail()
+    end).pass()
 
     writeTest("Should require the arguments be integers", function()
         local buffer = BitBuffer()
