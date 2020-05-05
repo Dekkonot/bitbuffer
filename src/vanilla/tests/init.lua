@@ -21,11 +21,7 @@ local specs = {
 
 for _, v in ipairs(specs) do
     local test = require("spec/"..v)
-    local _ = test(try.new)
-    -- if not passed then
-    --     print("Aborted tests because not all previous tests passed")
-    --     return
-    -- end
+    test(try.new)
 end
 
 print(string.format("FINAL COUNT: %i PASSED, %s FAILED, %s DISABLED", try.reportFinal()))
