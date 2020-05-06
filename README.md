@@ -1,6 +1,6 @@
-BitBuffer is a binary stream module implemented in pure Lua. Its purpose is to provide an easy way to write and read binary data down to the bit level. It first found life as a replacement for a BitBuffer that performed rather poorly, and was meant for use on Roblox.
+BitBuffer is a binary stream module implemented in pure Lua. Its purpose is to provide an easy way to write and read binary data down to the bit level. It first found life as a replacement for a BitBuffer that performed rather poorly, and was meant for use on Roblox. To that end, there is a [Rojo](https://github.com/rojo-rbx/rojo) project file in the [Roblox subfolder](src/roblox) that can be used to build it for Roblox.
 
-However, no Roblox specific API is used in the main file or tests of this buffer. The module was written and tested using Lua 5.2, and any version of Lua that has a bit module should be able to run this module with no issues. It will probably perform best with LuaJIT, as Roblox's Lua VM is extremely fast compared to PUC-Rio and this module makes use of some specific optimizations (ipairs, as an example, is faster than a numeric for in Luau).
+However, no Roblox specific API is used in the main file or tests of this buffer. The module was written and tested using Lua 5.2, and any version of Lua that has a bit module should be able to run this module with only minor modifications. It will probably perform best with LuaJIT, as Roblox's Lua VM is extremely fast compared to PUC-Rio and this module makes use of some specific optimizations (ipairs, as an example, is faster than a numeric for in Luau).
 
 Given only basic `bit32` functions are used (shifting, AND, btest, extract) for the core functionality of this module, it should be trivial to remove them if your environment doesn't have a bit module. The only core bitwise operation not trivially replicated in arithmetic, XOR, is used only to calculate the checksum functions, which can be removed without harming the module.
 
@@ -27,5 +27,3 @@ A limit for the width of all numbers is hardcoded to  be 64-bits. However, as Lu
 ## Technical details
 
 This BitBuffer is big-endian. It follows the IEEE-754 format for floating points. Signed integers are stored using two's complements, as you would expect. By default, strings are written and read by prefixing the length as an unsigned 24-bit integer.
-
-There are a variety of tests that can be run in the [tests folder](./tests) to verify the functionality of the module. They expect this module to be named `bitbuffer` and be requirable from the test folder.
