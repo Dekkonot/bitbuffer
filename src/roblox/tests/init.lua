@@ -10,7 +10,7 @@ local specs = {
     "string",
     "terminatedstring",
     "setlengthstring",
-    "bools"
+    "field"
 }
 
 -- local trySpec = require("spec/try")

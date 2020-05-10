@@ -455,7 +455,7 @@ local function bitBuffer(stream)
         return true
     end
 
-    local function writeBools(...)
+    local function writeField(...)
         -- This is equivalent to having a writeBitfield function.
         -- It combines all of the passed 'bits' into an unsigned number, then writes it.
         local field = 0
@@ -669,12 +669,12 @@ local function bitBuffer(stream)
         return table.concat(outputCharacters) --todo Use faster table.concat method
     end
 
-    local function readBools(n)
-        assert(type(n) == "number", "argument #1 to readBools should be a number")
-        assert(n > 0, "argument #1 to readBools should be above 0")
-        assert(n%1 == 0, "argument #1 to readBools should be an integer")
+    local function readField(n)
+        assert(type(n) == "number", "argument #1 to readField should be a number")
+        assert(n > 0, "argument #1 to readField should be above 0")
+        assert(n%1 == 0, "argument #1 to readField should be an integer")
 
-        assert(pointer+n <= bitCount, "readBools cannot read past the end of the stream")
+        assert(pointer+n <= bitCount, "readField cannot read past the end of the stream")
         -- Reading a bit field is again rather simple. You read the actual field, then take the bits out.
         local readInt = readUnsigned(n)
         local output = table.create(n)--!
@@ -705,7 +705,7 @@ local function bitBuffer(stream)
         writeString = writeString,
         writeTerminatedString = writeTerminatedString,
         writeSetLengthString = writeSetLengthString,
-        writeBools = writeBools,
+        writeField = writeField,
 
         readBits = readBits,
         readByte = readByte,
@@ -715,7 +715,7 @@ local function bitBuffer(stream)
         readString = readString,
         readTerminatedString = readTerminatedString,
         readSetLengthString = readSetLengthString,
-        readBools = readBools,
+        readField = readField,
     }
 end
 
