@@ -139,7 +139,7 @@ Writes a string to the BitBuffer as a sequence of bytes with not other overhead.
 ---
 
 ```
-BitBuffer.writeBools(...: any) -> nil
+BitBuffer.writeField(...: any) -> nil
 ```
 Writes a series of bits to the BitBuffer as a bitfield. Truthy arguments get written as `1` and falsey arguments get written as `0`.
 
@@ -202,6 +202,6 @@ Reads a `length` character string from the BitBuffer and returns it.
 ---
 
 ```
-BitBuffer.readBools(n: integer) -> Array<boolean>
+BitBuffer.readField(n: integer) -> Array<boolean>
 ```
 Reads an `n` length bitfield from the BitBuffer and returns its representation in an array. Every value in the array will either be `true` or `false`.

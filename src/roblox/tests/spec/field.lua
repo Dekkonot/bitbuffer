@@ -1,26 +1,26 @@
-local BitBuffer = require("bitBuffer")
+local BitBuffer = require(script.Parent.Parent.Parent)
 
 local function makeTests(try)
-    local writeTest = try("writeBools tests")
-    local readTest = try("readBools tests")
+    local writeTest = try("writeField tests")
+    local readTest = try("readField tests")
 
     writeTest("Should accept multiple arguments", function()
         local buffer = BitBuffer()
 
-        buffer.writeBools(true, true, false)
+        buffer.writeField(true, true, false)
     end).pass()
 
     writeTest("Should accept nil as an argument", function()
         local buffer = BitBuffer()
 
-        buffer.writeBools(nil)
+        buffer.writeField(nil)
     end).pass()
 
     writeTest("Should write falsey values to the stream properly", function()
         local buffer = BitBuffer()
 
-        buffer.writeBools(nil)
-        buffer.writeBools(false)
+        buffer.writeField(nil)
+        buffer.writeField(false)
 
         assert(buffer.dumpBinary() == "00", "")
     end).pass()
@@ -28,10 +28,10 @@ local function makeTests(try)
     writeTest("Should write truthy values to the stream properly", function()
         local buffer = BitBuffer()
 
-        buffer.writeBools(1)
-        buffer.writeBools(true)
-        buffer.writeBools("true")
-        buffer.writeBools({})
+        buffer.writeField(1)
+        buffer.writeField(true)
+        buffer.writeField("true")
+        buffer.writeField({})
         
         assert(buffer.dumpBinary() == "1111", "")
     end).pass()
@@ -39,7 +39,7 @@ local function makeTests(try)
     writeTest("Should write multiple arguments to the stream properly", function()
         local buffer = BitBuffer()
 
-        buffer.writeBools(true, false, 1)
+        buffer.writeField(true, false, 1)
         
         assert(buffer.dumpBinary() == "101", "")
     end).pass()
@@ -47,7 +47,7 @@ local function makeTests(try)
     writeTest("Should write multiple arguments with nil to the stream properly", function()
         local buffer = BitBuffer()
 
-        buffer.writeBools(true, false, nil, 1)
+        buffer.writeField(true, false, nil, 1)
 
         assert(buffer.dumpBinary() == "1001", "")
     end).pass()
@@ -56,7 +56,7 @@ local function makeTests(try)
         local buffer = BitBuffer()
         
         buffer.writeBits(1)
-        buffer.writeBools(false, true, false)
+        buffer.writeField(false, true, false)
 
         assert(buffer.dumpBinary() == "1010", "")
     end).pass()
@@ -64,7 +64,7 @@ local function makeTests(try)
     writeTest("Should write a bit to the stream properly after a bitfield", function()
         local buffer = BitBuffer()
         
-        buffer.writeBools(false, true, false)
+        buffer.writeField(false, true, false)
         buffer.writeBits(1)
 
         assert(buffer.dumpBinary() == "0101", "")
@@ -73,32 +73,32 @@ local function makeTests(try)
     readTest("Should require the argument be a number", function()
         local buffer = BitBuffer()
 
-        buffer.writeBools(true)
+        buffer.writeField(true)
 
-        buffer.readBools({})
+        buffer.readField({})
     end).fail()
 
     readTest("Should require the argument be an integer", function()
         local buffer = BitBuffer()
 
-        buffer.writeBools(true)
+        buffer.writeField(true)
 
-        buffer.readBools(math.pi)
+        buffer.readField(math.pi)
     end).fail()
 
     readTest("Should require the argument be greater than 0", function()
         local buffer = BitBuffer()
 
-        buffer.writeBools(true)
+        buffer.writeField(true)
 
-        buffer.readBools(0)
+        buffer.readField(0)
     end).fail()
 
     readTest("Should read from the stream correctly", function()
         local buffer = BitBuffer()
 
-        buffer.writeBools(true, true, false)
-        local values = buffer.readBools(3)
+        buffer.writeField(true, true, false)
+        local values = buffer.readField(3)
         assert(values[1] == true, "")
         assert(values[2] == true, "")
         assert(values[3] == false, "")
@@ -108,11 +108,11 @@ local function makeTests(try)
         local buffer = BitBuffer()
 
         buffer.writeBits(1)
-        buffer.writeBools(true, true, false)
+        buffer.writeField(true, true, false)
 
         buffer.readBits(1)
 
-        local values = buffer.readBools(3)
+        local values = buffer.readField(3)
         assert(values[1] == true, "")
         assert(values[2] == true, "")
         assert(values[3] == false, "")
@@ -121,10 +121,10 @@ local function makeTests(try)
     readTest("Should read a bit from the stream correctly after a bitfield", function()
         local buffer = BitBuffer()
 
-        buffer.writeBools(true, true, false)
+        buffer.writeField(true, true, false)
         buffer.writeBits(1)
 
-        buffer.readBools(3)
+        buffer.readField(3)
 
         assert(buffer.readBits(1)[1] == 1, "")
     end).pass()
@@ -132,7 +132,7 @@ local function makeTests(try)
     readTest("Should not allow reading past the end of the stream", function()
         local buffer = BitBuffer()
 
-        buffer.readBools(10)
+        buffer.readField(10)
     end).fail()
 
     local writeTestPassed = writeTest.run()
