@@ -474,6 +474,268 @@ local function bitBuffer(stream)
         return true
     end
 
+    -- All write functions below here are shorthands. For the sake of performance, these functions are implemented manually.
+    -- As an example, while it would certainly be easier to make `writeInt16(n)` just call `writeUnsigned(16, n),
+    -- it's more performant to just manually call writeByte twice for it.
+
+    local function writeUInt8(n)
+        assert(type(n) == "number", "argument #1 to BitBuffer.writeUInt8 should be a number")
+        assert(n >= 0 and n <= 255, "argument #1 to BitBuffer.writeUInt8 should be in the range [0, 255]")
+        assert(n%1 == 0, "argument #1 to BitBuffer.writeUInt8 should be an integer")
+
+        writeByte(n)
+    end
+
+    local function writeUInt16(n)
+        assert(type(n) == "number", "argument #1 to BitBuffer.writeUInt16 should be a number")
+        assert(n >= 0 and n <= 65535, "argument #1 to BitBuffer.writeInt16 should be in the range [0, 65535]")
+        assert(n%1 == 0, "argument #1 to BitBuffer.writeUInt16 should be an integer")
+
+        writeByte(bit32.rshift(n, 8))
+        writeByte(bit32.band(n, 255))
+    end
+
+    local function writeUInt32(n)
+        assert(type(n) == "number", "argument #1 to BitBuffer.writeUInt32 should be a number")
+        assert(n >= 0 and n <= 4294967295, "argument #1 to BitBuffer.writeUInt32 should be in the range [0, 4294967295]")
+        assert(n%1 == 0, "argument #1 to BitBuffer.writeUInt32 should be an integer")
+
+        writeByte(bit32.rshift(n, 24))
+        writeByte(bit32.band(bit32.rshift(n, 16), 255))
+        writeByte(bit32.band(bit32.rshift(n, 8), 255))
+        writeByte(bit32.band(n, 255))
+    end
+
+    local function writeInt8(n)
+        assert(type(n) == "number", "argument #1 to BitBuffer.writeInt8 should be a number")
+        assert(n >= -128 and n <= 127, "argument #1 to BitBuffer.writeInt8 should be in the range [-128, 127]")
+        assert(n%1 == 0, "argument #1 to BitBuffer.writeInt8 should be an integer")
+
+        if n < 0 then
+            n = (128+n)+128
+        end
+
+        writeByte(n)
+    end
+
+    local function writeInt16(n)
+        assert(type(n) == "number", "argument #1 to BitBuffer.writeInt16 should be a number")
+        assert(n >= -32768 and n <= 32767, "argument #1 to BitBuffer.writeInt16 should be in the range [-32768, 32767]")
+        assert(n%1 == 0, "argument #1 to BitBuffer.writeInt16 should be an integer")
+
+        if n < 0 then
+            n = (32768+n)+32768
+        end
+
+        writeByte(bit32.rshift(n, 8))
+        writeByte(bit32.band(n, 255))
+    end
+
+    local function writeInt32(n)
+        assert(type(n) == "number", "argument #1 to BitBuffer.writeInt32 should be a number")
+        assert(n >= -2147483648 and n <= 2147483647, "argument #1 to BitBuffer.writeInt32 should be in the range [-2147483648, 2147483647]")
+        assert(n%1 == 0, "argument #1 to BitBuffer.writeInt32 should be an integer")
+
+        if n < 0 then
+            n = (2147483648+n)+2147483648
+        end
+
+        writeByte(bit32.rshift(n, 24))
+        writeByte(bit32.band(bit32.rshift(n, 16), 255))
+        writeByte(bit32.band(bit32.rshift(n, 8), 255))
+        writeByte(bit32.band(n, 255))
+    end
+
+    local function writeFloat16(n)
+        assert(type(n) == "number", "argument #1 to writeFloat16 should be a number")
+
+        local sign = n < 0
+        n = math.abs(n)
+
+        local mantissa, exponent = math.frexp(n)
+
+        if n == math.huge then
+            if sign then
+                writeByte(252) -- 11111100
+            else
+                writeByte(124) -- 01111100
+            end
+            writeByte(0) -- 00000000
+            return
+        elseif n ~= n then
+            -- 01111111 11111111
+            writeByte(127)
+            writeByte(255)
+            return
+        elseif n == 0 then
+            writeByte(0)
+            writeByte(0)
+            return
+        elseif exponent+15 <= 1 then -- Bias for halfs is 15
+            mantissa = math.floor(mantissa*1024+0.5)
+            if sign then
+                writeByte(128+bit32.rshift(mantissa, 8)) -- Sign bit, 5 empty bits, 2 from mantissa
+            else
+                writeByte(bit32.rshift(mantissa, 8))
+            end
+            writeByte(bit32.band(mantissa, 255)) -- Get last 8 bits from mantissa
+            return
+        end
+
+        mantissa = math.floor((mantissa-0.5)*2048+0.5)
+
+        -- The bias for halfs is 15, 15-1 is 14
+        if sign then
+            writeByte(128+bit32.lshift(exponent+14, 2)+bit32.rshift(mantissa, 8))
+        else
+            writeByte(bit32.lshift(exponent+14, 2)+bit32.rshift(mantissa, 8))
+        end
+        writeByte(bit32.band(mantissa, 255))
+    end
+
+    local function writeFloat32(n)
+        assert(type(n) == "number", "argument #1 to writeFloat16 should be a number")
+
+        local sign = n < 0
+        n = math.abs(n)
+
+        local mantissa, exponent = math.frexp(n)
+
+        if n == math.huge then
+            if sign then
+                writeByte(255) -- 11111111
+            else
+                writeByte(127) -- 01111111
+            end
+            writeByte(128) -- 10000000
+            writeByte(0) -- 00000000
+            writeByte(0) -- 00000000
+            return
+        elseif n ~= n then
+            -- 01111111 11111111 11111111 11111111
+            writeByte(127)
+            writeByte(255)
+            writeByte(255)
+            writeByte(255)
+            return
+        elseif n == 0 then
+            writeByte(0)
+            writeByte(0)
+            writeByte(0)
+            writeByte(0)
+            return
+        elseif exponent+127 <= 1 then -- bias for singles is 127
+            mantissa = math.floor(mantissa*8388608+0.5)
+            if sign then
+                writeByte(128) -- Sign bit, 7 empty bits for exponent
+            else
+                writeByte(0)
+            end
+            writeByte(127) -- 01111111
+            writeByte(255)
+            writeByte(255)
+            return
+        end
+
+        mantissa = math.floor((mantissa-0.5)*16777216+0.5)
+
+        -- 127-1 = 126
+        if sign then -- sign + 7 exponent
+            writeByte(128+bit32.rshift(exponent+126, 1))
+        else
+            writeByte(bit32.rshift(exponent+126, 1))
+        end
+        writeByte(bit32.band(bit32.lshift(exponent+126, 7), 255)+bit32.rshift(mantissa, 16)) -- 1 exponent + 7 mantissa
+        writeByte(bit32.band(bit32.rshift(mantissa, 8), 255)) -- 8 mantissa
+        writeByte(bit32.band(mantissa, 255)) -- 8 mantissa
+    end
+
+    local function writeFloat64(n)
+        assert(type(n) == "number", "argument #1 to writeFloat64 should be a number")
+
+        local sign = n < 0
+        n = math.abs(n)
+
+        local mantissa, exponent = math.frexp(n)
+
+        if n == math.huge then
+            if sign then
+                writeByte(255) -- 11111111
+            else
+                writeByte(127) -- 01111111
+            end
+            writeByte(240) -- 11110000
+            writeByte(0) -- 00000000
+            writeByte(0) -- 00000000
+            writeByte(0) -- 00000000
+            writeByte(0) -- 00000000
+            writeByte(0) -- 00000000
+            writeByte(0) -- 00000000
+            return
+        elseif n ~= n then
+            -- 01111111 11111111 11111111 11111111 11111111 11111111 11111111 11111111
+            writeByte(127)
+            writeByte(255)
+            writeByte(255)
+            writeByte(255)
+            writeByte(255)
+            writeByte(255)
+            writeByte(255)
+            writeByte(255)
+            return
+        elseif n == 0 then
+            writeByte(0)
+            return
+        elseif exponent+1023 <= 1 then -- bias for doubles is 1023
+            mantissa = math.floor(mantissa*4503599627370496+0.5)
+            if sign then
+                writeByte(128) -- Sign bit, 7 empty bits for exponent
+            else
+                writeByte(0)
+            end
+
+            -- This is labeled better below
+            local leastSignificantChunk = mantissa%0x100000000 -- 32 bits
+            local mostSignificantChunk = math.floor(mantissa/0x100000000) -- 20 bits
+
+            writeByte(bit32.rshift(mostSignificantChunk, 16))
+            writeByte(bit32.band(bit32.rshift(mostSignificantChunk, 8), 255))
+            writeByte(bit32.band(mostSignificantChunk, 255))
+            writeByte(bit32.rshift(leastSignificantChunk, 24))
+            writeByte(bit32.band(bit32.rshift(leastSignificantChunk, 16), 255))
+            writeByte(bit32.band(bit32.rshift(leastSignificantChunk, 8), 255))
+            writeByte(bit32.band(leastSignificantChunk, 255))
+            return
+        end
+        
+        mantissa = math.floor((mantissa-0.5)*9007199254740992+0.5)
+
+        --1023-1 = 1022
+        if sign then
+            writeByte(128+bit32.rshift(exponent+1022, 4)) -- shift out 4 of the bits in exponent
+        else
+            writeByte(bit32.rshift(exponent+1022, 4)) -- 01000001 0110
+        end
+        -- Things start to get a bit wack here because the mantissa is 52 bits, so bit32 *can't* be used.
+        -- As the Offspring once said... You gotta keep 'em seperated.
+        local leastSignificantChunk = mantissa%0x100000000 -- 32 bits
+        local mostSignificantChunk = math.floor(mantissa/0x100000000) -- 20 bits
+
+        -- First, the last 4 bits of the exponent and the first 4 bits of the mostSignificantChunk:
+        writeByte(bit32.band(bit32.lshift(exponent+1022, 4), 255)+bit32.rshift(mostSignificantChunk, 16))
+        -- Then, the next 16 bits:
+        writeByte(bit32.band(bit32.rshift(mostSignificantChunk, 8), 255))
+        writeByte(bit32.band(mostSignificantChunk, 255))
+        -- Then... 4 bytes of the leastSignificantChunk
+        writeByte(bit32.rshift(leastSignificantChunk, 24))
+        writeByte(bit32.band(bit32.rshift(leastSignificantChunk, 16), 255))
+        writeByte(bit32.band(bit32.rshift(leastSignificantChunk, 8), 255))
+        writeByte(bit32.band(leastSignificantChunk, 255))
+    end
+
+
+    -- These are the read functions for the 'abstract' data types. At the bottom, there are shorthand read functions.
+
     local function readBits(n)
         assert(type(n) == "number", "argument #1 to readBits should be a number")
         assert(n > 0, "argument #1 to readBits should be greater than zero")
@@ -687,6 +949,160 @@ local function bitBuffer(stream)
         return output
     end
 
+    -- All read functions below here are shorthands. 
+    -- As with their write variants, these functions are implemented manually using readByte for performance reasons.
+
+    local function readUInt8()
+        assert(pointer+8 <= bitCount, "readUInt8 cannot read past the end of the stream")
+
+        return readByte()
+    end
+
+    local function readUInt16()
+        assert(pointer+16 <= bitCount, "readUInt16 cannot read past the end of the stream")
+
+        return bit32.lshift(readByte(), 8)+readByte()
+    end
+
+    local function readUInt32()
+        assert(pointer+32 <= bitCount, "readUInt32 cannot read past the end of the stream")
+
+        return bit32.lshift(readByte(), 24)+bit32.lshift(readByte(), 16)+bit32.lshift(readByte(), 8)+readByte()
+    end
+
+    local function readInt8()
+        assert(pointer+8 <= bitCount, "readInt8 cannot read past the end of the stream")
+
+        local n = readByte()
+        local sign = bit32.btest(n, 128)
+        n = bit32.band(n, 127)
+        
+        if sign then
+            return n-128
+        else
+            return n
+        end
+    end
+
+    local function readInt16()
+        assert(pointer+16 <= bitCount, "readInt16 cannot read past the end of the stream")
+
+        local n = bit32.lshift(readByte(), 8)+readByte()
+        local sign = bit32.btest(n, 32768)
+        n = bit32.band(n, 32767)
+
+        if sign then
+            return n-32768
+        else
+            return n
+        end
+    end
+
+    local function readInt32()
+        assert(pointer+32 <= bitCount, "readInt32 cannot read past the end of the stream")
+
+        local n = bit32.lshift(readByte(), 24)+bit32.lshift(readByte(), 16)+bit32.lshift(readByte(), 8)+readByte()
+        local sign = bit32.btest(n, 2147483648)
+        n = bit32.band(n, 2147483647)
+
+        if sign then
+            return n-2147483648
+        else
+            return n
+        end
+    end
+
+    local function readFloat16()
+        assert(pointer+16 <= bitCount, "readFloat16 cannot read past the end of the stream")
+
+        local b0 = readByte()
+        local sign = bit32.btest(b0, 128)
+        local exponent = bit32.rshift(bit32.band(b0, 127), 2)
+        local mantissa = bit32.lshift(bit32.band(b0, 3), 8)+readByte()
+
+        if exponent == 31 then --2^5-1
+            if mantissa ~= 0 then
+                return 0/0
+            else
+                return sign and -math.huge or math.huge
+            end
+        elseif exponent == 0 then
+            if mantissa == 0 then
+                return 0
+            else
+                return sign and -math.ldexp(mantissa/1024, -14) or math.ldexp(mantissa/1024, -14)
+            end
+        end
+
+        mantissa = (mantissa/1024)+1
+
+        return sign and -math.ldexp(mantissa, exponent-15) or math.ldexp(mantissa, exponent-15)
+    end
+
+    local function readFloat32()
+        assert(pointer+32 <= bitCount, "readFloat32 cannot read past the end of the stream")
+
+        local b0 = readByte()
+        local b1 = readByte()
+        local sign = bit32.btest(b0, 128)
+        local exponent = bit32.band(bit32.lshift(b0, 1), 255)+bit32.rshift(b1, 7)
+        local mantissa = bit32.lshift(bit32.band(b1, 127), 23-7)+bit32.lshift(readByte(), 23-7-8)+bit32.lshift(readByte(), 23-7-8-8)
+
+        if exponent == 255 then -- 2^8-1
+            if mantissa ~= 0 then
+                return 0/0
+            else
+                return sign and -math.huge or math.huge
+            end
+        elseif exponent == 0 then
+            if mantissa == 0 then
+                return 0
+            else
+                -- -126 is the 0-bias+1
+                return sign and -math.ldexp(mantissa/8388608, -126) or math.ldexp(mantissa/8388608, -126)
+            end
+        end
+
+        mantissa = (mantissa/8388608)+1
+
+        return sign and -math.ldexp(mantissa, exponent-127) or math.ldexp(mantissa, exponent-127)
+    end
+
+    local function readFloat64()
+        assert(pointer+64 <= bitCount, "readFloat64 cannot read past the end of the stream")
+
+        local b0 = readByte()
+        local b1 = readByte()
+
+        local sign = bit32.btest(b0, 128)
+        local exponent = bit32.lshift(bit32.band(b0, 127), 4)+bit32.rshift(b1, 4)
+        local mostSignificantChunk = bit32.lshift(bit32.band(b1, 15), 16)+bit32.lshift(readByte(), 8)+readByte()
+        local leastSignificantChunk = bit32.lshift(readByte(), 24)+bit32.lshift(readByte(), 16)+bit32.lshift(readByte(), 8)+readByte()
+
+        -- local mantissa = (bit32.lshift(bit32.band(b1, 15), 16)+bit32.lshift(readByte(), 8)+readByte())*0x100000000+
+        --     bit32.lshift(readByte(), 24)+bit32.lshift(readByte(), 16)+bit32.lshift(readByte(), 8)+readByte()
+
+        local mantissa = mostSignificantChunk*0x100000000+leastSignificantChunk
+
+        if exponent == 2047 then -- 2^11-1
+            if mantissa ~= 0 then
+                return 0/0
+            else
+                return sign and -math.huge or math.huge
+            end
+        elseif exponent == 0 then
+            if mantissa == 0 then
+                return 0
+            else
+                return sign and -math.ldexp(mantissa/4503599627370496, -1022) or math.ldexp(mantissa/4503599627370496, -1022)
+            end
+        end
+
+        mantissa = (mantissa/4503599627370496)+1
+
+        return sign and -math.ldexp(mantissa, exponent-1023) or math.ldexp(mantissa, exponent-1023)
+    end
+
     return {
         dumpBinary = dumpBinary,
         dumpString = dumpString,
@@ -707,6 +1123,17 @@ local function bitBuffer(stream)
         writeSetLengthString = writeSetLengthString,
         writeField = writeField,
 
+        writeUInt8 = writeUInt8,
+        writeUInt16 = writeUInt16,
+        writeUInt32 = writeUInt32,
+        writeInt8 = writeInt8,
+        writeInt16 = writeInt16,
+        writeInt32 = writeInt32,
+
+        writeFloat16 = writeFloat16,
+        writeFloat32 = writeFloat32,
+        writeFloat64 = writeFloat64,
+
         readBits = readBits,
         readByte = readByte,
         readUnsigned = readUnsigned,
@@ -716,6 +1143,17 @@ local function bitBuffer(stream)
         readTerminatedString = readTerminatedString,
         readSetLengthString = readSetLengthString,
         readField = readField,
+
+        readUInt8 = readUInt8,
+        readUInt16 = readUInt16,
+        readUInt32 = readUInt32,
+        readInt8 = readInt8,
+        readInt16 = readInt16,
+        readInt32 = readInt32,
+
+        readFloat16 = readFloat16,
+        readFloat32 = readFloat32,
+        readFloat64 = readFloat64,
     }
 end
 
