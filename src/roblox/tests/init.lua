@@ -10,7 +10,19 @@ local specs = {
     "string",
     "terminatedstring",
     "setlengthstring",
-    "field"
+    "field",
+
+    "uint8",
+    "uint16",
+    "uint32",
+
+    "int8",
+    "int16",
+    "int32",
+
+    "float16",
+    "float32",
+    "float64",
 }
 
 -- local trySpec = require("spec/try")
