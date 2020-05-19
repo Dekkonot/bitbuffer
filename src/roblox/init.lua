@@ -737,7 +737,7 @@ local function bitBuffer(stream)
 
     local function writeBrickColor(n)
         assert(typeof(n) == "BrickColor", "argument #1 to BitBuffer.writeBrickColor should be a BrickColor")
-        writeUInt16(n)
+        writeUInt16(n.Number)
     end
 
     -- These are the read functions for the 'abstract' data types. At the bottom, there are shorthand read functions.
@@ -1113,8 +1113,9 @@ local function bitBuffer(stream)
 
     local function readBrickColor()
         assert(pointer+16 <= bitCount, "readBrickColor cannot read past the end of the stream")
-        return readUInt16()
+        return BrickColor.new(readUInt16())
     end
+
     return {
         dumpBinary = dumpBinary,
         dumpString = dumpString,
