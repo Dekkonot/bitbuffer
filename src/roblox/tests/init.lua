@@ -25,6 +25,7 @@ local specs = {
     "float64",
 
     "brickcolor",
+    "color3"
 }
 
 -- local trySpec = require("spec/try")

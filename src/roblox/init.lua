@@ -740,6 +740,12 @@ local function bitBuffer(stream)
         writeUInt16(n.Number)
     end
 
+    local function writeColor3(c3)
+        assert(typeof(c3) == "Color3", "argument #1 to BitBuffer.writeColor3 should be a Color3")
+
+        writeUnsigned(24, math.floor(c3.R*0xff+0.5)*0x10000+math.floor(c3.G*0xff+0.5)*0x100+math.floor(c3.B*0x0ff+0.5))
+    end
+
     -- These are the read functions for the 'abstract' data types. At the bottom, there are shorthand read functions.
 
     local function readBits(n)
@@ -1116,6 +1122,14 @@ local function bitBuffer(stream)
         return BrickColor.new(readUInt16())
     end
 
+    local function readColor3()
+        assert(pointer+24 <= bitCount, "readColor3 cannot read past the end of the stream")
+
+        local color = readUnsigned(24)
+
+        return Color3.fromRGB(bit32.rshift(color, 0x10), bit32.rshift(bit32.band(color, 0xffff), 0x08), bit32.band(color, 0xff))
+    end
+
     return {
         dumpBinary = dumpBinary,
         dumpString = dumpString,
@@ -1148,6 +1162,7 @@ local function bitBuffer(stream)
         writeFloat64 = writeFloat64,
 
         writeBrickColor = writeBrickColor,
+        writeColor3 = writeColor3,
 
         readBits = readBits,
         readByte = readByte,
@@ -1171,6 +1186,7 @@ local function bitBuffer(stream)
         readFloat64 = readFloat64,
 
         readBrickColor = readBrickColor,
+        readColor3 = readColor3,
     }
 end
 
