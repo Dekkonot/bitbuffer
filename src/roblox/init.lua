@@ -737,6 +737,7 @@ local function bitBuffer(stream)
 
     local function writeBrickColor(n)
         assert(typeof(n) == "BrickColor", "argument #1 to BitBuffer.writeBrickColor should be a BrickColor")
+
         writeUInt16(n.Number)
     end
 
@@ -1119,6 +1120,7 @@ local function bitBuffer(stream)
 
     local function readBrickColor()
         assert(pointer+16 <= bitCount, "readBrickColor cannot read past the end of the stream")
+
         return BrickColor.new(readUInt16())
     end
 
