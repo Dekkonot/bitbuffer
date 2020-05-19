@@ -733,6 +733,12 @@ local function bitBuffer(stream)
         writeByte(bit32.band(leastSignificantChunk, 255))
     end
 
+    -- All write functions below here are Roblox specific datatypes.
+
+    local function writeBrickColor(n)
+        assert(typeof(n) == "BrickColor", "argument #1 to BitBuffer.writeBrickColor should be a BrickColor")
+        writeUInt16(n)
+    end
 
     -- These are the read functions for the 'abstract' data types. At the bottom, there are shorthand read functions.
 
@@ -1103,6 +1109,12 @@ local function bitBuffer(stream)
         return sign and -math.ldexp(mantissa, exponent-1023) or math.ldexp(mantissa, exponent-1023)
     end
 
+    -- All read functions below here are Roblox specific datatypes.
+
+    local function readBrickColor()
+        assert(pointer+16 <= bitCount, "readBrickColor cannot read past the end of the stream")
+        return readUInt16()
+    end
     return {
         dumpBinary = dumpBinary,
         dumpString = dumpString,
@@ -1134,6 +1146,8 @@ local function bitBuffer(stream)
         writeFloat32 = writeFloat32,
         writeFloat64 = writeFloat64,
 
+        writeBrickColor = writeBrickColor,
+
         readBits = readBits,
         readByte = readByte,
         readUnsigned = readUnsigned,
@@ -1154,6 +1168,8 @@ local function bitBuffer(stream)
         readFloat16 = readFloat16,
         readFloat32 = readFloat32,
         readFloat64 = readFloat64,
+
+        readBrickColor = readBrickColor,
     }
 end
 
