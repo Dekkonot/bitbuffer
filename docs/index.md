@@ -4,7 +4,7 @@ However, no Roblox specific API is used in the main file or tests of the module.
 
 ## Why?
 
-Numbers take up a lot of space. Take the number `24930`. On its own, it's 5 bytes of space. That's not an awful lot, but if you had to save hundreds of thousands of numbers of a similiar size, that's a lot of space spent on numbers alone.
+Numbers take up a lot of space. Take the number `24930`. When written out, it's 5 bytes. That's not an awful lot, but if you had to save hundreds of thousands of numbers of a similiar size, that's a lot of space spent on numbers alone.
 
 When written with this BitBuffer though, `24930` only takes up 2 bytes and becomes `ab`.
 
