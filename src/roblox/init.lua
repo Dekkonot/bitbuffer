@@ -13,6 +13,17 @@ local HEX_TO_BIN = {
     ["c"] = "1100", ["d"] = "1101", ["e"] = "1110", ["f"] = "1111",
 }
 
+local NORMAL_ID_VECTORS = { -- [Enum.Value] = Vector3.fromNormalId(Enum)
+    [0] = Vector3.new(1, 0, 0), -- Enum.NormalId.Right
+    [1] = Vector3.new(0, 1, 0), -- Enum.NormalId.Top
+    [2] = Vector3.new(0, 0, 1), -- Enum.NormalId.Back
+    [3] = Vector3.new(-1, 0, 0), -- Enum.NormalId.Left
+    [4] = Vector3.new(0, -1, 0), -- Enum.NormalId.Bottom
+    [5] = Vector3.new(0, 0, -1), -- Enum.NormalId.Front
+}
+
+local ONES_VECTOR = Vector3.new(1, 1, 1)
+
 local BOOL_TO_BIT = { [true] = 1, [false] = 0, }
 
 local CRC32_POLYNOMIAL = 0xedb88320
@@ -747,6 +758,69 @@ local function bitBuffer(stream)
         writeUnsigned(24, math.floor(c3.R*0xff+0.5)*0x10000+math.floor(c3.G*0xff+0.5)*0x100+math.floor(c3.B*0x0ff+0.5))
     end
 
+    local function writeCFrame(cf)
+        assert(typeof(cf) == "CFrame", "argument #1 to BitBuffer.writeCFrame should be a CFrame")
+        -- CFrames can be rather lengthy (if stored naively, they would each be 48 bytes long) so some optimization is done here.
+        -- Specifically, if a CFrame is axis-aligned (it's only rotated in 90 degree increments), the rotation matrix isn't stored.
+        -- Instead, an 'id' for its orientation is generated and that's stored instead of the rotation.
+        -- This means that for the most common rotations, only 13 bytes are used.
+        -- The downside is that non-axis-aligned CFrames use 49 bytes instead of 48, but that's a small price to pay.
+
+        local upVector = cf.UpVector
+        local rightVector = cf.RightVector
+
+        -- This is an easy trick to check if a CFrame is axis-aligned:
+        -- Essentially, in order for a vector to be axis-aligned, two of the components have to be 0
+        -- This means that the dot product between the vector and a vector of all 1s will be 1 (0*x = 0)
+        -- Since these are all unit vectors, there is no other combination that results in 1.
+        local rightAligned = math.abs(rightVector:Dot(ONES_VECTOR))
+        local upAligned = math.abs(upVector:Dot(ONES_VECTOR))
+        -- At least one of these two vectors is guaranteed to not result in 0.
+
+        local axisAligned = (math.abs(1-rightAligned) < 0.00001 or rightAligned == 0) and (math.abs(1-upAligned) < 0.00001 or upAligned == 0)
+        -- There are limitations to `math.abs(a-b) < epsilon` but they're not relevant:
+        -- The range of numbers is [0, 1] and this just needs to know if the number is approximately 1
+
+        --todo special code for quaternions (0x01 in Roblox's format, would clash with 0x00 here)
+        if axisAligned then
+            local position = cf.Position
+            -- The ID of an orientation is generated through what can best be described as 'hand waving';
+            -- This is how Roblox does it and it works, so it was chosen to do it this way too.
+            local rightNormal, upNormal
+            for i = 0, 5 do
+                local v = NORMAL_ID_VECTORS[i]
+                if 1-v:Dot(rightVector) < 0.00001 then
+                    rightNormal = i
+                end
+                if 1-v:Dot(upVector) < 0.00001 then
+                    upNormal = i
+                end
+            end
+            -- The ID generated here is technically off by 1 from what Roblox would store, but that's not important
+            -- It just means that 0x02 is actually 0x01 for the purposes of this module's implementation.
+            writeByte(rightNormal*6+upNormal)
+            writeFloat32(position.X)
+            writeFloat32(position.Y)
+            writeFloat32(position.Z)
+        else
+            -- If the CFrame isn't axis-aligned, the entire rotation matrix has to be written...
+            writeByte(0) -- Along with a byte to indicate the matrix was written.
+            local x, y, z, r00, r01, r02, r10, r11, r12, r20, r21, r22 = cf:GetComponents()
+            writeFloat32(x)
+            writeFloat32(y)
+            writeFloat32(z)
+            writeFloat32(r00)
+            writeFloat32(r01)
+            writeFloat32(r02)
+            writeFloat32(r10)
+            writeFloat32(r11)
+            writeFloat32(r12)
+            writeFloat32(r20)
+            writeFloat32(r21)
+            writeFloat32(r22)
+        end
+    end
+
     -- These are the read functions for the 'abstract' data types. At the bottom, there are shorthand read functions.
 
     local function readBits(n)
@@ -1132,6 +1206,44 @@ local function bitBuffer(stream)
         return Color3.fromRGB(bit32.rshift(color, 0x10), bit32.rshift(bit32.band(color, 0xffff), 0x08), bit32.band(color, 0xff))
     end
 
+--local x, y, z, m11, m12, m13, m21, m22, m23, m31, m32, m33 = cf:components()
+ 
+-- m11, m12, m13,
+-- m21, m22, m23,
+-- m31, m32, m33
+ 
+-- local right = Vector3.new(m11, m21, m31) -- This is the same as cf.rightVector
+-- local up = Vector3.new(m12, m22, m32) -- This is the same as cf.upVector
+-- local back = Vector3.new(m13, m23, m33) -- This is the same as -cf.lookVector
+
+    local function readCFrame()
+        assert(pointer+8 <= bitCount, "readCFrame cannot read past the end of the stream")
+
+        local id = readByte()
+
+        if id == 0 then
+            assert(pointer+384 <= bitCount, "readCFrame cannot read past the end of the stream") -- 4*12 bytes = 383 bits
+            return CFrame.new(
+                readFloat32(), readFloat32(), readFloat32(),
+                readFloat32(), readFloat32(), readFloat32(),
+                readFloat32(), readFloat32(), readFloat32(),
+                readFloat32(), readFloat32(), readFloat32()
+            )
+        else
+            local rightVector = NORMAL_ID_VECTORS[math.floor(id/6)]
+            local upVector = NORMAL_ID_VECTORS[id%6]
+            local lookVector = rightVector:Cross(upVector)
+
+            -- CFrame's full-matrix constructor takes right/up/look vectors as columns...
+            return CFrame.new(
+                readFloat32(), readFloat32(), readFloat32(),
+                rightVector.X, upVector.X, lookVector.X,
+                rightVector.Y, upVector.Y, lookVector.Y,
+                rightVector.Z, upVector.Z, lookVector.Z
+            )
+        end
+    end
+
     return {
         dumpBinary = dumpBinary,
         dumpString = dumpString,
@@ -1165,6 +1277,7 @@ local function bitBuffer(stream)
 
         writeBrickColor = writeBrickColor,
         writeColor3 = writeColor3,
+        writeCFrame = writeCFrame,
 
         readBits = readBits,
         readByte = readByte,
@@ -1189,6 +1302,7 @@ local function bitBuffer(stream)
 
         readBrickColor = readBrickColor,
         readColor3 = readColor3,
+        readCFrame = readCFrame,
     }
 end
 
