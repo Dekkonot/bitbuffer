@@ -13,6 +13,17 @@ local HEX_TO_BIN = {
     ["c"] = "1100", ["d"] = "1101", ["e"] = "1110", ["f"] = "1111",
 }
 
+local NORMAL_ID_VECTORS = { -- [Enum.Value] = Vector3.fromNormalId(Enum)
+    [0] = Vector3.new(1, 0, 0), -- Enum.NormalId.Right
+    [1] = Vector3.new(0, 1, 0), -- Enum.NormalId.Top
+    [2] = Vector3.new(0, 0, 1), -- Enum.NormalId.Back
+    [3] = Vector3.new(-1, 0, 0), -- Enum.NormalId.Left
+    [4] = Vector3.new(0, -1, 0), -- Enum.NormalId.Bottom
+    [5] = Vector3.new(0, 0, -1), -- Enum.NormalId.Front
+}
+
+local ONES_VECTOR = Vector3.new(1, 1, 1)
+
 local BOOL_TO_BIT = { [true] = 1, [false] = 0, }
 
 local CRC32_POLYNOMIAL = 0xedb88320
@@ -733,6 +744,106 @@ local function bitBuffer(stream)
         writeByte(bit32.band(leastSignificantChunk, 255))
     end
 
+    -- All write functions below here are Roblox specific datatypes.
+
+    local function writeBrickColor(n)
+        assert(typeof(n) == "BrickColor", "argument #1 to BitBuffer.writeBrickColor should be a BrickColor")
+
+        writeUInt16(n.Number)
+    end
+
+    local function writeColor3(c3)
+        assert(typeof(c3) == "Color3", "argument #1 to BitBuffer.writeColor3 should be a Color3")
+
+        writeUnsigned(24, math.floor(c3.R*0xff+0.5)*0x10000+math.floor(c3.G*0xff+0.5)*0x100+math.floor(c3.B*0x0ff+0.5))
+    end
+
+    local function writeCFrame(cf)
+        assert(typeof(cf) == "CFrame", "argument #1 to BitBuffer.writeCFrame should be a CFrame")
+        -- CFrames can be rather lengthy (if stored naively, they would each be 48 bytes long) so some optimization is done here.
+        -- Specifically, if a CFrame is axis-aligned (it's only rotated in 90 degree increments), the rotation matrix isn't stored.
+        -- Instead, an 'id' for its orientation is generated and that's stored instead of the rotation.
+        -- This means that for the most common rotations, only 13 bytes are used.
+        -- The downside is that non-axis-aligned CFrames use 49 bytes instead of 48, but that's a small price to pay.
+
+        local upVector = cf.UpVector
+        local rightVector = cf.RightVector
+
+        -- This is an easy trick to check if a CFrame is axis-aligned:
+        -- Essentially, in order for a vector to be axis-aligned, two of the components have to be 0
+        -- This means that the dot product between the vector and a vector of all 1s will be 1 (0*x = 0)
+        -- Since these are all unit vectors, there is no other combination that results in 1.
+        local rightAligned = math.abs(rightVector:Dot(ONES_VECTOR))
+        local upAligned = math.abs(upVector:Dot(ONES_VECTOR))
+        -- At least one of these two vectors is guaranteed to not result in 0.
+
+        local axisAligned = (math.abs(1-rightAligned) < 0.00001 or rightAligned == 0) and (math.abs(1-upAligned) < 0.00001 or upAligned == 0)
+        -- There are limitations to `math.abs(a-b) < epsilon` but they're not relevant:
+        -- The range of numbers is [0, 1] and this just needs to know if the number is approximately 1
+
+        --todo special code for quaternions (0x01 in Roblox's format, would clash with 0x00 here)
+        if axisAligned then
+            local position = cf.Position
+            -- The ID of an orientation is generated through what can best be described as 'hand waving';
+            -- This is how Roblox does it and it works, so it was chosen to do it this way too.
+            local rightNormal, upNormal
+            for i = 0, 5 do
+                local v = NORMAL_ID_VECTORS[i]
+                if 1-v:Dot(rightVector) < 0.00001 then
+                    rightNormal = i
+                end
+                if 1-v:Dot(upVector) < 0.00001 then
+                    upNormal = i
+                end
+            end
+            -- The ID generated here is technically off by 1 from what Roblox would store, but that's not important
+            -- It just means that 0x02 is actually 0x01 for the purposes of this module's implementation.
+            writeByte(rightNormal*6+upNormal)
+            writeFloat32(position.X)
+            writeFloat32(position.Y)
+            writeFloat32(position.Z)
+        else
+            -- If the CFrame isn't axis-aligned, the entire rotation matrix has to be written...
+            writeByte(0) -- Along with a byte to indicate the matrix was written.
+            local x, y, z, r00, r01, r02, r10, r11, r12, r20, r21, r22 = cf:GetComponents()
+            writeFloat32(x)
+            writeFloat32(y)
+            writeFloat32(z)
+            writeFloat32(r00)
+            writeFloat32(r01)
+            writeFloat32(r02)
+            writeFloat32(r10)
+            writeFloat32(r11)
+            writeFloat32(r12)
+            writeFloat32(r20)
+            writeFloat32(r21)
+            writeFloat32(r22)
+        end
+    end
+
+    local function writeVector3(v3)
+        assert(typeof(v3) == "Vector3", "argument #1 to BitBuffer.writeVector3 should be a Vector3")
+
+        writeFloat32(v3.X)
+        writeFloat32(v3.Y)
+        writeFloat32(v3.Z)
+    end
+
+    local function writeVector2(v2)
+        assert(typeof(v2) == "Vector2", "argument #1 to BitBuffer.writeVector2 should be a Vector2")
+
+        writeFloat32(v2.X)
+        writeFloat32(v2.Y)
+    end
+
+    local function writeUDim2(u2)
+        assert(typeof(u2) == "UDim2", "argument #1 to BitBuffer.writeUDim2 should be a UDim2")
+        
+        writeFloat32(u2.X.Scale)
+        writeInt32(u2.X.Offset)
+        writeFloat32(u2.Y.Scale)
+        writeInt32(u2.Y.Offset)
+    end
 
     -- These are the read functions for the 'abstract' data types. At the bottom, there are shorthand read functions.
 
@@ -1103,6 +1214,69 @@ local function bitBuffer(stream)
         return sign and -math.ldexp(mantissa, exponent-1023) or math.ldexp(mantissa, exponent-1023)
     end
 
+    -- All read functions below here are Roblox specific datatypes.
+
+    local function readBrickColor()
+        assert(pointer+16 <= bitCount, "readBrickColor cannot read past the end of the stream")
+
+        return BrickColor.new(readUInt16())
+    end
+
+    local function readColor3()
+        assert(pointer+24 <= bitCount, "readColor3 cannot read past the end of the stream")
+
+        local color = readUnsigned(24)
+
+        return Color3.fromRGB(bit32.rshift(color, 0x10), bit32.rshift(bit32.band(color, 0xffff), 0x08), bit32.band(color, 0xff))
+    end
+
+    local function readCFrame()
+        assert(pointer+8 <= bitCount, "readCFrame cannot read past the end of the stream")
+
+        local id = readByte()
+
+        if id == 0 then
+            assert(pointer+384 <= bitCount, "readCFrame cannot read past the end of the stream") -- 4*12 bytes = 383 bits
+            return CFrame.new(
+                readFloat32(), readFloat32(), readFloat32(),
+                readFloat32(), readFloat32(), readFloat32(),
+                readFloat32(), readFloat32(), readFloat32(),
+                readFloat32(), readFloat32(), readFloat32()
+            )
+        else
+            assert(pointer+96 <= bitCount, "readCFrame cannot read past the end of the stream") -- 4*3 bytes = 96 bits
+            local rightVector = NORMAL_ID_VECTORS[math.floor(id/6)]
+            local upVector = NORMAL_ID_VECTORS[id%6]
+            local lookVector = rightVector:Cross(upVector)
+
+            -- CFrame's full-matrix constructor takes right/up/look vectors as columns...
+            return CFrame.new(
+                readFloat32(), readFloat32(), readFloat32(),
+                rightVector.X, upVector.X, lookVector.X,
+                rightVector.Y, upVector.Y, lookVector.Y,
+                rightVector.Z, upVector.Z, lookVector.Z
+            )
+        end
+    end
+
+    local function readVector3()
+        assert(pointer+96 <= bitCount, "readVector3 cannot read past the end of the stream")
+
+        return Vector3.new(readFloat32(), readFloat32(), readFloat32())
+    end
+
+    local function readVector2()
+        assert(pointer+64 <= bitCount, "readVector2 cannot read past the end of the stream")
+
+        return Vector2.new(readFloat32(), readFloat32())
+    end
+
+    local function readUDim2()
+        assert(pointer+128 <= bitCount, "readUDim2 cannot read past the end of the stream")
+
+        return UDim2.new(readFloat32(), readInt32(), readFloat32(), readInt32())
+    end
+
     return {
         dumpBinary = dumpBinary,
         dumpString = dumpString,
@@ -1134,6 +1308,13 @@ local function bitBuffer(stream)
         writeFloat32 = writeFloat32,
         writeFloat64 = writeFloat64,
 
+        writeBrickColor = writeBrickColor,
+        writeColor3 = writeColor3,
+        writeCFrame = writeCFrame,
+        writeVector3 = writeVector3,
+        writeVector2 = writeVector2,
+        writeUDim2 = writeUDim2,
+
         readBits = readBits,
         readByte = readByte,
         readUnsigned = readUnsigned,
@@ -1154,6 +1335,13 @@ local function bitBuffer(stream)
         readFloat16 = readFloat16,
         readFloat32 = readFloat32,
         readFloat64 = readFloat64,
+
+        readBrickColor = readBrickColor,
+        readColor3 = readColor3,
+        readCFrame = readCFrame,
+        readVector3 = readVector3,
+        readVector2 = readVector2,
+        readUDim2 = readUDim2,
     }
 end
 

@@ -23,6 +23,13 @@ local specs = {
     "float16",
     "float32",
     "float64",
+
+    "brickcolor",
+    "color3",
+    "cframe",
+    "vector3",
+    "vector2",
+    "udim2",
 }
 
 -- local trySpec = require("spec/try")
