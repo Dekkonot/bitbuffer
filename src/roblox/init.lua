@@ -149,34 +149,6 @@ local function bitBuffer(stream)
         return bit32.bnot(crc)%0xffffffff -- 2^32
     end
 
-    local function adler32()
-        -- This is a checksum algorithm. It's used in zlib, which is likely to come up while processing binary data.
-
-        local a = 1
-        local b = 0
-
-        -- The numbers here seem magical. They are not.
-        -- The Adler-32 checksum uses the prime 65521. This is the largest prime smaller than 2^16.
-        -- 5552 is the maximum number of bytes that can be processed before modulo is required.
-        -- Assuming a and b are both 65520 (one less than the prime) and all the data processed has been 0xff,
-        -- b will be 4294690200 (below 2^32). Another cycle and it will be well over 2^32.
-        -- source: https://software.intel.com/en-us/articles/fast-computation-of-adler32-checksums
-        for i = 1, byteCount, 5553 do
-            for j = 0, 5552 do
-                local byte = bytes[i+j]
-                if not byte then
-                    break
-                end
-                a = a+byte
-                b = b+a
-            end
-            a = a%65521
-            b = b%65521
-        end
-
-        return bit32.lshift(b, 16)+a
-    end
-
     local function getPointer()
         -- This function gets the value of the pointer. This is self-explanatory.
         return pointer
@@ -1283,7 +1255,6 @@ local function bitBuffer(stream)
         dumpHex = dumpHex,
         dumpBase64 = dumpBase64,
         crc32 = crc32,
-        adler32 = adler32,
         getPointer = getPointer,
         setPointer = setPointer,
 
