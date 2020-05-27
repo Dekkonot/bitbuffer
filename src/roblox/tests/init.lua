@@ -27,6 +27,8 @@ local specs = {
     "brickcolor",
     "color3",
     "cframe",
+    "vector3",
+    "vector2",
 }
 
 -- local trySpec = require("spec/try")

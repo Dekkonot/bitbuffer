@@ -821,6 +821,21 @@ local function bitBuffer(stream)
         end
     end
 
+    local function writeVector3(v3)
+        assert(typeof(v3) == "Vector3", "argument #1 to BitBuffer.writeVector3 should be a Vector3")
+
+        writeFloat32(v3.X)
+        writeFloat32(v3.Y)
+        writeFloat32(v3.Z)
+    end
+
+    local function writeVector2(v2)
+        assert(typeof(v2) == "Vector2", "argument #1 to BitBuffer.writeVector2 should be a Vector2")
+
+        writeFloat32(v2.X)
+        writeFloat32(v2.Y)
+    end
+
     -- These are the read functions for the 'abstract' data types. At the bottom, there are shorthand read functions.
 
     local function readBits(n)
@@ -1234,6 +1249,18 @@ local function bitBuffer(stream)
         end
     end
 
+    local function readVector3()
+        assert(pointer+96 <= bitCount, "readVector3 cannot read past the end of the stream")
+
+        return Vector3.new(readFloat32(), readFloat32(), readFloat32())
+    end
+
+    local function readVector2()
+        assert(pointer+64 <= bitCount, "readVector2 cannot read past the end of the stream")
+
+        return Vector2.new(readFloat32(), readFloat32())
+    end
+
     return {
         dumpBinary = dumpBinary,
         dumpString = dumpString,
@@ -1268,6 +1295,8 @@ local function bitBuffer(stream)
         writeBrickColor = writeBrickColor,
         writeColor3 = writeColor3,
         writeCFrame = writeCFrame,
+        writeVector3 = writeVector3,
+        writeVector2 = writeVector2,
 
         readBits = readBits,
         readByte = readByte,
@@ -1293,6 +1322,8 @@ local function bitBuffer(stream)
         readBrickColor = readBrickColor,
         readColor3 = readColor3,
         readCFrame = readCFrame,
+        readVector3 = readVector3,
+        readVector2 = readVector2,
     }
 end
 
