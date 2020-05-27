@@ -45,12 +45,6 @@ local function makeTests(try)
         assert(buffer.crc32() == 0xebe6c6e6, "")
     end).pass()
 
-    tests("adler32 should correct calculate the adler32 checksum of the buffer's contents", function()
-        local buffer = BitBuffer("Hello, world!")
-
-        assert(buffer.adler32() == 0x205e048a, "")
-    end).pass()
-
     tests("getPointer should return the pointer", function()
         local buffer = BitBuffer("Hello, world!")
         
