@@ -1235,6 +1235,7 @@ local function bitBuffer(stream)
                 readFloat32(), readFloat32(), readFloat32()
             )
         else
+            assert(pointer+96 <= bitCount, "readCFrame cannot read past the end of the stream") -- 4*3 bytes = 96 bits
             local rightVector = NORMAL_ID_VECTORS[math.floor(id/6)]
             local upVector = NORMAL_ID_VECTORS[id%6]
             local lookVector = rightVector:Cross(upVector)

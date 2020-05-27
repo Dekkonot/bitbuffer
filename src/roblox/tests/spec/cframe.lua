@@ -215,8 +215,24 @@ local function makeTests(try)
         assert(buffer.readBits(1)[1] == 1, "")
     end).pass()
 
-    readTest("Should not allow reading past the end of the stream", function()
+    readTest("Should not allow reading past the end of the stream with no remaining bytes", function()
         local buffer = BitBuffer()
+
+        buffer.readCFrame()
+    end).fail()
+
+    readTest("Should not allow reading past the end of the stream with a non-zero byte remaining", function()
+        local buffer = BitBuffer()
+
+        buffer.writeByte(1)
+
+        buffer.readCFrame()
+    end).fail()
+
+    readTest("Should not allow reading past the end of the stream with a zero byte remaining", function()
+        local buffer = BitBuffer()
+
+        buffer.writeByte(0)
 
         buffer.readCFrame()
     end).fail()
