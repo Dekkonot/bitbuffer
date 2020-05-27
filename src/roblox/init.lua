@@ -836,6 +836,15 @@ local function bitBuffer(stream)
         writeFloat32(v2.Y)
     end
 
+    local function writeUDim2(u2)
+        assert(typeof(u2) == "UDim2", "argument #1 to BitBuffer.writeUDim2 should be a UDim2")
+        
+        writeFloat32(u2.X.Scale)
+        writeInt32(u2.X.Offset)
+        writeFloat32(u2.Y.Scale)
+        writeInt32(u2.Y.Offset)
+    end
+
     -- These are the read functions for the 'abstract' data types. At the bottom, there are shorthand read functions.
 
     local function readBits(n)
@@ -1262,6 +1271,12 @@ local function bitBuffer(stream)
         return Vector2.new(readFloat32(), readFloat32())
     end
 
+    local function readUDim2()
+        assert(pointer+128 <= bitCount, "readUDim2 cannot read past the end of the stream")
+
+        return UDim2.new(readFloat32(), readInt32(), readFloat32(), readInt32())
+    end
+
     return {
         dumpBinary = dumpBinary,
         dumpString = dumpString,
@@ -1298,6 +1313,7 @@ local function bitBuffer(stream)
         writeCFrame = writeCFrame,
         writeVector3 = writeVector3,
         writeVector2 = writeVector2,
+        writeUDim2 = writeUDim2,
 
         readBits = readBits,
         readByte = readByte,
@@ -1325,6 +1341,7 @@ local function bitBuffer(stream)
         readCFrame = readCFrame,
         readVector3 = readVector3,
         readVector2 = readVector2,
+        readUDim2 = readUDim2,
     }
 end
 

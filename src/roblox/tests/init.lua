@@ -29,6 +29,7 @@ local specs = {
     "cframe",
     "vector3",
     "vector2",
+    "udim2",
 }
 
 -- local trySpec = require("spec/try")
