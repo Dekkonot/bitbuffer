@@ -1206,16 +1206,6 @@ local function bitBuffer(stream)
         return Color3.fromRGB(bit32.rshift(color, 0x10), bit32.rshift(bit32.band(color, 0xffff), 0x08), bit32.band(color, 0xff))
     end
 
---local x, y, z, m11, m12, m13, m21, m22, m23, m31, m32, m33 = cf:components()
- 
--- m11, m12, m13,
--- m21, m22, m23,
--- m31, m32, m33
- 
--- local right = Vector3.new(m11, m21, m31) -- This is the same as cf.rightVector
--- local up = Vector3.new(m12, m22, m32) -- This is the same as cf.upVector
--- local back = Vector3.new(m13, m23, m33) -- This is the same as -cf.lookVector
-
     local function readCFrame()
         assert(pointer+8 <= bitCount, "readCFrame cannot read past the end of the stream")
 
