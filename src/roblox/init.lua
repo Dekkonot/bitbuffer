@@ -727,7 +727,9 @@ local function bitBuffer(stream)
     local function writeColor3(c3)
         assert(typeof(c3) == "Color3", "argument #1 to BitBuffer.writeColor3 should be a Color3")
 
-        writeUnsigned(24, math.floor(c3.R*0xff+0.5)*0x10000+math.floor(c3.G*0xff+0.5)*0x100+math.floor(c3.B*0x0ff+0.5))
+        writeByte(math.floor(c3.R*0xff+0.5))
+        writeByte(math.floor(c3.G*0xff+0.5))
+        writeByte(math.floor(c3.B*0xff+0.5))
     end
 
     local function writeCFrame(cf)
@@ -1197,9 +1199,7 @@ local function bitBuffer(stream)
     local function readColor3()
         assert(pointer+24 <= bitCount, "BitBuffer.readColor3 cannot read past the end of the stream")
 
-        local color = readUnsigned(24)
-
-        return Color3.fromRGB(bit32.rshift(color, 0x10), bit32.rshift(bit32.band(color, 0xffff), 0x08), bit32.band(color, 0xff))
+        return Color3.fromRGB(readByte(), readByte(), readByte())
     end
 
     local function readCFrame()
