@@ -47,7 +47,7 @@ local function bitBuffer(stream)
     local lastByte = 0 -- The most recent byte in the buffer, made up of free floating bits
 
     local byteCount = 0 -- This variable keeps track of how many bytes there are total in the bit buffer.
-    local bitCount = 0 -- This variable keeps track of how many bytes there are total in the bit buffer
+    local bitCount = 0 -- This variable keeps track of how many bits there are total in the bit buffer
 
     local pointer = 0 -- This variable keeps track of what bit the read functions start at
     local pointerByte = 1 -- This variable keeps track of what byte the pointer is at. It starts at 1 since the byte array starts at 1.
