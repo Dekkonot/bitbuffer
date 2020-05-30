@@ -1405,6 +1405,9 @@ local function bitBuffer(stream)
         assert(pointer+32 <= bitCount, "BitBuffer.readNumberSequence cannot read past the end of the stream")
 
         local keypointCount = readUInt32()
+        
+        assert(pointer+keypointCount*96, "BitBuffer.readColorSequence cannot read past the end of the stream")
+
         local keypoints = table.create(keypointCount)
         
         for i = 1, keypoints do
@@ -1418,9 +1421,12 @@ local function bitBuffer(stream)
         assert(pointer+32 <= bitCount, "BitBuffer.readColorSequence cannot read past the end of the stream")
 
         local keypointCount = readUInt32()
+        
+        assert(pointer+keypointCount*56, "BitBuffer.readColorSequence cannot read past the end of the stream")
+
         local keypoints = table.create(keypointCount)
         
-        for i = 1, keypoints do
+        for i = 1, keypointCount do
             keypoints[i] = ColorSequenceKeypoint.new(readFloat32(), Color3.fromRGB(readByte(), readByte(), readByte()))
         end
 
