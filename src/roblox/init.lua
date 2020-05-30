@@ -1410,7 +1410,7 @@ local function bitBuffer(stream)
 
         local keypoints = table.create(keypointCount)
         
-        for i = 1, keypoints do
+        for i = 1, keypointCount do
             keypoints[i] = NumberSequenceKeypoint.new(readFloat32(), readFloat32(), readFloat32())
         end
 
