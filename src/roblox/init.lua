@@ -819,6 +819,89 @@ local function bitBuffer(stream)
         writeInt32(u2.Y.Offset)
     end
 
+    local function writeUDim(u)
+        assert(typeof(u) == "UDim", "argument #1 to BitBuffer.writeUDim should be a UDim")
+
+        writeFloat32(u.Scale)
+        writeInt32(u.Offset)
+    end
+
+    local function writeRay(ray)
+        assert(typeof(ray) == "Ray", "argument #1 to BitBuffer.writeRay should be a Ray")
+
+        writeFloat32(ray.Origin.X)
+        writeFloat32(ray.Origin.Y)
+        writeFloat32(ray.Origin.Z)
+
+        writeFloat32(ray.Direction.X)
+        writeFloat32(ray.Direction.Y)
+        writeFloat32(ray.Direction.Z)
+    end
+
+    local function writeRect(rect)
+        assert(typeof(rect) == "Rect", "argument #1 to BitBuffer.writeRect should be a Rect")
+
+        writeFloat32(rect.Min.X)
+        writeFloat32(rect.Min.Y)
+
+        writeFloat32(rect.Max.X)
+        writeFloat32(rect.Max.Y)
+    end
+
+    local function writeRegion3(region)
+        assert(typeof(region) == "Region3", "argument #1 to BitBuffer.writeRegion3 should be a Region3")
+
+        local min = region.CFrame.Position-(region.Size/2)
+        local max = region.CFrame.Position+(region.Size/2)
+
+        writeFloat32(min.X)
+        writeFloat32(min.Y)
+        writeFloat32(min.Z)
+
+        writeFloat32(max.X)
+        writeFloat32(max.Y)
+        writeFloat32(max.Z)
+    end
+
+    local function writeEnum(enum)
+        assert(typeof(enum) == "EnumItem", "argument #1 to BitBuffer.writeEnum should be an EnumItem")
+
+        -- Relying upon tostring is generally not good, but there's not any other options for this.
+        writeTerminatedString(tostring(enum.EnumType))
+        writeUInt16(enum.Value) -- Optimistically assuming no Roblox Enum value will ever pass 65,535
+    end
+
+    local function writeNumberRange(range)
+        assert(typeof(range) == "NumberRange", "argument #1 to BitBuffer.writeNumberRange should be a NumberRange")
+
+        writeFloat32(range.Min)
+        writeFloat32(range.Max)
+    end
+
+    local function writeNumberSequence(sequence)
+        assert(typeof(sequence) == "NumberSequence", "argument #1 to BitBuffer.writeNumberSequence should be a NumberSequence")
+
+        writeUInt32(#sequence.Keypoints)
+        for _, keypoint in ipairs(sequence.Keypoints) do
+            writeFloat32(keypoint.Time)
+            writeFloat32(keypoint.Value)
+            writeFloat32(keypoint.Envelope)
+        end
+    end
+
+    local function writeColorSequence(sequence)
+        assert(typeof(sequence) == "ColorSequence", "argument #1 to BitBuffer.writeColorSequence should be a ColorSequence")
+
+        writeUInt32(#sequence.Keypoints)
+        for _, keypoint in ipairs(sequence.Keypoints) do
+            local c3 = keypoint.Value
+            writeFloat32(keypoint.Time)
+            writeByte(math.floor(c3.R*0xff+0.5))
+            writeByte(math.floor(c3.G*0xff+0.5))
+            writeByte(math.floor(c3.B*0xff+0.5))
+        end
+    end
+
     -- These are the read functions for the 'abstract' data types. At the bottom, there are shorthand read functions.
 
     local function readBits(n)
@@ -1209,6 +1292,7 @@ local function bitBuffer(stream)
 
         if id == 0 then
             assert(pointer+384 <= bitCount, "BitBuffer.readCFrame cannot read past the end of the stream") -- 4*12 bytes = 383 bits
+
             return CFrame.new(
                 readFloat32(), readFloat32(), readFloat32(),
                 readFloat32(), readFloat32(), readFloat32(),
@@ -1217,6 +1301,7 @@ local function bitBuffer(stream)
             )
         else
             assert(pointer+96 <= bitCount, "BitBuffer.readCFrame cannot read past the end of the stream") -- 4*3 bytes = 96 bits
+
             local rightVector = NORMAL_ID_VECTORS[math.floor(id/6)]
             local upVector = NORMAL_ID_VECTORS[id%6]
             local lookVector = rightVector:Cross(upVector)
@@ -1247,6 +1332,100 @@ local function bitBuffer(stream)
         assert(pointer+128 <= bitCount, "BitBuffer.readUDim2 cannot read past the end of the stream")
 
         return UDim2.new(readFloat32(), readInt32(), readFloat32(), readInt32())
+    end
+
+
+    local function readUDim()
+        assert(pointer+64 <= bitCount, "BitBuffer.readUDim cannot read past the end of the stream")
+
+        return UDim.new(readFloat32(), readInt32())
+    end
+
+    local function readRay()
+        assert(pointer+192 <= bitCount, "BitBuffer.readRay cannot read past the end of the stream")
+
+        return Ray.new(Vector3.new(readFloat32(), readFloat32(), readFloat32()), Vector3.new(readFloat32(), readFloat32(), readFloat32()))
+    end
+
+    local function readRect()
+        assert(pointer+128 <= bitCount, "BitBuffer.readRect cannot read past the end of the stream")
+
+        return Rect.new(readFloat32(), readFloat32(), readFloat32(), readFloat32())
+    end
+
+    local function readRegion3()
+        assert(pointer+192 <= bitCount, "BitBuffer.readRegion3 cannot read past the end of the stream")
+
+        return Region3.new(Vector3.new(readFloat32(), readFloat32(), readFloat32()), Vector3.new(readFloat32(), readFloat32(), readFloat32()))
+    end
+
+    local function readEnum()
+        assert(pointer+8 <= bitCount, "BitBuffer.readEnum cannot read past the end of the stream")
+        
+        local name = readTerminatedString() -- This might expose an error from readString to the end-user but it's not worth the hassle to fix.
+
+        assert(pointer+16 <= bitCount, "BitBuffer.readEnum cannot read past the end of the stream")
+
+        local value = readUInt16() -- Again, optimistically assuming no Roblox Enum value will ever pass 65,535
+
+        -- Catching a potential error only to throw it with different formatting seems... Superfluous.
+        -- Open an issue on github if you feel otherwise.
+        for _, v in ipairs(Enum[name]:GetEnumItems()) do
+            if v.Value == value then
+                return v
+            end
+        end
+
+        error("BitBuffer.readEnum could not get value: `"..tostring(value).."` is not a valid member of `"..name.."`", 2)
+    end
+
+    local function readNumberRange()
+        assert(pointer+64 <= bitCount, "BitBuffer.readNumberRange cannot read past the end of the stream")
+
+        return NumberRange.new(readFloat32(), readFloat32())
+    end
+
+    local function readNumberSequence()
+        assert(pointer+32 <= bitCount, "BitBuffer.readNumberSequence cannot read past the end of the stream")
+
+        local keypointCount = readUInt32()
+        
+        assert(pointer+keypointCount*96, "BitBuffer.readColorSequence cannot read past the end of the stream")
+
+        local keypoints = table.create(keypointCount)
+        
+        -- As it turns out, creating a NumberSequence with a negative value as its first argument (in the first and second constructor)
+        -- creates NumberSequenceKeypoints with negative envelopes. The envelope is read and saved properly, as you would expect,
+        -- but you can't create a NumberSequence with a negative envelope if you're using a table of keypoints (which is happening here).
+        -- If you're confused, run this snippet: NumberSequence.new(NumberSequence.new(-1).Keypoints)
+        -- As a result, there has to be some branching logic in this function.
+        -- ColorSequences don't have envelopes so it's not necessary for them.
+
+        for i = 1, keypointCount do
+            local time, value, envelope = readFloat32(), readFloat32(), readFloat32()
+            if value < 0 then
+                envelope = nil
+            end
+            keypoints[i] = NumberSequenceKeypoint.new(time, value, envelope)
+        end
+
+        return NumberSequence.new(keypoints)
+    end
+
+    local function readColorSequence()
+        assert(pointer+32 <= bitCount, "BitBuffer.readColorSequence cannot read past the end of the stream")
+
+        local keypointCount = readUInt32()
+        
+        assert(pointer+keypointCount*56, "BitBuffer.readColorSequence cannot read past the end of the stream")
+
+        local keypoints = table.create(keypointCount)
+        
+        for i = 1, keypointCount do
+            keypoints[i] = ColorSequenceKeypoint.new(readFloat32(), Color3.fromRGB(readByte(), readByte(), readByte()))
+        end
+
+        return ColorSequence.new(keypoints)
     end
 
     return {
@@ -1285,6 +1464,14 @@ local function bitBuffer(stream)
         writeVector3 = writeVector3,
         writeVector2 = writeVector2,
         writeUDim2 = writeUDim2,
+        writeUDim = writeUDim,
+        writeRay = writeRay,
+        writeRect = writeRect,
+        writeRegion3 = writeRegion3,
+        writeEnum = writeEnum,
+        writeNumberRange = writeNumberRange,
+        writeNumberSequence = writeNumberSequence,
+        writeColorSequence = writeColorSequence,
 
         readBits = readBits,
         readByte = readByte,
@@ -1313,6 +1500,14 @@ local function bitBuffer(stream)
         readVector3 = readVector3,
         readVector2 = readVector2,
         readUDim2 = readUDim2,
+        readUDim = readUDim,
+        readRay = readRay,
+        readRect = readRect,
+        readRegion3 = readRegion3,
+        readEnum = readEnum,
+        readNumberRange = readNumberRange,
+        readNumberSequence = readNumberSequence,
+        readColorSequence = readColorSequence,
     }
 end
 
