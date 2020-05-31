@@ -30,10 +30,18 @@ local specs = {
     "vector3",
     "vector2",
     "udim2",
+    "udim",
+    "ray",
+    "rect",
+    "region3",
+    "enum",
+    "numberrange",
+    "numbersequence",
+    "colorsequence",
 }
 
--- local trySpec = require("spec/try")
--- if not trySpec(try) then
+-- local trySpec = require(script.spec.try)
+-- if not trySpec(try.new) then
 --     print("trySpec failed")
 --     return
 -- end

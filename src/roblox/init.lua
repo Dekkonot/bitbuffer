@@ -894,7 +894,7 @@ local function bitBuffer(stream)
 
         -- Relying upon tostring is generally not good, but there's not any other options for this.
         writeTerminatedString(tostring(enum.EnumType))
-        writeUInt16(enum.Value)
+        writeUInt16(enum.Value) -- Optimistically assuming no Roblox Enum value will ever pass 65,535
     end
 
     local function writeNumberRange(range)
@@ -916,13 +916,15 @@ local function bitBuffer(stream)
     end
 
     local function writeColorSequence(sequence)
-        assert(typeof(sequence) == "NumberSequence", "argument #1 to BitBuffer.writeNumberSequence should be a NumberSequence")
+        assert(typeof(sequence) == "ColorSequence", "argument #1 to BitBuffer.writeColorSequence should be a ColorSequence")
 
         writeUInt32(#sequence.Keypoints)
         for _, keypoint in ipairs(sequence.Keypoints) do
             local c3 = keypoint.Value
             writeFloat32(keypoint.Time)
-            writeFloat32(math.floor(c3.R*0xff+0.5)*0x10000+math.floor(c3.G*0xff+0.5)*0x100+math.floor(c3.B*0xff+0.5))
+            writeByte(math.floor(c3.R*0xff+0.5))
+            writeByte(math.floor(c3.G*0xff+0.5))
+            writeByte(math.floor(c3.B*0xff+0.5))
         end
     end
 
@@ -1361,7 +1363,7 @@ local function bitBuffer(stream)
     local function readUDim()
         assert(pointer+64 <= bitCount, "BitBuffer.readUDim cannot read past the end of the stream")
 
-        return UDim2.new(readFloat32(), readInt32())
+        return UDim.new(readFloat32(), readInt32())
     end
 
     local function readRay()
@@ -1383,7 +1385,7 @@ local function bitBuffer(stream)
     end
 
     local function readEnum()
-        assert(pointer+8 <= bitCount, "BitBuffer.readRegion3 cannot read past the end of the stream")
+        assert(pointer+8 <= bitCount, "BitBuffer.readEnum cannot read past the end of the stream")
         
         local name = readTerminatedString() -- This might expose an error from readString to the end-user but it's not worth the hassle to fix.
 
@@ -1391,8 +1393,15 @@ local function bitBuffer(stream)
 
         local value = readUInt16() -- Again, optimistically assuming no Roblox Enum value will ever pass 65,535
 
-        return Enum[name][value] -- Catching a potential error only to throw it with different formatting seems... Superfluous.
+        -- Catching a potential error only to throw it with different formatting seems... Superfluous.
         -- Open an issue on github if you feel otherwise.
+        for _, v in ipairs(Enum[name]:GetEnumItems()) do
+            if v.Value == value then
+                return v
+            end
+        end
+
+        error("BitBuffer.readEnum could not get value: `"..tostring(value).."` is not a valid member of `"..name.."`", 2)
     end
 
     local function readNumberRange()
@@ -1410,8 +1419,19 @@ local function bitBuffer(stream)
 
         local keypoints = table.create(keypointCount)
         
+        -- As it turns out, creating a NumberSequence with a negative value as its first argument (in the first and second constructor)
+        -- creates NumberSequenceKeypoints with negative envelopes. The envelope is read and saved properly, as you would expect,
+        -- but you can't create a NumberSequence with a negative envelope if you're using a table of keypoints (which is happening here).
+        -- If you're confused, run this snippet: NumberSequence.new(NumberSequence.new(-1).Keypoints)
+        -- As a result, there has to be some branching logic in this function.
+        -- ColorSequences don't have envelopes so it's not necessary for them.
+
         for i = 1, keypointCount do
-            keypoints[i] = NumberSequenceKeypoint.new(readFloat32(), readFloat32(), readFloat32())
+            local time, value, envelope = readFloat32(), readFloat32(), readFloat32()
+            if value < 0 then
+                envelope = nil
+            end
+            keypoints[i] = NumberSequenceKeypoint.new(time, value, envelope)
         end
 
         return NumberSequence.new(keypoints)
@@ -1511,9 +1531,9 @@ local function bitBuffer(stream)
         readRect = readRect,
         readRegion3 = readRegion3,
         readEnum = readEnum,
-        readNumberRange,
-        readNumberSequence,
-        readColorSequence,
+        readNumberRange = readNumberRange,
+        readNumberSequence = readNumberSequence,
+        readColorSequence = readColorSequence,
     }
 end
 
