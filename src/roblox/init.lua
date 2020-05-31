@@ -58,7 +58,7 @@ local function bitBuffer(stream)
     local lastByte = 0 -- The most recent byte in the buffer, made up of free floating bits
 
     local byteCount = 0 -- This variable keeps track of how many bytes there are total in the bit buffer.
-    local bitCount = 0 -- This variable keeps track of how many bytes there are total in the bit buffer
+    local bitCount = 0 -- This variable keeps track of how many bits there are total in the bit buffer
 
     local pointer = 0 -- This variable keeps track of what bit the read functions start at
     local pointerByte = 1 -- This variable keeps track of what byte the pointer is at. It starts at 1 since the byte array starts at 1.
@@ -149,34 +149,6 @@ local function bitBuffer(stream)
         return bit32.bnot(crc)%0xffffffff -- 2^32
     end
 
-    local function adler32()
-        -- This is a checksum algorithm. It's used in zlib, which is likely to come up while processing binary data.
-
-        local a = 1
-        local b = 0
-
-        -- The numbers here seem magical. They are not.
-        -- The Adler-32 checksum uses the prime 65521. This is the largest prime smaller than 2^16.
-        -- 5552 is the maximum number of bytes that can be processed before modulo is required.
-        -- Assuming a and b are both 65520 (one less than the prime) and all the data processed has been 0xff,
-        -- b will be 4294690200 (below 2^32). Another cycle and it will be well over 2^32.
-        -- source: https://software.intel.com/en-us/articles/fast-computation-of-adler32-checksums
-        for i = 1, byteCount, 5553 do
-            for j = 0, 5552 do
-                local byte = bytes[i+j]
-                if not byte then
-                    break
-                end
-                a = a+byte
-                b = b+a
-            end
-            a = a%65521
-            b = b%65521
-        end
-
-        return bit32.lshift(b, 16)+a
-    end
-
     local function getPointer()
         -- This function gets the value of the pointer. This is self-explanatory.
         return pointer
@@ -200,7 +172,7 @@ local function bitBuffer(stream)
         bitCount = bitCount+bitN
         local packed = table.pack(...)
         for _, v in ipairs(packed) do
-            assert(v == 1 or v == 0, "arguments to writeBits should be either 1 or 0")
+            assert(v == 1 or v == 0, "arguments to BitBuffer.writeBits should be either 1 or 0")
             if bits == 0 then -- If the bit count is 0, increment the byteCount
                 -- This is the case at the beginning of the buffer as well as when the the buffer reaches 7 bits,
                 -- so it's done at the beginning of the loop.
@@ -558,7 +530,7 @@ local function bitBuffer(stream)
     end
 
     local function writeFloat16(n)
-        assert(type(n) == "number", "argument #1 to writeFloat16 should be a number")
+        assert(type(n) == "number", "argument #1 to BitBuffer.writeFloat16 should be a number")
 
         local sign = n < 0
         n = math.abs(n)
@@ -605,7 +577,7 @@ local function bitBuffer(stream)
     end
 
     local function writeFloat32(n)
-        assert(type(n) == "number", "argument #1 to writeFloat16 should be a number")
+        assert(type(n) == "number", "argument #1 to BitBuffer.writeFloat32 should be a number")
 
         local sign = n < 0
         n = math.abs(n)
@@ -662,7 +634,7 @@ local function bitBuffer(stream)
     end
 
     local function writeFloat64(n)
-        assert(type(n) == "number", "argument #1 to writeFloat64 should be a number")
+        assert(type(n) == "number", "argument #1 to BitBuffer.writeFloat64 should be a number")
 
         local sign = n < 0
         n = math.abs(n)
@@ -755,7 +727,9 @@ local function bitBuffer(stream)
     local function writeColor3(c3)
         assert(typeof(c3) == "Color3", "argument #1 to BitBuffer.writeColor3 should be a Color3")
 
-        writeUnsigned(24, math.floor(c3.R*0xff+0.5)*0x10000+math.floor(c3.G*0xff+0.5)*0x100+math.floor(c3.B*0x0ff+0.5))
+        writeByte(math.floor(c3.R*0xff+0.5))
+        writeByte(math.floor(c3.G*0xff+0.5))
+        writeByte(math.floor(c3.B*0xff+0.5))
     end
 
     local function writeCFrame(cf)
@@ -931,11 +905,11 @@ local function bitBuffer(stream)
     -- These are the read functions for the 'abstract' data types. At the bottom, there are shorthand read functions.
 
     local function readBits(n)
-        assert(type(n) == "number", "argument #1 to readBits should be a number")
-        assert(n > 0, "argument #1 to readBits should be greater than zero")
-        assert(n%1 == 0, "argument #1 to readBits should be an integer")
+        assert(type(n) == "number", "argument #1 to BitBuffer.readBits should be a number")
+        assert(n > 0, "argument #1 to BitBuffer.readBits should be greater than zero")
+        assert(n%1 == 0, "argument #1 to BitBuffer.readBits should be an integer")
 
-        assert(pointer+n <= bitCount, "readBits cannot read past the end of the stream")
+        assert(pointer+n <= bitCount, "BitBuffer.readBits cannot read past the end of the stream")
 
         if pointer+n > bitCount then return false end
         -- The first of two main functions for the actual 'reading' of the bitbuffer.
@@ -960,7 +934,7 @@ local function bitBuffer(stream)
     end
 
     local function readByte()
-        assert(pointer+8 <= bitCount, "readByte cannot read past the end of the stream")
+        assert(pointer+8 <= bitCount, "BitBuffer.readByte cannot read past the end of the stream")
         -- The second of two main functions for the actual 'reading' of the bitbuffer.
         -- Reads a byte and returns it
         local c = pointer%8 -- How far into the pointerByte the pointer is
@@ -982,7 +956,7 @@ local function bitBuffer(stream)
         assert(width >= 1 and width <= 64, "argument #1 to BitBuffer.readUnsigned should be in the range [1, 64]")
         assert(width%1 == 0, "argument #1 to BitBuffer.readUnsigned should be an integer")
 
-        assert(pointer+width <= bitCount, "readUnsigned cannot read past the end of the stream")
+        assert(pointer+width <= bitCount, "BitBuffer.readUnsigned cannot read past the end of the stream")
         -- Implementing this on its own was considered because of a worry that it would be inefficient to call
         -- readByte and readBit several times, but it was decided the simplicity is worth a minor performance hit.
         local bytesInN, bitsInN = math.floor(width/8), width%8
@@ -1010,7 +984,7 @@ local function bitBuffer(stream)
         assert(width >= 2 and width <= 64, "argument #1 to BitBuffer.readSigned should be in the range [2, 64]")
         assert(width%1 == 0, "argument #1 to BitBuffer.readSigned should be an integer")
         
-        assert(pointer+8 <= bitCount, "readSigned cannot read past the end of the stream")
+        assert(pointer+8 <= bitCount, "BitBuffer.readSigned cannot read past the end of the stream")
         local sign = readBits(1)[1]
         local n = readUnsigned(width-1) -- Again, width-1 is because one bit is used for the sign
 
@@ -1033,7 +1007,7 @@ local function bitBuffer(stream)
         assert(mantissaWidth >= 1 and mantissaWidth <= 64, "argument #2 to BitBuffer.readFloat should be in the range [1, 64]")
         assert(mantissaWidth%1 == 0, "argument #2 to BitBuffer.readFloat should be an integer")
 
-        assert(pointer+exponentWidth+mantissaWidth+1 <= bitCount, "readFloat cannot read past the end of the stream")
+        assert(pointer+exponentWidth+mantissaWidth+1 <= bitCount, "BitBuffer.readFloat cannot read past the end of the stream")
         -- Recomposing floats is rather straightfoward.
         -- The bias is subtracted from the exponent, the mantissa is shifted back by mantissaWidth, one is added to the mantissa
         -- and the whole thing is recomposed with math.ldexp (this is identical to mantissa*(2^exponent)).
@@ -1074,12 +1048,12 @@ local function bitBuffer(stream)
     end
 
     local function readString()
-        assert(pointer+24 <= bitCount, "readString cannot read past the end of the stream")
+        assert(pointer+24 <= bitCount, "BitBuffer.readString cannot read past the end of the stream")
         -- Reading a length-prefixed string is rather straight forward.
         -- The length is read, then that many bytes are read and put in a string.
         
         local stringLength = readUnsigned(24)
-        assert(pointer+(stringLength*8) <= bitCount, "readString cannot read past the end of the stream")
+        assert(pointer+(stringLength*8) <= bitCount, "BitBuffer.readString cannot read past the end of the stream")
 
         local outputCharacters = table.create(stringLength) --!
 
@@ -1109,11 +1083,11 @@ local function bitBuffer(stream)
     end
 
     local function readSetLengthString(length)
-        assert(type(length) == "number", "argument #1 to readSetLengthString should be a number")
-        assert(length > 0, "argument #1 to readSetLengthString should be above 0")
-        assert(length%1 == 0, "argument #1 to readSetLengthString should be an integer")
+        assert(type(length) == "number", "argument #1 to BitBuffer.readSetLengthString should be a number")
+        assert(length > 0, "argument #1 to BitBuffer.readSetLengthString should be above 0")
+        assert(length%1 == 0, "argument #1 to BitBuffer.readSetLengthString should be an integer")
 
-        assert(pointer+(length*8) <= bitCount, "readSetLengthString cannot read past the end of the stream")
+        assert(pointer+(length*8) <= bitCount, "BitBuffer.readSetLengthString cannot read past the end of the stream")
         -- `length` number of bytes are read and put into a string
 
         local outputCharacters = table.create(length) --!
@@ -1126,11 +1100,11 @@ local function bitBuffer(stream)
     end
 
     local function readField(n)
-        assert(type(n) == "number", "argument #1 to readField should be a number")
-        assert(n > 0, "argument #1 to readField should be above 0")
-        assert(n%1 == 0, "argument #1 to readField should be an integer")
+        assert(type(n) == "number", "argument #1 to BitBuffer.readField should be a number")
+        assert(n > 0, "argument #1 to BitBuffer.readField should be above 0")
+        assert(n%1 == 0, "argument #1 to BitBuffer.readField should be an integer")
 
-        assert(pointer+n <= bitCount, "readField cannot read past the end of the stream")
+        assert(pointer+n <= bitCount, "BitBuffer.readField cannot read past the end of the stream")
         -- Reading a bit field is again rather simple. You read the actual field, then take the bits out.
         local readInt = readUnsigned(n)
         local output = table.create(n)--!
@@ -1147,25 +1121,25 @@ local function bitBuffer(stream)
     -- As with their write variants, these functions are implemented manually using readByte for performance reasons.
 
     local function readUInt8()
-        assert(pointer+8 <= bitCount, "readUInt8 cannot read past the end of the stream")
+        assert(pointer+8 <= bitCount, "BitBuffer.readUInt8 cannot read past the end of the stream")
 
         return readByte()
     end
 
     local function readUInt16()
-        assert(pointer+16 <= bitCount, "readUInt16 cannot read past the end of the stream")
+        assert(pointer+16 <= bitCount, "BitBuffer.readUInt16 cannot read past the end of the stream")
 
         return bit32.lshift(readByte(), 8)+readByte()
     end
 
     local function readUInt32()
-        assert(pointer+32 <= bitCount, "readUInt32 cannot read past the end of the stream")
+        assert(pointer+32 <= bitCount, "BitBuffer.readUInt32 cannot read past the end of the stream")
 
         return bit32.lshift(readByte(), 24)+bit32.lshift(readByte(), 16)+bit32.lshift(readByte(), 8)+readByte()
     end
 
     local function readInt8()
-        assert(pointer+8 <= bitCount, "readInt8 cannot read past the end of the stream")
+        assert(pointer+8 <= bitCount, "BitBuffer.readInt8 cannot read past the end of the stream")
 
         local n = readByte()
         local sign = bit32.btest(n, 128)
@@ -1179,7 +1153,7 @@ local function bitBuffer(stream)
     end
 
     local function readInt16()
-        assert(pointer+16 <= bitCount, "readInt16 cannot read past the end of the stream")
+        assert(pointer+16 <= bitCount, "BitBuffer.readInt16 cannot read past the end of the stream")
 
         local n = bit32.lshift(readByte(), 8)+readByte()
         local sign = bit32.btest(n, 32768)
@@ -1193,7 +1167,7 @@ local function bitBuffer(stream)
     end
 
     local function readInt32()
-        assert(pointer+32 <= bitCount, "readInt32 cannot read past the end of the stream")
+        assert(pointer+32 <= bitCount, "BitBuffer.readInt32 cannot read past the end of the stream")
 
         local n = bit32.lshift(readByte(), 24)+bit32.lshift(readByte(), 16)+bit32.lshift(readByte(), 8)+readByte()
         local sign = bit32.btest(n, 2147483648)
@@ -1207,7 +1181,7 @@ local function bitBuffer(stream)
     end
 
     local function readFloat16()
-        assert(pointer+16 <= bitCount, "readFloat16 cannot read past the end of the stream")
+        assert(pointer+16 <= bitCount, "BitBuffer.readFloat16 cannot read past the end of the stream")
 
         local b0 = readByte()
         local sign = bit32.btest(b0, 128)
@@ -1234,7 +1208,7 @@ local function bitBuffer(stream)
     end
 
     local function readFloat32()
-        assert(pointer+32 <= bitCount, "readFloat32 cannot read past the end of the stream")
+        assert(pointer+32 <= bitCount, "BitBuffer.readFloat32 cannot read past the end of the stream")
 
         local b0 = readByte()
         local b1 = readByte()
@@ -1263,7 +1237,7 @@ local function bitBuffer(stream)
     end
 
     local function readFloat64()
-        assert(pointer+64 <= bitCount, "readFloat64 cannot read past the end of the stream")
+        assert(pointer+64 <= bitCount, "BitBuffer.readFloat64 cannot read past the end of the stream")
 
         local b0 = readByte()
         local b1 = readByte()
@@ -1300,26 +1274,25 @@ local function bitBuffer(stream)
     -- All read functions below here are Roblox specific datatypes.
 
     local function readBrickColor()
-        assert(pointer+16 <= bitCount, "readBrickColor cannot read past the end of the stream")
+        assert(pointer+16 <= bitCount, "BitBuffer.readBrickColor cannot read past the end of the stream")
 
         return BrickColor.new(readUInt16())
     end
 
     local function readColor3()
-        assert(pointer+24 <= bitCount, "readColor3 cannot read past the end of the stream")
+        assert(pointer+24 <= bitCount, "BitBuffer.readColor3 cannot read past the end of the stream")
 
-        local color = readUnsigned(24)
-
-        return Color3.fromRGB(bit32.rshift(color, 0x10), bit32.rshift(bit32.band(color, 0xffff), 0x08), bit32.band(color, 0xff))
+        return Color3.fromRGB(readByte(), readByte(), readByte())
     end
 
     local function readCFrame()
-        assert(pointer+8 <= bitCount, "readCFrame cannot read past the end of the stream")
+        assert(pointer+8 <= bitCount, "BitBuffer.readCFrame cannot read past the end of the stream")
 
         local id = readByte()
 
         if id == 0 then
-            assert(pointer+384 <= bitCount, "readCFrame cannot read past the end of the stream") -- 4*12 bytes = 383 bits
+            assert(pointer+384 <= bitCount, "BitBuffer.readCFrame cannot read past the end of the stream") -- 4*12 bytes = 383 bits
+
             return CFrame.new(
                 readFloat32(), readFloat32(), readFloat32(),
                 readFloat32(), readFloat32(), readFloat32(),
@@ -1327,7 +1300,8 @@ local function bitBuffer(stream)
                 readFloat32(), readFloat32(), readFloat32()
             )
         else
-            assert(pointer+96 <= bitCount, "readCFrame cannot read past the end of the stream") -- 4*3 bytes = 96 bits
+            assert(pointer+96 <= bitCount, "BitBuffer.readCFrame cannot read past the end of the stream") -- 4*3 bytes = 96 bits
+
             local rightVector = NORMAL_ID_VECTORS[math.floor(id/6)]
             local upVector = NORMAL_ID_VECTORS[id%6]
             local lookVector = rightVector:Cross(upVector)
@@ -1343,22 +1317,23 @@ local function bitBuffer(stream)
     end
 
     local function readVector3()
-        assert(pointer+96 <= bitCount, "readVector3 cannot read past the end of the stream")
+        assert(pointer+96 <= bitCount, "BitBuffer.readVector3 cannot read past the end of the stream")
 
         return Vector3.new(readFloat32(), readFloat32(), readFloat32())
     end
 
     local function readVector2()
-        assert(pointer+64 <= bitCount, "readVector2 cannot read past the end of the stream")
+        assert(pointer+64 <= bitCount, "BitBuffer.readVector2 cannot read past the end of the stream")
 
         return Vector2.new(readFloat32(), readFloat32())
     end
 
     local function readUDim2()
-        assert(pointer+128 <= bitCount, "readUDim2 cannot read past the end of the stream")
+        assert(pointer+128 <= bitCount, "BitBuffer.readUDim2 cannot read past the end of the stream")
 
         return UDim2.new(readFloat32(), readInt32(), readFloat32(), readInt32())
     end
+
 
     local function readUDim()
         assert(pointer+64 <= bitCount, "BitBuffer.readUDim cannot read past the end of the stream")
@@ -1459,7 +1434,6 @@ local function bitBuffer(stream)
         dumpHex = dumpHex,
         dumpBase64 = dumpBase64,
         crc32 = crc32,
-        adler32 = adler32,
         getPointer = getPointer,
         setPointer = setPointer,
 

@@ -1,0 +1,40 @@
+site_name: BitBuffer Documentation
+site_url: https://dekkonot.github.io/bitbuffer/
+site_author: Dekkonot
+
+repo_name: dekkonot/bitbuffer
+repo_url: https://github.com/dekkonot/bitbuffer
+
+theme:
+  name: material
+  language: en
+  palette:
+    primary: teal
+    accent: amber
+
+nav:
+  - Home: index.md
+  - Use:
+    - Installation: installation.md
+    - Writing: writing.md
+    - Reading: reading.md
+    - Customization: customization.md
+  - API Reference:
+    - Main Functions: api-main.md
+    - Abstract Functions: api-base.md
+    - Roblox Functions: api-roblox.md
+
+extra:
+  social:
+    - icon: fontawesome/brands/github-alt
+      link: https://github.com/dekkonot
+    - icon: fontawesome/brands/twitter
+      link: https://twitter.com/dekkonot
+
+markdown_extensions:
+  - admonition
+  - codehilite:
+      guess_lang: false
+  - toc:
+      permalink: true
+  - pymdownx.details

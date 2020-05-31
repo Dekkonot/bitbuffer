@@ -29,11 +29,11 @@ local function makeTests(try)
 
     tests("Should be disabled #1", function()
         error("")
-    end).disable()
+    end).fail().disable()
 
     tests("Should be disabled #2", function()
 
-    end).disable()
+    end).pass().disable()
 
     return tests.run()
 end
