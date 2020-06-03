@@ -31,6 +31,18 @@ BitBuffer.setPointer(n: integer) -> nil
 ```
 Sets where the pointer is in the stream.
 
+### getLength
+```
+BitBuffer.getLength() -> integer
+```
+Returns the length of the internal buffer in bytes.
+
+### getBitLength
+```
+BitBuffer.getBitLength() -> integer
+```
+Returns the length of the internal buffer in bits.
+
 ## Export functions
 
 The following functions are all intended to get data *out* of the BitBuffer in some way.

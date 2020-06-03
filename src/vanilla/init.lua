@@ -136,6 +136,14 @@ local function bitBuffer(stream)
         return bit32.bnot(crc)%0xffffffff -- 2^32
     end
 
+    local function getLength()
+        return byteCount
+    end
+    
+    local function getBitLength()
+        return bitCount
+    end
+
     local function getPointer()
         -- This function gets the value of the pointer. This is self-explanatory.
         return pointer
@@ -1079,6 +1087,8 @@ local function bitBuffer(stream)
         dumpHex = dumpHex,
         dumpBase64 = dumpBase64,
         crc32 = crc32,
+        getLength = getLength,
+        getBitLength = getBitLength,
         getPointer = getPointer,
         setPointer = setPointer,
 
