@@ -43,6 +43,11 @@ for i = 0, 64 do
     powers_of_2[i] = 2^i
 end
 
+local byte_to_hex = {}
+for i = 0, 255 do
+    byte_to_hex[i] = string.format("%02x", i)
+end
+
 local function bitBuffer(stream)
     if stream ~= nil then
         assert(type(stream) == "string", "argument to BitBuffer constructor must be either nil or a string")
@@ -80,7 +85,7 @@ local function bitBuffer(stream)
         -- Thus, bytes [97, 101] with bits [1, 1, 0] would output "01100001 01100101 110"
         local output = table.create(byteCount)--!
         for i, v in ipairs(bytes) do
-            output[i] = string.gsub(string.format("%02x", v), "%x", HEX_TO_BIN)
+            output[i] = string.gsub(byte_to_hex[v], "%x", HEX_TO_BIN)
         end
         if bits ~= 0 then
             -- Because the last byte (where the free floating bits are stored) is in the byte array, it has to be overwritten.
@@ -94,9 +99,13 @@ local function bitBuffer(stream)
         -- This function is for accessing the total contents of the bitbuffer.
         -- This function combines all the bytes, including the last byte, into a string of binary data.
         -- Thus, bytes [97, 101] and bits [1, 1, 0] would become (in hex) "0x61 0x65 0x06"
-        local output = table.create(byteCount)--!
-        for i, v in ipairs(bytes) do
-            output[i] = string.char(v)
+        
+        -- It's substantially faster to create several smaller strings before using table.concat.
+        local output = table.create(math.ceil(byteCount/4096))--!
+        local c = 1
+        for i = 1, byteCount, 4096 do -- groups of 4096 bytes is the point at which there are diminishing returns
+            output[c] = string.char(table.unpack(bytes, i, math.min(byteCount, i+4095)))
+            c = c+1
         end
 
         return table.concat(output, "")
@@ -106,7 +115,7 @@ local function bitBuffer(stream)
         -- This function is for getting the hex of the bitbuffer's contents, should that be desired
         local output = table.create(byteCount)--!
         for i, v in ipairs(bytes) do
-            output[i] = string.format("%02x", v)
+            output[i] = byte_to_hex[v]
         end
 
         return table.concat(output, "")
@@ -135,7 +144,7 @@ local function bitBuffer(stream)
             c = c+4
         end
 
-        return table.concat(output, "") --todo swap to fast table.concat method
+        return table.concat(output, "")
     end
 
     local function crc32()

@@ -21,6 +21,12 @@ local function makeTests(try)
         assert(buffer.dumpString() == "Hello, world!", "")
     end).pass()
 
+    tests("dumpString should work with more than 4096 characters in the buffer", function()
+        local buffer = BitBuffer(string.rep("h", 4100))
+
+        assert(buffer.dumpString() == string.rep("h", 4100), "")
+    end).pass()
+
     tests("dumpBinary should dump the binary of the buffer's contents", function()
         local buffer = BitBuffer("Hello, world!")
 
