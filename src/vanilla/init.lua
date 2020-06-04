@@ -329,7 +329,7 @@ local function bitBuffer(stream)
 
         local sign = n < 0 -- The sign of a number is important.
         -- In this case, since we're using a lookup table for the sign bit, we want `sign` to indicate if the number is negative or not.
-        n = math.abs(n) -- But it's annoying to work with negative numbers and the sign isn't important for decomposition.
+        n = math.abs(n) -- It's annoying to work with negative numbers and the sign isn't important for decomposition.
 
         -- Lua has a function specifically for decomposing (or taking apart) a floating point number into its pieces.
         -- These pieces, as listed above, are the mantissa and exponent.
@@ -359,11 +359,11 @@ local function bitBuffer(stream)
             writeUnsigned(exponentWidth+mantissaWidth+1, 0)
             return true
         elseif exponent+bias <= 1 then
-            -- Subnormal numbers are an number thats exponent (when biased) is zero.
+            -- Subnormal numbers are a number that's exponent (when biased) is zero.
             -- Because of a quirk with the way Lua and C decompose numbers, subnormal numbers actually have an exponent of one when biased.
 
             -- The process behind this is explained below, so for the sake of brevity it isn't explained here.
-            -- The only difference between processing subnormal and normal numbers is with the mantissa
+            -- The only difference between processing subnormal and normal numbers is with the mantissa.
             -- As subnormal numbers always start with a 0 (in binary), it doesn't need to be removed or shifted out
             -- so it's a simple shift and round.
             mantissa = math.floor(mantissa * powers_of_2[mantissaWidth] + 0.5)
@@ -391,7 +391,7 @@ local function bitBuffer(stream)
         -- This means that 0.15625 = 0.625*2^-2
         -- Or, in binary: 0.00101 = 0.101 >> 2
         -- This is a correct statement but the actual result is meant to be:
-        -- 0.00101 = 1.01 >> 3, or 0.15625 = 0.625*2^-3
+        -- 0.00101 = 1.01 >> 3, or 0.15625 = 1.25*2^-3
         -- A small but important distinction that has made writing this module frustrating because no documentation notates this.
         writeUnsigned(mantissaWidth, mantissa)
         return true
