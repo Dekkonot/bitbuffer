@@ -54,9 +54,9 @@ local function makeTests(try)
     writeTest("Should write positive subnormal numbers to the stream properly", function()
         local buffer = BitBuffer()
 
-        buffer.writeFloat64(2.22507385850720088902e-308)
+        buffer.writeFloat64(2.13996638550848841992e-308)
 
-        assert(buffer.dumpBinary() == "00000000 00001111 11111111 11111111 11111111 11111111 11111111 11111111", "")
+        assert(buffer.dumpBinary() == "00000000 00001111 01100011 01010100 10111001 00010101 11111011 10111110", "")
     end).pass()
 
     writeTest("Should write negative integers to the stream properly", function()
@@ -103,9 +103,9 @@ local function makeTests(try)
     writeTest("Should write negative subnormal numbers to the stream properly", function()
         local buffer = BitBuffer()
 
-        buffer.writeFloat64(-2.22507385850720088902e-308)
+        buffer.writeFloat64(-2.13996638550848841992e-308)
 
-        assert(buffer.dumpBinary() == "10000000 00001111 11111111 11111111 11111111 11111111 11111111 11111111", "")
+        assert(buffer.dumpBinary() == "10000000 00001111 01100011 01010100 10111001 00010101 11111011 10111110", "")
     end).pass()
 
     writeTest("Should write NaN to the stream properly", function()

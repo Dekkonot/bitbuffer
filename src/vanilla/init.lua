@@ -618,9 +618,9 @@ local function bitBuffer(stream)
             else
                 writeByte(0)
             end
-            writeByte(127) -- 01111111
-            writeByte(255)
-            writeByte(255)
+            writeByte(bit32.rshift(mantissa, 16))
+            writeByte(bit32.band(bit32.rshift(mantissa, 8), 255))
+            writeByte(bit32.band(mantissa, 255))
             return
         end
 
