@@ -1,9 +1,10 @@
+-- The standard base64 alphabet as codepoints rather than characters.
 local BASE64_CHAR_SET = { [0] =
-    "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
-    "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
-    "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m",
-    "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z",
-    "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "+", "/",
+    0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4a, 0x4b, 0x4c, 0x4d,
+    0x4e, 0x4f, 0x50, 0x51, 0x52, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58, 0x59, 0x5a,
+    0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6a, 0x6b, 0x6c, 0x6d,
+    0x6e, 0x6f, 0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78, 0x79, 0x7a,
+    0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x2b, 0x2f,
 }
 
 local HEX_TO_BIN = {
@@ -122,16 +123,24 @@ local function bitBuffer(stream)
             local packed = bit32.lshift(b1, 16)+bit32.lshift(b2 or 0, 8)+(b3 or 0)
             
             -- This can be done with bit32.extract (and/or bit32.lshift, bit32.band, bit32.rshift)
-            -- But this is more elegant in my opinion
-            output[c] = BASE64_CHAR_SET[bit32.rshift(bit32.band(packed, 16515072), 18)] -- 111111000000000000000000
-            output[c+1] = BASE64_CHAR_SET[bit32.rshift(bit32.band(packed, 258048), 12)] -- 000000111111000000000000
-            output[c+2] = b2 and BASE64_CHAR_SET[bit32.rshift(bit32.band(packed, 4032), 6)] or "=" -- 000000000000111111000000
-            output[c+3] = b3 and BASE64_CHAR_SET[bit32.band(packed, 63)] or "=" -- 000000000000000000111111
+            -- But bit masking and shifting is more eloquent in my opinion.
+            output[c] = BASE64_CHAR_SET[bit32.rshift(bit32.band(packed, 0xfc0000), 0x12)]
+            output[c+1] = BASE64_CHAR_SET[bit32.rshift(bit32.band(packed, 0x3f000), 0xc)]
+            output[c+2] = b2 and BASE64_CHAR_SET[bit32.rshift(bit32.band(packed, 0xfc0), 0x6)] or 0x3d -- 0x3d == "="
+            output[c+3] = b3 and BASE64_CHAR_SET[bit32.band(packed, 0x3f)] or 0x3d
 
             c = c+4
         end
+        c = c-1 -- c will always be 1 more than the length of `output`
 
-        return table.concat(output, "")
+        local realOutput = {}--!
+        local k = 1
+        for i = 1, byteCount, 0x1000 do
+            realOutput[k] = string.char(table.unpack(output, i, math.min(c, i+0x1000)))
+            k = k+1
+        end
+
+        return table.concat(realOutput, "")
     end
 
     local function exportChunk(chunkLength)
