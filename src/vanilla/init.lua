@@ -904,28 +904,44 @@ local function bitBuffer(stream)
         local outputCharacters = {} --!
 
         for i = 1, stringLength do
-            outputCharacters[i] = string.char(readByte())
+            outputCharacters[i] = readByte()
         end
 
-        return table.concat(outputCharacters) --todo Use faster table.concat method
+        local output = {}
+        local k = 1
+        for i = 1, stringLength, 4096 do
+            output[k] = string.char(table.unpack(outputCharacters, i, math.min(stringLength, i+4095)))
+            k = k+1
+        end
+
+        return table.concat(output)
     end
 
     local function readTerminatedString()
         local outputCharacters = {}
-
+    
         -- Bytes are read continuously until either a nul-character is reached or until the stream runs out.
-        for i = 1, math.huge do -- Using a for loop gives us a convenient counter variable
+        local length = 0
+        while true do
             local byte = readByte()
             if not byte then -- Stream has ended
                 error("BitBuffer.readTerminatedString cannot read past the end of the stream", 2)
             elseif byte == 0 then -- String has ended
                 break
             else -- Add byte to string
-                outputCharacters[i] = string.char(byte)
+                length = length+1
+                outputCharacters[length] = byte
             end
         end
 
-        return table.concat(outputCharacters) --todo Use faster table.concat method
+        local output = {}
+        local k = 1
+        for l = 1, length, 4096 do
+            output[k] = string.char(table.unpack(outputCharacters, l, math.min(length, l+4095)))
+            k = k+1
+        end
+    
+        return table.concat(output)
     end
 
     local function readSetLengthString(length)
@@ -939,10 +955,17 @@ local function bitBuffer(stream)
         local outputCharacters = {} --!
 
         for i = 1, length do
-            outputCharacters[i] = string.char(readByte())
+            outputCharacters[i] = readByte()
         end
 
-        return table.concat(outputCharacters) --todo Use faster table.concat method
+        local output = {}
+        local k = 1
+        for i = 1, length, 4096 do
+            output[k] = string.char(table.unpack(outputCharacters, i, math.min(length, i+4095)))
+            k = k+1
+        end
+
+        return table.concat(output)
     end
 
     local function readField(n)

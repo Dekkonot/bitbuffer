@@ -3,4 +3,4 @@
 - Support for common data types (u8, u16, u32, i8, i16, i32, f16, f32, f64)
 - Add `getLength` and `getBitLength`
 - Add `exportChunk`
-- Improve performance for dumpString, dumpHex, dumpBase64, and dumpBinary
+- Improve performance for dumpString, dumpHex, dumpBase64, dumpBinary, and all of the string read functions
