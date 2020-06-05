@@ -75,6 +75,27 @@ BitBuffer.dumpHex() -> string
 ```
 Returns a string of hex characters representing the contents of the BitBuffer.
 
+### exportChunk
+
+```
+BitBuffer.exportChunk(chunkLength: integer) -> iterator() -> i: integer, chunk: string
+```
+Returns an iterator function that can be used to get individual chunks and their position in the Buffer.
+
+```lua
+local buffer = BitBuffer("foo|bar|baz")
+for position, chunk in buffer.exportChunk(4) do
+    print(position, chunk)
+end
+```
+
+Would output:
+```
+1   foo|
+5   bar|
+9   baz
+```
+
 ### crc32
 
 ```

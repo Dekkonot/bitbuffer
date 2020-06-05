@@ -45,6 +45,62 @@ local function makeTests(try)
         assert(buffer.dumpHex() == "48656c6c6f2c20776f726c6421", "")
     end).pass()
 
+    tests("exportChunk should require the argument be a number", function()
+        local buffer = BitBuffer()
+
+        buffer.exportChunk({})
+    end).fail()
+
+    tests("exportChunk should require the argument be an integer", function()
+        local buffer = BitBuffer()
+
+        buffer.exportChunk(math.pi)
+    end).fail()
+
+    tests("exportChunk should require the argument be positive", function()
+        local buffer = BitBuffer()
+
+        buffer.exportChunk(-1)
+    end).fail()
+
+    tests("exportChunk should require the argument be non-zero", function()
+        local buffer = BitBuffer()
+
+        buffer.exportChunk(0)
+    end).fail()
+
+    tests("exportChunk should correctly export every single byte and its position", function()
+        local str = "abcdefg"
+        local buffer = BitBuffer(str)
+
+        local last = 1
+        for pos, chunk in buffer.exportChunk(1) do
+            assert(pos == last, "")
+            assert(chunk == string.sub(str, pos, pos), "")
+            last = last+1
+        end
+    end).pass()
+
+    tests("exportChunk should correctly export chunks correctly", function()
+        local str = "abcdefg"
+        local buffer = BitBuffer(str)
+
+        local iter = buffer.exportChunk(2)
+        
+        local pos, chunk = iter()
+        assert(pos == 1, "")
+        assert(chunk == "ab", "")
+        pos, chunk = iter()
+        assert(pos == 3, "")
+        assert(chunk == "cd", "")
+        pos, chunk = iter()
+        assert(pos == 5, "")
+        assert(chunk == "ef", "")
+        pos, chunk = iter()
+        assert(pos == 7, "")
+        assert(chunk == "g", "")
+    end).pass()
+
     tests("crc32 should correctly calculate the crc32 checksum of the buffer's contents", function()
         local buffer = BitBuffer("Hello, world!")
 

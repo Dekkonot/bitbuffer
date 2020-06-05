@@ -134,6 +134,24 @@ local function bitBuffer(stream)
         return table.concat(output, "")
     end
 
+    local function exportChunk(chunkLength)
+        assert(type(chunkLength) == "number", "argument #1 to BitBuffer.exportChunk should be a number")
+        assert(chunkLength > 0, "argument #1 to BitBuffer.exportChunk should be above zero")
+        assert(chunkLength%1 == 0, "argument #1 to BitBuffer.exportChunk should be an integer")
+
+        -- Since `i` is being returned, the most eloquent way to handle this is with a coroutine
+        -- This allows returning the existing value of `i` without having to increment it first.
+        -- The alternative was starting at `i = -(chunkLength-1)` and incrementing at the start of the iterator function.
+        return coroutine.wrap(function()
+            local realChunkLength = chunkLength-1
+            -- Since this function only has one 'state', it's perfectly fine to use a for-loop.
+            for i = 1, byteCount, chunkLength do
+                local chunk = string.char(table.unpack(bytes, i, math.min(byteCount, i+realChunkLength)))
+                coroutine.yield(i, chunk)
+            end
+        end)
+    end
+
     local function crc32()
         local crc = 0xffffffff -- 2^32
         
@@ -1095,6 +1113,7 @@ local function bitBuffer(stream)
         dumpString = dumpString,
         dumpHex = dumpHex,
         dumpBase64 = dumpBase64,
+        exportChunk = exportChunk,
         crc32 = crc32,
         getLength = getLength,
         getBitLength = getBitLength,
