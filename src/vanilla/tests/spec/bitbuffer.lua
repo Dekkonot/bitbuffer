@@ -157,6 +157,26 @@ local function makeTests(try)
         assert(buffer.getPointer() == 4, "")
     end).pass()
 
+    tests("isFinished should require no arguments", function()
+        local buffer = BitBuffer("Hello, world!")
+
+        buffer.isFinished()
+    end).pass()
+
+    tests("isFinished should return false when the pointer is not at the end of the buffer", function()
+        local buffer = BitBuffer("Hello, world!")
+
+        assert(buffer.isFinished() == false, "")
+    end).pass()
+
+    tests("isFinished should return true when the pointer is at the end of the buffer", function()
+        local buffer = BitBuffer("Hello, world!")
+
+        buffer.setPointer(13*8)
+
+        assert(buffer.isFinished() == true, "")
+    end).pass()
+
     return tests.run()
 end
 

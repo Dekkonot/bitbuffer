@@ -43,6 +43,12 @@ BitBuffer.getBitLength() -> integer
 ```
 Returns the length of the internal buffer in bits.
 
+### isFinished
+```
+BitBuffer.isFinished() -> boolean
+```
+Returns whether or not the buffer has data left in it to read.
+
 ## Export functions
 
 The following functions are all intended to get data *out* of the BitBuffer in some way.

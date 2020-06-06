@@ -206,6 +206,10 @@ local function bitBuffer(stream)
         pointer = n
     end
 
+    local function isFinished()
+        return pointer == bitCount
+    end
+
     local function writeBits(...)
         -- The first of two main functions for the actual 'writing' of the bitbuffer.
         -- This function takes a vararg of 1s and 0s and writes them to the buffer.
@@ -1506,6 +1510,7 @@ local function bitBuffer(stream)
         getBitLength = getBitLength,
         getPointer = getPointer,
         setPointer = setPointer,
+        isFinished = isFinished,
 
         writeBits = writeBits,
         writeByte = writeByte,
