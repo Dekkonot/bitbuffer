@@ -204,6 +204,7 @@ local function bitBuffer(stream)
         assert(n%1 == 0, "argument #1 to BitBuffer.setPointer should be a number")
         -- This function sets the value of pointer. This is self-explanatory.
         pointer = n
+        pointerByte = math.floor(pointerByte/n)+1
     end
 
     local function isFinished()
