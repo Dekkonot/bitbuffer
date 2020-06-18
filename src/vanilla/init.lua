@@ -185,10 +185,6 @@ local function bitBuffer(stream)
         return pointer
     end
 
-    local function isFinished()
-        return pointer == bitCount
-    end
-
     local function setPointer(n)
         assert(type(n) == "number", "argument #1 to BitBuffer.setPointer should be a number")
         assert(n >= 0, "argument #1 to BitBuffer.setPointer should be a number")
@@ -196,6 +192,10 @@ local function bitBuffer(stream)
         -- This function sets the value of pointer. This is self-explanatory.
         pointer = n
         pointerByte = math.floor(pointerByte/n)+1
+    end
+
+    local function isFinished()
+        return pointer == bitCount
     end
 
     local function writeBits(...)
