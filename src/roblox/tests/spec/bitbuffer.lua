@@ -107,16 +107,16 @@ local function makeTests(try)
         assert(buffer.crc32() == 0xebe6c6e6, "")
     end).pass()
 
-    tests("getLength should return the length of the buffer in bytes", function()
+    tests("getLength should return the length of the buffer in bits", function()
         local buffer = BitBuffer("Hello, world!")
 
-        assert(buffer.getLength() == 13, "")
+        assert(buffer.getLength() == 104, "")
     end).pass()
 
-    tests("getBitLength should return the length of the buffer in bits", function()
+    tests("getByteLength should return the length of the buffer in bytes", function()
         local buffer = BitBuffer("Hello, world!")
 
-        assert(buffer.getBitLength() == 104, "")
+        assert(buffer.getByteLength() == 13, "")
     end).pass()
 
     tests("getPointer should return the pointer", function()

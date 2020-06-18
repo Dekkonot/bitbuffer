@@ -173,11 +173,11 @@ local function bitBuffer(stream)
     end
 
     local function getLength()
-        return byteCount
+        return bitCount
     end
     
-    local function getBitLength()
-        return bitCount
+    local function getByteLength()
+        return byteCount
     end
 
     local function getPointer()
@@ -1188,7 +1188,7 @@ local function bitBuffer(stream)
         exportChunk = exportChunk,
         crc32 = crc32,
         getLength = getLength,
-        getBitLength = getBitLength,
+        getByteLength = getByteLength,
         getPointer = getPointer,
         setPointer = setPointer,
         setPointerFromEnd = setPointerFromEnd,

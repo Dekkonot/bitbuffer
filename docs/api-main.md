@@ -63,13 +63,13 @@ Sets the pointer in bytes from the end of the stream. Equivalent to `setPointerB
 ```
 BitBuffer.getLength() -> integer
 ```
-Returns the length of the internal buffer in bytes.
-
-### getBitLength
-```
-BitBuffer.getBitLength() -> integer
-```
 Returns the length of the internal buffer in bits.
+
+### getByteLength
+```
+BitBuffer.getByteLength() -> integer
+```
+Returns the length of the internal buffer in bytes.
 
 ### isFinished
 ```
