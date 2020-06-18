@@ -29,7 +29,7 @@ Returns where the pointer is in the stream. The pointer is the bit from which th
 ```
 BitBuffer.setPointer(n: integer) -> nil
 ```
-Sets where the pointer is in the stream in bits.'
+Sets where the pointer is in the stream in bits.
 
 ### setPointerFromEnd
 
