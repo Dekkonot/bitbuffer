@@ -31,6 +31,13 @@ BitBuffer.setPointer(n: integer) -> nil
 ```
 Sets where the pointer is in the stream in bits.'
 
+### setPointerFromEnd
+
+```
+BitBuffer.setPointerFromEnd(n: integer) -> nil
+```
+Sets the pointer in bits from the end of the stream. Equivalent to `setPointer(getBitLength()-n)`.
+
 ### getPointerByte
 
 ```
@@ -44,6 +51,13 @@ Returns the byte the pointer is at in the stream.
 BitBuffer.setPointerByte(n: integer) -> nil
 ```
 Sets where the pointer is in the stream in bytes.
+
+### setPointerFromEnd
+
+```
+BitBuffer.setPointerFromEnd(n: integer) -> nil
+```
+Sets the pointer in bytes from the end of the stream. Equivalent to `setPointerByte(getLength()-n)`.
 
 ### getLength
 ```

@@ -207,6 +207,15 @@ local function bitBuffer(stream)
         pointerByte = math.floor(n/8)+1
     end
 
+    local function setPointerFromEnd(n)
+        assert(type(n) == "number", "argument #1 to BitBuffer.setPointerFromEnd should be a number")
+        assert(n >= 0, "argument #1 to BitBuffer.setPointerFromEnd should be zero or higher")
+        assert(n%1 == 0, "argument #1 to BitBuffer.setPointerFromEnd should be an integer")
+
+        pointer = bitCount-n
+        pointerByte = math.floor(pointer/8+1)
+    end
+
     local function getPointerByte()
         return pointerByte
     end
@@ -219,6 +228,16 @@ local function bitBuffer(stream)
         -- Sets the value of the pointer in bytes instead of bits
         pointer = n*8
         pointerByte = n
+    end
+
+    local function setPointerByteFromEnd(n)
+        assert(type(n) == "number", "argument #1 to BitBuffer.setPointerByteFromEnd should be a number")
+        assert(n >= 0, "argument #1 to BitBuffer.setPointerByteFromEnd should be zero or higher")
+        assert(n%1 == 0, "argument #1 to BitBuffer.setPointerByteFromEnd should be an integer")
+        assert(n <= byteCount, "argument #1 to BitBuffer.setPointerByteFromEnd should be within range of the buffer")
+
+        pointerByte = byteCount-n
+        pointer = pointerByte*8
     end
 
     local function isFinished()
@@ -1525,8 +1544,10 @@ local function bitBuffer(stream)
         getBitLength = getBitLength,
         getPointer = getPointer,
         setPointer = setPointer,
+        setPointerFromEnd = setPointerFromEnd,
         getPointerByte = getPointerByte,
         setPointerByte = setPointerByte,
+        setPointerByteFromEnd = setPointerByteFromEnd,
         isFinished = isFinished,
 
         writeBits = writeBits,

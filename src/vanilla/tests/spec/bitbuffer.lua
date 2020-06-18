@@ -157,6 +157,38 @@ local function makeTests(try)
         assert(buffer.getPointer() == 4, "")
     end).pass()
 
+    tests("setPointerFromEnd should require its argument be a number", function()
+        local buffer = BitBuffer("Hello, world!")
+
+        buffer.setPointerFromEnd({})
+    end).fail()
+
+    tests("setPointerFromEnd should require its argument be an integer", function()
+        local buffer = BitBuffer("Hello, world!")
+
+        buffer.setPointerFromEnd(math.pi)
+    end).fail()
+
+    tests("setPointerFromEnd should require its argument be positive", function()
+        local buffer = BitBuffer("Hello, world!")
+
+        buffer.setPointerFromEnd(-1)
+    end).fail()
+
+    tests("setPointerFromEnd should allow its argument be 0", function()
+        local buffer = BitBuffer("Hello, world!")
+
+        buffer.setPointerFromEnd(0)
+    end).pass()
+
+    tests("setPointerFromEnd should set the pointer relative to the end of the stream", function()
+        local buffer = BitBuffer("Hello, world!")
+
+        buffer.setPointerFromEnd(4)
+
+        assert(buffer.getPointer() == 100, "")
+    end).pass()
+
     tests("getPointerByte should require no arguments", function()
         local buffer = BitBuffer("Hello, world!")
 
@@ -201,6 +233,38 @@ local function makeTests(try)
         
         buffer.setPointerByte(0)
     end).fail()
+
+    tests("setPointerByteFromEnd should require the argument be a number", function()
+        local buffer = BitBuffer("Hello, world!")
+
+        buffer.setPointerByteFromEnd({})
+    end).fail()
+
+    tests("setPointerByteFromEnd should require the argument be an integer", function()
+        local buffer = BitBuffer("Hello, world!")
+
+        buffer.setPointerByteFromEnd(math.pi)
+    end).fail()
+
+    tests("setPointerByteFromEnd should require the argument be positive", function()
+        local buffer = BitBuffer("Hello, world!")
+        
+        buffer.setPointerByteFromEnd(-1)
+    end).fail()
+
+    tests("setPointerByteFromEnd should allow its argument to be zero", function()
+        local buffer = BitBuffer("Hello, world!")
+        
+        buffer.setPointerByteFromEnd(0)
+    end).pass()
+
+    tests("setPointerByteFromEnd should set the pointer byte relative to the end of the stream", function()
+        local buffer = BitBuffer("Hello, world!")
+
+        buffer.setPointerByteFromEnd(1)
+
+        assert(buffer.getPointerByte() == 12, "")
+    end).pass()
 
     tests("isFinished should require no arguments", function()
         local buffer = BitBuffer("Hello, world!")
