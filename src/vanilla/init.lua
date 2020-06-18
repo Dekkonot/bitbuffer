@@ -199,6 +199,7 @@ local function bitBuffer(stream)
         assert(type(n) == "number", "argument #1 to BitBuffer.setPointerFromEnd should be a number")
         assert(n >= 0, "argument #1 to BitBuffer.setPointerFromEnd should be zero or higher")
         assert(n%1 == 0, "argument #1 to BitBuffer.setPointerFromEnd should be an integer")
+        assert(n <= bitCount, "argument #1 to BitBuffer.setPointerFromEnd should within range of the buffer")
 
         pointer = bitCount-n
         pointerByte = math.floor(pointer/8+1)

@@ -181,6 +181,12 @@ local function makeTests(try)
         buffer.setPointerFromEnd(-1)
     end).fail()
 
+    tests("setPointerFromEnd should not allow its argument to be be greater than the size of the buffer", function()
+        local buffer = BitBuffer("Hello, world!")
+
+        buffer.setPointerFromEnd(200)
+    end).fail()
+
     tests("setPointerFromEnd should allow its argument be 0", function()
         local buffer = BitBuffer("Hello, world!")
 
@@ -234,11 +240,33 @@ local function makeTests(try)
         buffer.setPointerByte(-1)
     end).fail()
 
+    tests("setPointerByte should not allow its argument to be past the end of the stream", function()
+        local buffer = BitBuffer("Hello, world!")
+
+        buffer.setPointerByte(20)
+    end).fail()
+
     tests("setPointerByte should not allow its argument to be zero", function()
         local buffer = BitBuffer("Hello, world!")
         
         buffer.setPointerByte(0)
     end).fail()
+
+    tests("setPointerByte should set the pointer byte to its argument", function()
+        local buffer = BitBuffer("Hello, world!")
+        
+        buffer.setPointerByte(2)
+
+        assert(buffer.getPointerByte() == 2, "")
+    end).pass()
+
+    tests("setPointerByte should set the pointer in bits correctly", function()
+        local buffer = BitBuffer("Hello, world!")
+        
+        buffer.setPointerByte(2)
+
+        assert(buffer.getPointer() == 16, "")
+    end).pass()
 
     tests("setPointerByteFromEnd should require the argument be a number", function()
         local buffer = BitBuffer("Hello, world!")
@@ -258,6 +286,12 @@ local function makeTests(try)
         buffer.setPointerByteFromEnd(-1)
     end).fail()
 
+    tests("setPointerByteFromEnd should not allow its argument to be be greater than the size of the buffer", function()
+        local buffer = BitBuffer("Hello, world!")
+
+        buffer.setPointerByteFromEnd(20)
+    end).fail()
+
     tests("setPointerByteFromEnd should allow its argument to be zero", function()
         local buffer = BitBuffer("Hello, world!")
         
@@ -270,6 +304,14 @@ local function makeTests(try)
         buffer.setPointerByteFromEnd(1)
 
         assert(buffer.getPointerByte() == 12, "")
+    end).pass()
+
+    tests("setPointerByte should set the pointer in bits correctly relative to the end of the stream", function()
+        local buffer = BitBuffer("Hello, world!")
+        
+        buffer.setPointerByteFromEnd(1)
+
+        assert(buffer.getPointer() == 96, "")
     end).pass()
 
     tests("isFinished should require no arguments", function()
