@@ -143,6 +143,12 @@ local function makeTests(try)
         buffer.setPointer(-1)
     end).fail()
 
+    tests("setPointer should not allow its argument to be past the end of the stream", function()
+        local buffer = BitBuffer("Hello, world!")
+
+        buffer.setPointer(200)
+    end).fail()
+
     tests("setPointer should allow its argument be zero", function()
         local buffer = BitBuffer("Hello, world!")
 
