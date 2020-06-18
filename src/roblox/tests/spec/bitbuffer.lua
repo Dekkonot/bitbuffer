@@ -157,6 +157,50 @@ local function makeTests(try)
         assert(buffer.getPointer() == 4, "")
     end).pass()
 
+    tests("getPointerByte should require no arguments", function()
+        local buffer = BitBuffer("Hello, world!")
+
+        buffer.getPointerByte()
+    end).pass()
+
+    tests("getPointerByte should return the byte is at without any pointer modifications", function()
+        local buffer = BitBuffer("Hello, world!")
+
+        assert(buffer.getPointerByte() == 1, "")
+    end).pass()
+
+    tests("getPointerByte should return the byte the pointer is at after pointer modification", function()
+        local buffer = BitBuffer("Hello, world!")
+
+        buffer.setPointer(9)
+
+        assert(buffer.getPointerByte() == 2, "")
+    end).pass()
+
+    tests("setPointerByte should require the argument be a number", function()
+        local buffer = BitBuffer("Hello, world!")
+
+        buffer.setPointerByte({})
+    end).fail()
+
+    tests("setPointerByte should require the argument be an integer", function()
+        local buffer = BitBuffer("Hello, world!")
+
+        buffer.setPointerByte(math.pi)
+    end).fail()
+
+    tests("setPointerByte should require the argument be positive", function()
+        local buffer = BitBuffer("Hello, world!")
+        
+        buffer.setPointerByte(-1)
+    end).fail()
+
+    tests("setPointerByte should not allow its argument to be zero", function()
+        local buffer = BitBuffer("Hello, world!")
+        
+        buffer.setPointerByte(0)
+    end).fail()
+
     tests("isFinished should require no arguments", function()
         local buffer = BitBuffer("Hello, world!")
 

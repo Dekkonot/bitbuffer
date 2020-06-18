@@ -29,7 +29,21 @@ Returns where the pointer is in the stream. The pointer is the bit from which th
 ```
 BitBuffer.setPointer(n: integer) -> nil
 ```
-Sets where the pointer is in the stream.
+Sets where the pointer is in the stream in bits.'
+
+### getPointerByte
+
+```
+BitBuffer.getPointerByte() -> integer
+```
+Returns the byte the pointer is at in the stream.
+
+### setPointerByte
+
+```
+BitBuffer.setPointerByte(n: integer) -> nil
+```
+Sets where the pointer is in the stream in bytes.
 
 ### getLength
 ```
