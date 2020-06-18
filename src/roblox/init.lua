@@ -1149,7 +1149,7 @@ local function bitBuffer(stream)
 
     local function readSetLengthString(length)
         assert(type(length) == "number", "argument #1 to BitBuffer.readSetLengthString should be a number")
-        assert(length > 0, "argument #1 to BitBuffer.readSetLengthString should be above 0")
+        assert(length >= 0, "argument #1 to BitBuffer.readSetLengthString should be zero or higher.")
         assert(length%1 == 0, "argument #1 to BitBuffer.readSetLengthString should be an integer")
 
         assert(pointer+(length*8) <= bitCount, "BitBuffer.readSetLengthString cannot read past the end of the stream")

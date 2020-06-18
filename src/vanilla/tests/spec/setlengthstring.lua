@@ -72,13 +72,13 @@ local function makeTests(try)
         buffer.readSetLengthString(-1)
     end).fail()
 
-    readTest("Should require the argument not be 0", function()
+    readTest("Should allow the argument to be 0", function()
         local buffer = BitBuffer()
 
         buffer.writeSetLengthString(":>")
 
         buffer.readSetLengthString(0)
-    end).fail()
+    end).pass()
 
     readTest("Should read from the string correctly", function()
         local buffer = BitBuffer()
