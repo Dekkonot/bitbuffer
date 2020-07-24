@@ -250,9 +250,7 @@ local function bitBuffer(stream)
         -- The first of two main functions for the actual 'writing' of the bitbuffer.
         -- This function takes a vararg of 1s and 0s and writes them to the buffer.
         local bitN = select("#", ...)
-        if bitN == 0 then
-            return false
-        end
+        if bitN == 0 then return end -- Throwing here seems unnecessary
         bitCount = bitCount+bitN
         local packed = table.pack(...)
         for _, v in ipairs(packed) do
@@ -274,7 +272,6 @@ local function bitBuffer(stream)
             -- If this is done regardless of the bit count, there might be a trailing zero byte
             bytes[byteCount] = lastByte
         end
-        return true
     end
 
     local function writeByte(n)
@@ -295,7 +292,6 @@ local function bitBuffer(stream)
             bytes[byteCount] = lastByte
         end
         bitCount = bitCount+8 -- Increment the bit counter
-        return true
     end
 
     local function writeUnsigned(width, n)
@@ -328,8 +324,6 @@ local function bitBuffer(stream)
             end
             -- Said array is then used to write them to the buffer
             writeBits(table.unpack(extractedBits))
-
-            return true
         else
             -- If the width is greater than 32, the number has to be divided up into a few 32-bit or less numbers
             local leastSignificantChunk = n%0x100000000 -- Get bits 0-31 (counting from the right side). 0x100000000 is 2^32.
@@ -350,8 +344,6 @@ local function bitBuffer(stream)
             for i = 3, 0, -1 do -- Then of course, write all 4 bytes of leastSignificantChunk
                 writeByte(bit32.extract(leastSignificantChunk, i*8, 8))
             end
-
-            return true
         end
     end
 
@@ -375,7 +367,6 @@ local function bitBuffer(stream)
             writeBits(1)
             writeUnsigned(width-1, powers_of_2[width-1]+n)
         end
-        return true
     end
 
     local function writeFloat(exponentWidth, mantissaWidth, n)
@@ -424,7 +415,7 @@ local function bitBuffer(stream)
             writeBits(BOOL_TO_BIT[sign]) -- As previously said, there's a bit for the sign
             writeUnsigned(exponentWidth, powers_of_2[exponentWidth]-1) -- Then comes the exponent
             writeUnsigned(mantissaWidth, 0) -- And finally the mantissa
-            return true
+            return
         elseif n ~= n then
             -- NaN is indicated with an exponent that's all 1s and a mantissa that isn't 0.
             -- In theory, the individual bits of NaN should be maintained but Lua doesn't allow that,
@@ -432,12 +423,12 @@ local function bitBuffer(stream)
             writeBits(BOOL_TO_BIT[sign])
             writeUnsigned(exponentWidth, powers_of_2[exponentWidth]-1)
             writeUnsigned(mantissaWidth, 10)
-            return true
+            return
         elseif n == 0 then
             -- Zero is represented with an exponent that's zero and a mantissa that's also zero.
             -- Lua doesn't have a signed zero, so that translates to the entire number being all 0s.
             writeUnsigned(exponentWidth+mantissaWidth+1, 0)
-            return true
+            return
         elseif exponent+bias <= 1 then
             -- Subnormal numbers are a number that's exponent (when biased) is zero.
             -- Because of a quirk with the way Lua and C decompose numbers, subnormal numbers actually have an exponent of one when biased.
@@ -451,7 +442,7 @@ local function bitBuffer(stream)
             writeBits(BOOL_TO_BIT[sign])
             writeUnsigned(exponentWidth, 0) -- Subnormal numbers always have zero for an exponent
             writeUnsigned(mantissaWidth, mantissa)
-            return true
+            return
         end
 
         -- In every normal case, the mantissa of a number will have a 1 directly after the decimal point (in binary).
@@ -474,7 +465,6 @@ local function bitBuffer(stream)
         -- 0.00101 = 1.01 >> 3, or 0.15625 = 1.25*2^-3
         -- A small but important distinction that has made writing this module frustrating because no documentation notates this.
         writeUnsigned(mantissaWidth, mantissa)
-        return true
     end
 
     local function writeString(str)
@@ -491,8 +481,6 @@ local function bitBuffer(stream)
         for i = 1, #str do
             writeByte(string.byte(str, i, i))
         end
-
-        return true
     end
 
     local function writeTerminatedString(str)
@@ -505,8 +493,6 @@ local function bitBuffer(stream)
             writeByte(string.byte(str, i, i))
         end
         writeByte(0)
-
-        return true
     end
 
     local function writeSetLengthString(str)
@@ -518,8 +504,6 @@ local function bitBuffer(stream)
         for i = 1, #str do
             writeByte(string.byte(str, i, i))
         end
-
-        return true
     end
 
     local function writeField(...)
@@ -537,8 +521,6 @@ local function bitBuffer(stream)
         end
 
         writeUnsigned(bools.n, field)
-
-        return true
     end
 
     -- All write functions below here are shorthands. For the sake of performance, these functions are implemented manually.
@@ -995,7 +977,6 @@ local function bitBuffer(stream)
 
         assert(pointer+n <= bitCount, "BitBuffer.readBits cannot read past the end of the stream")
 
-        if pointer+n > bitCount then return false end
         -- The first of two main functions for the actual 'reading' of the bitbuffer.
         -- Reads `n` bits and returns an array of their values.
         local output = table.create(n)--!
