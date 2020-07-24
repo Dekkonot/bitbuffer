@@ -161,6 +161,37 @@ local function bitBuffer(stream)
         end)
     end
 
+    local function exportBase64Chunk(chunkLength)
+        chunkLength = chunkLength or 76
+        assert(type(chunkLength) == "number", "argument #1 to BitBuffer.exportBase64Chunk should be a number")
+        assert(chunkLength > 0, "argument #1 to BitBuffer.exportBase64Chunk should be above zero")
+        assert(chunkLength%1 == 0, "argument #1 to BitBuffer.exportBase64Chunk should be an integer")
+
+        local output = {}--!
+
+        local c = 1
+        for i = 1, byteCount, 3 do
+            local b1, b2, b3 = bytes[i], bytes[i+1], bytes[i+2]
+            local packed = bit32.lshift(b1, 16)+bit32.lshift(b2 or 0, 8)+(b3 or 0)
+
+            output[c] = BASE64_CHAR_SET[bit32.rshift(bit32.band(packed, 0xfc0000), 0x12)]
+            output[c+1] = BASE64_CHAR_SET[bit32.rshift(bit32.band(packed, 0x3f000), 0xc)]
+            output[c+2] = b2 and BASE64_CHAR_SET[bit32.rshift(bit32.band(packed, 0xfc0), 0x6)] or 0x3d
+            output[c+3] = b3 and BASE64_CHAR_SET[bit32.band(packed, 0x3f)] or 0x3d
+
+            c = c+4
+        end
+        c = c-1
+
+        return coroutine.wrap(function()
+            local realChunkLength = chunkLength-1
+            for i = 1, c, chunkLength do
+                local chunk = string.char(table.unpack(output, i, math.min(c, i+realChunkLength)))
+                coroutine.yield(i, chunk)
+            end
+        end)
+    end
+
     local function crc32()
         local crc = 0xffffffff -- 2^32
         
@@ -1167,6 +1198,8 @@ local function bitBuffer(stream)
         dumpHex = dumpHex,
         dumpBase64 = dumpBase64,
         exportChunk = exportChunk,
+        exportBase64Chunk = exportBase64Chunk,
+
         crc32 = crc32,
         getLength = getLength,
         getByteLength = getByteLength,

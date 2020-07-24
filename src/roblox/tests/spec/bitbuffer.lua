@@ -101,6 +101,98 @@ local function makeTests(try)
         assert(chunk == "g", "")
     end).pass()
 
+    tests("exportBase64Chunk should require the argument be a number", function()
+        local buffer = BitBuffer()
+
+        buffer.exportBase64Chunk({})
+    end).fail()
+
+    tests("exportBase64Chunk should require the argument be an integer", function()
+        local buffer = BitBuffer()
+
+        buffer.exportBase64Chunk(math.pi)
+    end).fail()
+
+    tests("exportBase64Chunk should require the argument be positive", function()
+        local buffer = BitBuffer()
+
+        buffer.exportBase64Chunk(-1)
+    end).fail()
+
+    tests("exportBase64Chunk should require the argument be non-zero", function()
+        local buffer = BitBuffer()
+
+        buffer.exportBase64Chunk(0)
+    end).fail()
+
+    tests("exportBase64Chunk allow no arguments", function()
+        local buffer = BitBuffer()
+
+        buffer.exportBase64Chunk()
+    end).pass()
+
+    tests("exportBase64Chunk should correctly export every single byte and its position", function()
+        local str = "abcdefg"
+        local buffer = BitBuffer(str)
+
+        local base64 = buffer.dumpBase64()
+
+        local last = 1
+        for pos, chunk in buffer.exportBase64Chunk(1) do
+            assert(pos == last, "")
+            assert(chunk == string.sub(base64, pos, pos), "")
+            last = last+1
+        end
+    end).pass()
+
+    tests("exportBase64Chunk should export chunks correctly", function()
+        local str = "abcdefg"
+        local buffer = BitBuffer(str)
+
+        local iter = buffer.exportBase64Chunk(2)
+
+        local pos, chunk = iter()
+        assert(pos == 1, "")
+        assert(chunk == "YW", "")
+        pos, chunk = iter()
+        assert(pos == 3, "")
+        assert(chunk == "Jj", "")
+        pos, chunk = iter()
+        assert(pos == 5, "")
+        assert(chunk == "ZG", "")
+        pos, chunk = iter()
+        assert(pos == 7, "")
+        assert(chunk == "Vm", "")
+        pos, chunk = iter()
+        assert(pos == 9, "")
+        assert(chunk == "Zw", "")
+        pos, chunk = iter()
+        assert(pos == 11, "")
+        assert(chunk == "==", "")
+    end).pass()
+
+    tests("exportBase64Chunk should export large strings correctly", function()
+        local str = string.rep("e", 140)
+        local buffer = BitBuffer(str)
+
+        local base64 = buffer.dumpBase64()
+
+        local output = ""
+        local finalPos = 0
+        local finalChunkLen = 0
+
+        for pos, chunk in buffer.exportBase64Chunk(10) do
+            output = output..chunk
+            finalPos = pos
+            finalChunkLen = #chunk
+        end
+
+        assert(base64 == output, "output was not equivalent to base64")
+        assert(#base64 == #output, "base64 len was not equivalent to output len")
+        assert(finalPos+finalChunkLen-1 == #base64, "totalLen was not equivalent to base64 len")
+        assert(finalPos+finalChunkLen-1 == #output, "totalLen was not equivalent to output len")
+    end).pass()
+
     tests("crc32 should correctly calculate the crc32 checksum of the buffer's contents", function()
         local buffer = BitBuffer("Hello, world!")
 
