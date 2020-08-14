@@ -193,6 +193,82 @@ local function makeTests(try)
         assert(finalPos+finalChunkLen-1 == #output, "totalLen was not equivalent to output len")
     end).pass()
 
+    tests("exportHexChunk should require the argument be a number", function()
+        local buffer = BitBuffer()
+
+        buffer.exportHexChunk({})
+    end).fail()
+
+    tests("exportHexChunk should require the argument be an integer", function()
+        local buffer = BitBuffer()
+
+        buffer.exportHexChunk(math.pi)
+    end).fail()
+
+    tests("exportHexChunk should require the argument be positive", function()
+        local buffer = BitBuffer()
+
+        buffer.exportHexChunk(-1)
+    end).fail()
+
+    tests("exportHexChunk should require the argument be non-zero", function()
+        local buffer = BitBuffer()
+
+        buffer.exportHexChunk(0)
+    end).fail()
+
+
+    tests("exportHexChunk should correctly export every single byte", function()
+        local str = "abcdefg"
+        local buffer = BitBuffer(str)
+
+        local hex = buffer.dumpHex()
+
+        local last = 1
+        for chunk in buffer.exportHexChunk(1) do
+            assert(#chunk == 1, "")
+            assert(chunk == string.sub(hex, last, last), "")
+            last = last+1
+        end
+    end).pass()
+
+    tests("exportHexChunk should export chunks correctly", function()
+        local str = "abcdefg"
+        local buffer = BitBuffer(str)
+
+        local iter = buffer.exportHexChunk(2)
+
+        local chunk = iter()
+        assert(chunk == "61", "")
+        chunk = iter()
+        assert(chunk == "62", "")
+        chunk = iter()
+        assert(chunk == "63", "")
+        chunk = iter()
+        assert(chunk == "64", "")
+        chunk = iter()
+        assert(chunk == "65", "")
+        chunk = iter()
+        assert(chunk == "66", "")
+    end).pass()
+
+    tests("exportHexChunk should export large strings correctly", function()
+        local str = string.rep("e", 140)
+        local buffer = BitBuffer(str)
+
+        local hex = buffer.dumpHex()
+
+        local output = ""
+
+        for chunk in buffer.exportHexChunk(10) do
+            output = output..chunk
+        end
+
+        assert(hex == output)
+        assert(#hex == #output)
+    end).pass()
+
+
     tests("crc32 should correctly calculate the crc32 checksum of the buffer's contents", function()
         local buffer = BitBuffer("Hello, world!")
 

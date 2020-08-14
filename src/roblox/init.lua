@@ -205,6 +205,58 @@ local function bitBuffer(stream)
         end)
     end
 
+    local function exportHexChunk(chunkLength)
+        assert(type(chunkLength) == "number", "argument #1 to BitBuffer.exportHexChunk should be a number")
+        assert(chunkLength > 0, "argument #1 to BitBuffer.exportHexChunk should be above zero")
+        assert(chunkLength%1 == 0, "argument #1 to BitBuffer.exportHexChunk should be an integer")
+
+        local halfLength = math.floor(chunkLength/2)
+
+        if chunkLength%2 == 0 then
+            return coroutine.wrap(function()
+                local output = {}--!
+                for i = 1, byteCount, halfLength do
+                    for c = 0, halfLength-1 do
+                        output[c] = byte_to_hex[bytes[i+c]]
+                    end
+                    coroutine.yield(table.concat(output, "", 0))
+                end
+            end)
+        else
+            return coroutine.wrap(function()
+                local output = {[0] = ""}--!
+                local remainder = ""
+
+                local i = 1
+                while i <= byteCount do
+                    if remainder == "" then
+                        output[0] = ""
+                        for c = 0, halfLength-1 do
+                            output[c+1] = byte_to_hex[bytes[i+c]]
+                        end
+                        local endByte = byte_to_hex[bytes[i+halfLength]]
+                        if endByte then
+                            output[halfLength+1] = string.sub(endByte, 1, 1)
+                            remainder = string.sub(endByte, 2, 2)
+                        end
+                        i = i+1
+                    else
+                        output[0] = remainder
+                        for c = 0, halfLength-1 do
+                            output[c+1] = byte_to_hex[bytes[i+c]]
+                        end
+                        output[halfLength+1] = ""
+                        remainder = ""
+                    end
+
+                    coroutine.yield(table.concat(output, "", 0))
+                    i = i+halfLength
+                end
+            end)
+        end
+    end
+
+
     local function crc32()
         local crc = 0xffffffff -- 2^32
         
@@ -1554,6 +1606,7 @@ local function bitBuffer(stream)
         dumpBase64 = dumpBase64,
         exportChunk = exportChunk,
         exportBase64Chunk = exportBase64Chunk,
+        exportHexChunk = exportHexChunk,
 
         crc32 = crc32,
         getLength = getLength,
