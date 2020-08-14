@@ -1,3 +1,4 @@
+--!nocheck
 local BitBuffer = require(script.Parent.Parent.Parent)
 
 local function makeTests(try)

@@ -1,3 +1,4 @@
+--!nocheck
 local BitBuffer = require(script.Parent.Parent.Parent)
 
 -- This test file is redundant because write/readUInt8 directly map to write/readByte
