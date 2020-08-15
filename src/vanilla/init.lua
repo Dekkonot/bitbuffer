@@ -187,7 +187,7 @@ local function bitBuffer(stream)
             local realChunkLength = chunkLength-1
             for i = 1, c, chunkLength do
                 local chunk = string.char(table.unpack(output, i, math.min(c, i+realChunkLength)))
-                coroutine.yield(i, chunk)
+                coroutine.yield(chunk)
             end
         end)
     end
