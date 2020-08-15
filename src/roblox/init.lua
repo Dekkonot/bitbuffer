@@ -174,6 +174,89 @@ local function bitBuffer(stream)
         end)
     end
 
+    local function exportBase64Chunk(chunkLength)
+        chunkLength = chunkLength or 76
+        assert(type(chunkLength) == "number", "argument #1 to BitBuffer.exportBase64Chunk should be a number")
+        assert(chunkLength > 0, "argument #1 to BitBuffer.exportBase64Chunk should be above zero")
+        assert(chunkLength%1 == 0, "argument #1 to BitBuffer.exportBase64Chunk should be an integer")
+
+        local output = table.create(math.ceil(byteCount*0.333))--!
+
+        local c = 1
+        for i = 1, byteCount, 3 do
+            local b1, b2, b3 = bytes[i], bytes[i+1], bytes[i+2]
+            local packed = bit32.lshift(b1, 16)+bit32.lshift(b2 or 0, 8)+(b3 or 0)
+
+            output[c] = BASE64_CHAR_SET[bit32.rshift(bit32.band(packed, 0xfc0000), 0x12)]
+            output[c+1] = BASE64_CHAR_SET[bit32.rshift(bit32.band(packed, 0x3f000), 0xc)]
+            output[c+2] = b2 and BASE64_CHAR_SET[bit32.rshift(bit32.band(packed, 0xfc0), 0x6)] or 0x3d
+            output[c+3] = b3 and BASE64_CHAR_SET[bit32.band(packed, 0x3f)] or 0x3d
+
+            c = c+4
+        end
+        c = c-1
+
+        return coroutine.wrap(function()
+            local realChunkLength = chunkLength-1
+            for i = 1, c, chunkLength do
+                local chunk = string.char(table.unpack(output, i, math.min(c, i+realChunkLength)))
+                coroutine.yield(chunk)
+            end
+        end)
+    end
+
+    local function exportHexChunk(chunkLength)
+        assert(type(chunkLength) == "number", "argument #1 to BitBuffer.exportHexChunk should be a number")
+        assert(chunkLength > 0, "argument #1 to BitBuffer.exportHexChunk should be above zero")
+        assert(chunkLength%1 == 0, "argument #1 to BitBuffer.exportHexChunk should be an integer")
+
+        local halfLength = math.floor(chunkLength/2)
+
+        if chunkLength%2 == 0 then
+            return coroutine.wrap(function()
+                local output = {}--!
+                for i = 1, byteCount, halfLength do
+                    for c = 0, halfLength-1 do
+                        output[c] = byte_to_hex[bytes[i+c]]
+                    end
+                    coroutine.yield(table.concat(output, "", 0))
+                end
+            end)
+        else
+            return coroutine.wrap(function()
+                local output = {[0] = ""}--!
+                local remainder = ""
+
+                local i = 1
+                while i <= byteCount do
+                    if remainder == "" then
+                        output[0] = ""
+                        for c = 0, halfLength-1 do
+                            output[c+1] = byte_to_hex[bytes[i+c]]
+                        end
+                        local endByte = byte_to_hex[bytes[i+halfLength]]
+                        if endByte then
+                            output[halfLength+1] = string.sub(endByte, 1, 1)
+                            remainder = string.sub(endByte, 2, 2)
+                        end
+                        i = i+1
+                    else
+                        output[0] = remainder
+                        for c = 0, halfLength-1 do
+                            output[c+1] = byte_to_hex[bytes[i+c]]
+                        end
+                        output[halfLength+1] = ""
+                        remainder = ""
+                    end
+
+                    coroutine.yield(table.concat(output, "", 0))
+                    i = i+halfLength
+                end
+            end)
+        end
+    end
+
+
     local function crc32()
         local crc = 0xffffffff -- 2^32
         
@@ -1522,6 +1605,9 @@ local function bitBuffer(stream)
         dumpHex = dumpHex,
         dumpBase64 = dumpBase64,
         exportChunk = exportChunk,
+        exportBase64Chunk = exportBase64Chunk,
+        exportHexChunk = exportHexChunk,
+
         crc32 = crc32,
         getLength = getLength,
         getByteLength = getByteLength,

@@ -130,6 +130,49 @@ Would output:
 9   baz
 ```
 
+### exportBase64Chunk
+
+```
+BitBuffer.exportBase64Chunk(chunkLength: integer)- > iterator() -> chunk: string
+```
+Returns an iterator function that can be used to get individual chunks of the Buffer, encoded to Base64. The `chunkLength` argument is the size of the Base64 output, not the size of the chunk pre-encoding.
+
+```lua
+local buffer = BitBuffer("foo|bar|baz")
+for chunk in buffer.exportBase64Chunk(4) do
+    print(chunk)
+end
+```
+
+Would output:
+```
+Zm9v
+fGJh
+cnxi
+YXo=
+```
+
+### exportHexChunk
+
+```
+BitBuffer.exportHexChunk(chunkLength: integer)- > iterator() -> chunk: string
+```
+Returns an iterator function that can be used to get individual chunks of the Buffer with their bytes in hex. The `chunkLength` argument is the size of the hex output, not the size of the chunk pre-encoding.
+
+```lua
+local buffer = BitBuffer("foo|bar|baz")
+for chunk in buffer.exportHexChunk(8) do
+    print(chunk)
+end
+```
+
+Would output:
+```
+666f6f7c
+6261727c
+62617a
+```
+
 ### crc32
 
 ```
