@@ -1501,6 +1501,8 @@ local function bitBuffer(stream)
     end
 
     local function readDateTime()
+        assert(pointer + 50 <= bitCount, "BitBuffer.readDateTime cannot read past the end of the stream")
+
         return DateTime.fromUniversalTime(
             readUnsigned(14),
             readUnsigned(4),
