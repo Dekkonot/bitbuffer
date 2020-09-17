@@ -35,8 +35,14 @@ local function makeTests(try)
 
     tests("dumpBase64 should dump the base64 of the buffer's contents", function()
         local buffer = BitBuffer("Hello, world!")
-        
+
         assert(buffer.dumpBase64() == "SGVsbG8sIHdvcmxkIQ==", "")
+    end).pass()
+
+    tests("dumpBase64 shouldn't duplicate any characters", function()
+        local buffer = BitBuffer(string.rep("e", 5000))
+
+        assert(buffer.dumpBase64() == string.rep("ZWVl", 1666) .. "ZWU=")
     end).pass()
 
     tests("dumpHex should dump the hex of the buffer's contents", function()
@@ -173,6 +179,21 @@ local function makeTests(try)
         local output = ""
 
         for chunk in buffer.exportBase64Chunk(10) do
+            output = output..chunk
+        end
+
+        assert(base64 == output)
+        assert(#base64 == #output)
+    end).pass()
+
+    tests("exportBase64Chunk shouldn't duplicate any characters", function()
+        local buffer = BitBuffer(string.rep("e", 5000))
+
+        local base64 = string.rep("ZWVl", 1666) .. "ZWU="
+
+        local output = ""
+
+        for chunk in buffer.exportBase64Chunk(0x1000) do
             output = output..chunk
         end
 
