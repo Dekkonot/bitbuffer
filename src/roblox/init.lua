@@ -945,6 +945,8 @@ local function bitBuffer(stream)
     end
 
     local function writeDateTime(dateTime)
+        assert(typeof(dateTime) == "DateTime", "argument #1 to BitBuffer.writeDateTime should be a DateTime")
+
         local universalTime = dateTime:ToUniversalTime()
         writeUnsigned(14, universalTime.Year)
         writeUnsigned(4, universalTime.Month)
