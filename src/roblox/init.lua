@@ -53,7 +53,7 @@ local function bitBuffer(stream)
     if stream ~= nil then
         assert(type(stream) == "string", "argument to BitBuffer constructor must be either nil or a string")
     end
-    
+
     -- The bit buffer works by keeping an array of bytes, a 'final' byte, and how many bits are currently in that last byte
     -- Bits are not kept track of on their own, and are instead combined to form a byte, which is stored in the last space in the array.
     -- This byte is also stored seperately, so that table operations aren't needed to read or modify its value.
@@ -81,7 +81,7 @@ local function bitBuffer(stream)
     end
 
     local function dumpBinary()
-        -- This function is for debugging or analysis purposes. 
+        -- This function is for debugging or analysis purposes.
         -- It dumps the contents of the byte array and the remaining bits into a string of binary digits.
         -- Thus, bytes [97, 101] with bits [1, 1, 0] would output "01100001 01100101 110"
         local output = table.create(byteCount)--!
@@ -100,7 +100,7 @@ local function bitBuffer(stream)
         -- This function is for accessing the total contents of the bitbuffer.
         -- This function combines all the bytes, including the last byte, into a string of binary data.
         -- Thus, bytes [97, 101] and bits [1, 1, 0] would become (in hex) "0x61 0x65 0x06"
-        
+
         -- It's substantially faster to create several smaller strings before using table.concat.
         local output = table.create(math.ceil(byteCount/4096))--!
         local c = 1
@@ -134,7 +134,7 @@ local function bitBuffer(stream)
         for i = 1, byteCount, 3 do
             local b1, b2, b3 = bytes[i], bytes[i+1], bytes[i+2]
             local packed = bit32.lshift(b1, 16)+bit32.lshift(b2 or 0, 8)+(b3 or 0)
-            
+
             -- This can be done with bit32.extract (and/or bit32.lshift, bit32.band, bit32.rshift)
             -- But bit masking and shifting is more eloquent in my opinion.
             output[c] = BASE64_CHAR_SET[bit32.rshift(bit32.band(packed, 0xfc0000), 0x12)]
@@ -259,7 +259,7 @@ local function bitBuffer(stream)
 
     local function crc32()
         local crc = 0xffffffff -- 2^32
-        
+
         for _, v in ipairs(bytes) do
             local poly = crc32_poly_lookup[bit32.band(bit32.bxor(crc, v), 255)]
             crc = bit32.bxor(bit32.rshift(crc, 8), poly)
@@ -271,7 +271,7 @@ local function bitBuffer(stream)
     local function getLength()
         return bitCount
     end
-    
+
     local function getByteLength()
         return byteCount
     end
@@ -456,7 +456,7 @@ local function bitBuffer(stream)
         assert(type(exponentWidth) == "number", "argument #1 to BitBuffer.writeFloat should be a number")
         assert(exponentWidth >= 1 and exponentWidth <= 64, "argument #1 to BitBuffer.writeFloat should be in the range [1, 64]")
         assert(exponentWidth%1 == 0, "argument #1 to BitBuffer.writeFloat should be an integer")
-        
+
         assert(type(mantissaWidth) == "number", "argument #2 to BitBuffer.writeFloat should be a number")
         assert(mantissaWidth >= 1 and mantissaWidth <= 64, "argument #2 to BitBuffer.writeFloat should be in the range [1, 64]")
         assert(mantissaWidth%1 == 0, "argument #2 to BitBuffer.writeFloat should be an integer")
@@ -839,7 +839,7 @@ local function bitBuffer(stream)
             writeByte(bit32.band(leastSignificantChunk, 255))
             return
         end
-        
+
         mantissa = math.floor((mantissa-0.5)*9007199254740992+0.5)
 
         --1023-1 = 1022
@@ -944,6 +944,17 @@ local function bitBuffer(stream)
         end
     end
 
+    local function writeDateTime(dateTime)
+        local universalTime = dateTime:ToUniversalTime()
+        writeUnsigned(14, universalTime.Year)
+        writeUnsigned(4, universalTime.Month)
+        writeUnsigned(5, universalTime.Day)
+        writeUnsigned(5, universalTime.Hour)
+        writeUnsigned(6, universalTime.Minute)
+        writeUnsigned(6, universalTime.Second)
+        writeUnsigned(10, universalTime.Millisecond)
+    end
+
     local function writeVector3(v3)
         assert(typeof(v3) == "Vector3", "argument #1 to BitBuffer.writeVector3 should be a Vector3")
 
@@ -961,7 +972,7 @@ local function bitBuffer(stream)
 
     local function writeUDim2(u2)
         assert(typeof(u2) == "UDim2", "argument #1 to BitBuffer.writeUDim2 should be a UDim2")
-        
+
         writeFloat32(u2.X.Scale)
         writeInt32(u2.X.Offset)
         writeFloat32(u2.Y.Scale)
@@ -1131,7 +1142,7 @@ local function bitBuffer(stream)
         assert(type(width) == "number", "argument #1 to BitBuffer.readSigned should be a number")
         assert(width >= 2 and width <= 64, "argument #1 to BitBuffer.readSigned should be in the range [2, 64]")
         assert(width%1 == 0, "argument #1 to BitBuffer.readSigned should be an integer")
-        
+
         assert(pointer+8 <= bitCount, "BitBuffer.readSigned cannot read past the end of the stream")
         local sign = readBits(1)[1]
         local n = readUnsigned(width-1) -- Again, width-1 is because one bit is used for the sign
@@ -1150,7 +1161,7 @@ local function bitBuffer(stream)
         assert(type(exponentWidth) == "number", "argument #1 to BitBuffer.readFloat should be a number")
         assert(exponentWidth >= 1 and exponentWidth <= 64, "argument #1 to BitBuffer.readFloat should be in the range [1, 64]")
         assert(exponentWidth%1 == 0, "argument #1 to BitBuffer.readFloat should be an integer")
-        
+
         assert(type(mantissaWidth) == "number", "argument #2 to BitBuffer.readFloat should be a number")
         assert(mantissaWidth >= 1 and mantissaWidth <= 64, "argument #2 to BitBuffer.readFloat should be in the range [1, 64]")
         assert(mantissaWidth%1 == 0, "argument #2 to BitBuffer.readFloat should be an integer")
@@ -1199,7 +1210,7 @@ local function bitBuffer(stream)
         assert(pointer+24 <= bitCount, "BitBuffer.readString cannot read past the end of the stream")
         -- Reading a length-prefixed string is rather straight forward.
         -- The length is read, then that many bytes are read and put in a string.
-        
+
         local stringLength = readUnsigned(24)
         assert(pointer+(stringLength*8) <= bitCount, "BitBuffer.readString cannot read past the end of the stream")
 
@@ -1221,7 +1232,7 @@ local function bitBuffer(stream)
 
     local function readTerminatedString()
         local outputCharacters = {}
-    
+
         -- Bytes are read continuously until either a nul-character is reached or until the stream runs out.
         local length = 0
         while true do
@@ -1242,7 +1253,7 @@ local function bitBuffer(stream)
             output[k] = string.char(table.unpack(outputCharacters, l, math.min(length, l+4095)))
             k = k+1
         end
-    
+
         return table.concat(output)
     end
 
@@ -1288,7 +1299,7 @@ local function bitBuffer(stream)
         return output
     end
 
-    -- All read functions below here are shorthands. 
+    -- All read functions below here are shorthands.
     -- As with their write variants, these functions are implemented manually using readByte for performance reasons.
 
     local function readUInt8()
@@ -1315,7 +1326,7 @@ local function bitBuffer(stream)
         local n = readByte()
         local sign = bit32.btest(n, 128)
         n = bit32.band(n, 127)
-        
+
         if sign then
             return n-128
         else
@@ -1487,6 +1498,18 @@ local function bitBuffer(stream)
         end
     end
 
+    local function readDateTime()
+        return DateTime.fromUniversalTime(
+            readUnsigned(14),
+            readUnsigned(4),
+            readUnsigned(5),
+            readUnsigned(5),
+            readUnsigned(6),
+            readUnsigned(6),
+            readUnsigned(10)
+        )
+    end
+
     local function readVector3()
         assert(pointer+96 <= bitCount, "BitBuffer.readVector3 cannot read past the end of the stream")
 
@@ -1532,7 +1555,7 @@ local function bitBuffer(stream)
 
     local function readEnum()
         assert(pointer+8 <= bitCount, "BitBuffer.readEnum cannot read past the end of the stream")
-        
+
         local name = readTerminatedString() -- This might expose an error from readString to the end-user but it's not worth the hassle to fix.
 
         assert(pointer+16 <= bitCount, "BitBuffer.readEnum cannot read past the end of the stream")
@@ -1560,11 +1583,11 @@ local function bitBuffer(stream)
         assert(pointer+32 <= bitCount, "BitBuffer.readNumberSequence cannot read past the end of the stream")
 
         local keypointCount = readUInt32()
-        
+
         assert(pointer+keypointCount*96, "BitBuffer.readColorSequence cannot read past the end of the stream")
 
         local keypoints = table.create(keypointCount)
-        
+
         -- As it turns out, creating a NumberSequence with a negative value as its first argument (in the first and second constructor)
         -- creates NumberSequenceKeypoints with negative envelopes. The envelope is read and saved properly, as you would expect,
         -- but you can't create a NumberSequence with a negative envelope if you're using a table of keypoints (which is happening here).
@@ -1587,11 +1610,11 @@ local function bitBuffer(stream)
         assert(pointer+32 <= bitCount, "BitBuffer.readColorSequence cannot read past the end of the stream")
 
         local keypointCount = readUInt32()
-        
+
         assert(pointer+keypointCount*56, "BitBuffer.readColorSequence cannot read past the end of the stream")
 
         local keypoints = table.create(keypointCount)
-        
+
         for i = 1, keypointCount do
             keypoints[i] = ColorSequenceKeypoint.new(readFloat32(), Color3.fromRGB(readByte(), readByte(), readByte()))
         end
@@ -1643,6 +1666,7 @@ local function bitBuffer(stream)
         writeBrickColor = writeBrickColor,
         writeColor3 = writeColor3,
         writeCFrame = writeCFrame,
+        writeDateTime = writeDateTime,
         writeVector3 = writeVector3,
         writeVector2 = writeVector2,
         writeUDim2 = writeUDim2,
@@ -1679,6 +1703,7 @@ local function bitBuffer(stream)
         readBrickColor = readBrickColor,
         readColor3 = readColor3,
         readCFrame = readCFrame,
+        readDateTime = readDateTime,
         readVector3 = readVector3,
         readVector2 = readVector2,
         readUDim2 = readUDim2,
