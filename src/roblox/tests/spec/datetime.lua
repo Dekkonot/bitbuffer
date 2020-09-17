@@ -64,7 +64,7 @@ local function makeTests(try)
         assert(buffer.readDateTime() == DateTime.fromUniversalTime(2020, 9, 17, 12, 5, 30, 500), "")
     end).pass()
 
-    readTest("Should read a bit from the stream properly after a Ray", function()
+    readTest("Should read a bit from the stream properly after a DateTime", function()
         local buffer = BitBuffer()
 
         buffer.writeDateTime(DateTime.fromUniversalTime(2020, 9, 17, 12, 5, 30, 500))
