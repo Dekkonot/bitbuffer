@@ -13,3 +13,11 @@ When written with this BitBuffer though, `24930` only takes up 2 bytes and becom
 Obviously, the two bytes taken up by `ab` is less than the 5 bytes taken up by `24930`. This difference gets a lot more dramatic the bigger the number: `1633837924` is 10 bytes to write out but in binary is `abcd`, and `107075202213222` is 15 bytes but turns into `abcdef`. That's a difference of 9 bytes per number!
 
 For more information, visit the documentation site!
+
+## Why not string.pack/string.unpack?
+
+For starters, they didn't exist when this module was written! They also don't exist until Lua 5.3, which is a huge downside.
+
+They're also comparatively slow: BitBuffer does all of its calculations with pure arithmetic and bit32, which is always going to be faster than string creation.
+
+The fact that you have to pass a format string to them is also a huge downside, as it means (un)serializing data that's dynamically generated is annoying.
