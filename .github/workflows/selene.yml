@@ -22,4 +22,4 @@ jobs:
 
       - name: 'Run Selene'
         run: |
-          ./selene . --pattern src/**/init.lua
+          ./selene src/roblox src/vanilla
