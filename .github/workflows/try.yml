@@ -9,6 +9,8 @@ on:
 jobs:
   Vanilla:
     runs-on: ubuntu-latest
+    env:
+      ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
     steps:
       - uses: actions/checkout@v1
       - uses: leafo/gh-actions-lua@v5
