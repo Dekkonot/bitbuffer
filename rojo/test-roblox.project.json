@@ -1,0 +1,27 @@
+{
+    "name": "bitbuffer",
+    "tree": {
+        "$className": "DataModel",
+        "HttpService": {
+            "$className": "HttpService",
+            "$properties": {
+                "HttpEnabled": true
+            }
+        },
+        "ReplicatedStorage": {
+            "$className": "ReplicatedStorage",
+            "BitBuffer": {
+                "$path": "roblox.project.json",
+                "Tests": {
+                    "$path": "../src/roblox-tests"
+                },
+                "CommonSpec": {
+                    "$path": "../src/common-spec"
+                }
+            },
+            "try": {
+                "$path": "../src/try.lua"
+            }
+        }
+    }
+}

@@ -17,6 +17,4 @@ jobs:
 
       - name: 'Run Tests'
         run: |
-          cp ./src/vanilla/init.lua ./src/vanilla/tests/bitBuffer.lua
-          cd ./src/vanilla/tests
-          lua init.lua
+          lua ./scripts/run-vanilla-tests.lua
