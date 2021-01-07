@@ -1,13 +1,11 @@
 local try = require("src.try")
 
 local BitBuffer = require("src.vanilla.init")
-local CommonSpec = "src.common-spec.init"
-local commonSpecModuleNames = require(CommonSpec)
+local CommonSpec = "src.common-spec"
+local commonSpecModuleNames = require(CommonSpec .. '.init')
 
 local function runTestModule(name, parent)
-    local testModule = parent:FindFirstChild(name)
-    assert(testModule, 'unable to find spec file: ' .. name)
-    local test = require(testModule)
+    local test = require(parent .. '.' .. name)
     test(try.new, BitBuffer)
 end
 
