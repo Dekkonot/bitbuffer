@@ -13,8 +13,9 @@ jobs:
 
       - name: 'Install Selene'
         run: |
-          wget -O selene https://github.com/Kampfkarren/selene/releases/download/0.11.0/selene-0.11.0-linux.zip
-          unzip selene-0.11.0-linux.zip
+          wget -O selene.zip https://github.com/Kampfkarren/selene/releases/download/0.11.0/selene-0.11.0-linux.zip
+          ls
+          unzip selene.zip
           ls
           chmod +x ./selene
 
