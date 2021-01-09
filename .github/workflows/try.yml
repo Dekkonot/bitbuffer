@@ -1,10 +1,10 @@
 name: Module Tests
 on:
   push:
-    branches: master
+    branches: main
     paths: '**.lua'
   pull_request:
-    branches: master
+    branches: main
     paths: '**.lua'
 jobs:
   Vanilla:
