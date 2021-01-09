@@ -1,4 +1,4 @@
-local BitBuffer = require("bitBuffer")
+local BitBuffer = require("src.vanilla.init")
 
 local buffer = BitBuffer()
 

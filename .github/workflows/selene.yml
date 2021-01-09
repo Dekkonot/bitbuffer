@@ -2,7 +2,7 @@ name: Selene
 on:
   push:
     paths: '**.lua'
-    branches: 'main'
+    branches: 'master'
   pull_request:
     paths: '**.lua'
 jobs:
@@ -22,4 +22,4 @@ jobs:
 
       - name: 'Run Selene'
         run: |
-          ./selene src/roblox src/vanilla
+          ./selene . --pattern src/**/init.lua

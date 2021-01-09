@@ -12,15 +12,15 @@
             "$className": "ReplicatedStorage",
             "BitBuffer": {
                 "$path": "roblox.project.json",
-                "Tests": {
-                    "$path": "../src/roblox-tests"
+                "RobloxSpec": {
+                    "$path": "../tests/roblox-spec"
                 },
                 "CommonSpec": {
-                    "$path": "../src/common-spec"
+                    "$path": "../tests/common-spec"
                 }
             },
             "try": {
-                "$path": "../src/try.lua"
+                "$path": "../tests/try.lua"
             }
         }
     }

@@ -2,10 +2,10 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local BitBuffer = require(ReplicatedStorage.BitBuffer)
 local CommonSpec = ReplicatedStorage.BitBuffer.CommonSpec
-local Spec = ReplicatedStorage.BitBuffer.Tests.spec
+local RobloxSpec = ReplicatedStorage.BitBuffer.RobloxSpec
 
 local commonSpecModuleNames = require(CommonSpec)
-local robloxSpecModuleNames = require(Spec)
+local robloxSpecModuleNames = require(RobloxSpec)
 local try = require(ReplicatedStorage.try)
 
 local function runTestModule(name, parent)
@@ -20,7 +20,7 @@ for _, name in ipairs(commonSpecModuleNames) do
 end
 
 for _, name in ipairs(robloxSpecModuleNames) do
-    runTestModule(name, Spec)
+    runTestModule(name, RobloxSpec)
 end
 
 local finalPass, finalFail, finalDisabled = try.reportFinal()
