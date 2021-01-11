@@ -1,14 +1,16 @@
 name: Module Tests
 on:
   push:
-    branches: master
+    branches: main
     paths: '**.lua'
   pull_request:
-    branches: master
+    branches: main
     paths: '**.lua'
 jobs:
   Vanilla:
     runs-on: ubuntu-latest
+    env:
+      ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
     steps:
       - uses: actions/checkout@v1
       - uses: leafo/gh-actions-lua@v5
@@ -17,6 +19,4 @@ jobs:
 
       - name: 'Run Tests'
         run: |
-          cp ./src/vanilla/init.lua ./src/vanilla/tests/bitBuffer.lua
-          cd ./src/vanilla/tests
-          lua init.lua
+          lua ./scripts/run-vanilla-tests.lua

@@ -1,0 +1,16 @@
+return {
+    "brickcolor",
+    "color3",
+    "cframe",
+    "vector3",
+    "vector2",
+    "udim2",
+    "udim",
+    "ray",
+    "rect",
+    "region3",
+    "enum",
+    "numberrange",
+    "numbersequence",
+    "colorsequence",
+}

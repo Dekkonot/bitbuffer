@@ -2,7 +2,7 @@ name: Selene
 on:
   push:
     paths: '**.lua'
-    branches: 'master'
+    branches: 'main'
   pull_request:
     paths: '**.lua'
 jobs:
@@ -13,7 +13,8 @@ jobs:
 
       - name: 'Install Selene'
         run: |
-          wget -O selene https://github.com/Kampfkarren/selene/releases/latest/download/selene-linux
+          wget -O selene.zip https://github.com/Kampfkarren/selene/releases/download/0.11.0/selene-0.11.0-linux.zip
+          unzip selene.zip
           chmod +x ./selene
 
       - name: 'Generate Roblox Std'
@@ -22,4 +23,4 @@ jobs:
 
       - name: 'Run Selene'
         run: |
-          ./selene . --pattern src/**/init.lua 
+          ./selene src/roblox.lua src/vanilla.lua
