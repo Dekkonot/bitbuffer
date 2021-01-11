@@ -1,6 +1,6 @@
 local try = require("tests.try")
 
-local BitBuffer = require("src.vanilla.init")
+local BitBuffer = require("src.vanilla")
 local CommonSpec = "tests.common-spec"
 local commonSpecModuleNames = require(CommonSpec .. '.init')
 

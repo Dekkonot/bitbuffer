@@ -1,6 +1,6 @@
 {
     "name": "bitbuffer",
     "tree": {
-        "$path": "../src/roblox"
+        "$path": "../src/roblox.lua"
     }
 }
