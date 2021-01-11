@@ -3,9 +3,8 @@ site/
 roblox.toml
 TODO
 
-src/*/tests/bitbuffer.lua
-
 **.rbxmx
+**.rbxlx
 **.rbxm
-**.bat
+**.rbxl
 **.todo
