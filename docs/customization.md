@@ -38,4 +38,4 @@ return {
 }
 ```
 
-If that example isn't sufficient, there are several present in the [Roblox version](https://github.com/dekkonot/bitbuffer/blob/master/src/roblox/init.lua) of the module.
+If that example isn't sufficient, there are several present in the [Roblox version](https://github.com/Dekkonot/bitbuffer/blob/main/src/roblox.lua) of the module.

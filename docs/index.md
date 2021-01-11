@@ -17,7 +17,7 @@ Obviously, the two bytes taken up by `ab` is less than the 5 bytes taken up by `
 
 By default, the BitBuffer only supports basic data types (specifically bits, integers, floats, and strings) and some common variants of them.
 
-Custom structs (Vectors, coordinates, etc.) can be added rather easily by modifying [the module](https://github.com/dekkonot/bitbuffer/blob/master/src/vanilla/init.lua) however. An example of this is found under [*Customization*](customization.md).
+Custom structs (Vectors, coordinates, etc.) can be added rather easily by modifying [the module](https://github.com/Dekkonot/bitbuffer/blob/main/src/vanilla.lua) however. An example of this is found under [*Customization*](customization.md).
 
 The module also obviously supports importing and exporting data to and from the stream. The constructor takes a string, which it will convert to a stream, and a buffer object has some functions to easily export the data inside. These are documented in [*Main Functions*](api-main.md).
 
@@ -29,4 +29,4 @@ A limit for the width of all numbers is hardcoded to  be 64-bits. However, as Lu
 
 Data written with the BitBuffer is big-endian. It follows the IEEE-754 format for floating points. Signed integers are stored using two's complements, as you would expect. By default, strings are written and read by prefixing the length as an unsigned 24-bit integer.
 
-There are a variety of tests that can be run in the [tests folder](https://github.com/dekkonot/bitbuffer/tree/master/src/vanilla/tests) to verify the functionality of the module. They expect a file named `bitbuffer.lua` that contains the main module.
+There are a variety of tests that can be run in the [tests folder](https://github.com/Dekkonot/bitbuffer/tree/main/tests/common-spec) to verify the functionality of the module. There are convenient scripts to run them in the repository.

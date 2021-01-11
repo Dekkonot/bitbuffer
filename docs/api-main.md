@@ -52,26 +52,29 @@ BitBuffer.setPointerByte(n: integer) -> nil
 ```
 Sets where the pointer is in the stream in bytes.
 
-### setPointerFromEnd
+### setPointerByteFromEnd
 
 ```
-BitBuffer.setPointerFromEnd(n: integer) -> nil
+BitBuffer.setPointerByteFromEnd(n: integer) -> nil
 ```
 Sets the pointer in bytes from the end of the stream. Equivalent to `setPointerByte(getLength()-n)`.
 
 ### getLength
+
 ```
 BitBuffer.getLength() -> integer
 ```
 Returns the length of the internal buffer in bits.
 
 ### getByteLength
+
 ```
 BitBuffer.getByteLength() -> integer
 ```
 Returns the length of the internal buffer in bytes.
 
 ### isFinished
+
 ```
 BitBuffer.isFinished() -> boolean
 ```
@@ -185,6 +188,7 @@ Returns the CRC-32 checksum of the BitBuffer's contents.
 The following functions are all intended to write data to the BitBuffer. With little exception, they're more efficient than calling their abstract equivalents and should be used over them.
 
 ### writeUInt8
+
 ```
 BitBuffer.writeUInt8(n: integer) -> nil
 ```
@@ -278,6 +282,7 @@ BitBuffer.writeField(...: any) -> nil
 Writes a bitfield with a bit for every argument passed. If the argument is truthy, the bit is `1`. Otherwise, it's `false`. The max number of arguments able to be passed to this function is 53 (see [the section on limitations](index.md#limitations)).
 
 ## Read functions
+
 The following functions are all intended to read data from the BitBuffer. With little exception, they're more efficient than calling their abstract equivalents and should be used over them.
 
 ### readUInt8
