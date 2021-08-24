@@ -1,0 +1,1123 @@
+
+
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      <meta http-equiv="x-ua-compatible" content="ie=edge">
+      
+      
+        <link rel="canonical" href="https://dekkonot.github.io/bitbuffer/api-roblox/">
+      
+      
+        <meta name="author" content="Dekkonot">
+      
+      
+        <meta name="lang:clipboard.copy" content="Copy to clipboard">
+      
+        <meta name="lang:clipboard.copied" content="Copied to clipboard">
+      
+        <meta name="lang:search.language" content="en">
+      
+        <meta name="lang:search.pipeline.stopwords" content="True">
+      
+        <meta name="lang:search.pipeline.trimmer" content="True">
+      
+        <meta name="lang:search.result.none" content="No matching documents">
+      
+        <meta name="lang:search.result.one" content="1 matching document">
+      
+        <meta name="lang:search.result.other" content="# matching documents">
+      
+        <meta name="lang:search.tokenizer" content="[\s\-]+">
+      
+      <link rel="shortcut icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.6.0">
+    
+    
+      
+        <title>Roblox Functions - BitBuffer Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/application.1b62728e.css">
+      
+        <link rel="stylesheet" href="../assets/stylesheets/application-palette.a8b3c06d.css">
+      
+      
+        
+        
+        <meta name="theme-color" content="#009688">
+      
+    
+    
+      <script src="../assets/javascripts/modernizr.268332fc.js"></script>
+    
+    
+      
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
+      
+    
+    <link rel="stylesheet" href="../assets/fonts/material-icons.css">
+    
+    
+    
+      
+    
+    
+  </head>
+  
+    
+    
+    <body dir="ltr" data-md-color-primary="teal" data-md-color-accent="amber">
+  
+    <svg class="md-svg">
+      <defs>
+        
+        
+          <svg xmlns="http://www.w3.org/2000/svg" width="416" height="448" viewBox="0 0 416 448" id="__github"><path fill="currentColor" d="M160 304q0 10-3.125 20.5t-10.75 19T128 352t-18.125-8.5-10.75-19T96 304t3.125-20.5 10.75-19T128 256t18.125 8.5 10.75 19T160 304zm160 0q0 10-3.125 20.5t-10.75 19T288 352t-18.125-8.5-10.75-19T256 304t3.125-20.5 10.75-19T288 256t18.125 8.5 10.75 19T320 304zm40 0q0-30-17.25-51T296 232q-10.25 0-48.75 5.25Q229.5 240 208 240t-39.25-2.75Q130.75 232 120 232q-29.5 0-46.75 21T56 304q0 22 8 38.375t20.25 25.75 30.5 15 35 7.375 37.25 1.75h42q20.5 0 37.25-1.75t35-7.375 30.5-15 20.25-25.75T360 304zm56-44q0 51.75-15.25 82.75-9.5 19.25-26.375 33.25t-35.25 21.5-42.5 11.875-42.875 5.5T212 416q-19.5 0-35.5-.75t-36.875-3.125-38.125-7.5-34.25-12.875T37 371.5t-21.5-28.75Q0 312 0 260q0-59.25 34-99-6.75-20.5-6.75-42.5 0-29 12.75-54.5 27 0 47.5 9.875t47.25 30.875Q171.5 96 212 96q37 0 70 8 26.25-20.5 46.75-30.25T376 64q12.75 25.5 12.75 54.5 0 21.75-6.75 42 34 40 34 99.5z"/></svg>
+        
+      </defs>
+    </svg>
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
+    
+      <a href="#write-functions" tabindex="1" class="md-skip">
+        Skip to content
+      </a>
+    
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid">
+    <div class="md-flex">
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <a href="https://dekkonot.github.io/bitbuffer/" title="BitBuffer Documentation" class="md-header-nav__button md-logo">
+          
+            <i class="md-icon"></i>
+          
+        </a>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <label class="md-icon md-icon--menu md-header-nav__button" for="__drawer"></label>
+      </div>
+      <div class="md-flex__cell md-flex__cell--stretch">
+        <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
+          
+            <span class="md-header-nav__topic">
+              BitBuffer Documentation
+            </span>
+            <span class="md-header-nav__topic">
+              
+                Roblox Functions
+              
+            </span>
+          
+        </div>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        
+          <label class="md-icon md-icon--search md-header-nav__button" for="__search"></label>
+          
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
+      <label class="md-icon md-search__icon" for="__search"></label>
+      <button type="reset" class="md-icon md-search__icon" data-md-component="reset" tabindex="-1">
+        &#xE5CD;
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="result">
+          <div class="md-search-result__meta">
+            Type to start searching
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+        
+      </div>
+      
+        <div class="md-flex__cell md-flex__cell--shrink">
+          <div class="md-header-nav__source">
+            
+
+
+  
+
+<a href="https://github.com/dekkonot/bitbuffer/" title="Go to repository" class="md-source" data-md-source="github">
+  
+    <div class="md-source__icon">
+      <svg viewBox="0 0 24 24" width="24" height="24">
+        <use xlink:href="#__github" width="24" height="24"></use>
+      </svg>
+    </div>
+  
+  <div class="md-source__repository">
+    dekkonot/bitbuffer
+  </div>
+</a>
+          </div>
+        </div>
+      
+    </div>
+  </nav>
+</header>
+    
+    <div class="md-container">
+      
+        
+      
+      
+      <main class="md-main" role="main">
+        <div class="md-main__inner md-grid" data-md-component="container">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <nav class="md-nav md-nav--primary" data-md-level="0">
+  <label class="md-nav__title md-nav__title--site" for="__drawer">
+    <a href="https://dekkonot.github.io/bitbuffer/" title="BitBuffer Documentation" class="md-nav__button md-logo">
+      
+        <i class="md-icon"></i>
+      
+    </a>
+    BitBuffer Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      
+
+
+  
+
+<a href="https://github.com/dekkonot/bitbuffer/" title="Go to repository" class="md-source" data-md-source="github">
+  
+    <div class="md-source__icon">
+      <svg viewBox="0 0 24 24" width="24" height="24">
+        <use xlink:href="#__github" width="24" height="24"></use>
+      </svg>
+    </div>
+  
+  <div class="md-source__repository">
+    dekkonot/bitbuffer
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href=".." title="Home" class="md-nav__link">
+      Home
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2">
+    
+    <label class="md-nav__link" for="nav-2">
+      Use
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-2">
+        Use
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../installation/" title="Installation" class="md-nav__link">
+      Installation
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../writing/" title="Writing" class="md-nav__link">
+      Writing
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../reading/" title="Reading" class="md-nav__link">
+      Reading
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../customization/" title="Customization" class="md-nav__link">
+      Customization
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3" checked>
+    
+    <label class="md-nav__link" for="nav-3">
+      API Reference
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-3">
+        API Reference
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../api-main/" title="Main Functions" class="md-nav__link">
+      Main Functions
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../api-base/" title="Abstract Functions" class="md-nav__link">
+      Abstract Functions
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        Roblox Functions
+      </label>
+    
+    <a href="./" title="Roblox Functions" class="md-nav__link md-nav__link--active">
+      Roblox Functions
+    </a>
+    
+      
+<nav class="md-nav md-nav--secondary">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#write-functions" class="md-nav__link">
+    Write functions
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#writebrickcolor" class="md-nav__link">
+    writeBrickColor
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writecolor3" class="md-nav__link">
+    writeColor3
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writecframe" class="md-nav__link">
+    writeCFrame
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writevector3" class="md-nav__link">
+    writeVector3
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writevector2" class="md-nav__link">
+    writeVector2
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writeudim2" class="md-nav__link">
+    writeUDim2
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writeudim" class="md-nav__link">
+    writeUDim
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writeray" class="md-nav__link">
+    writeRay
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writerect" class="md-nav__link">
+    writeRect
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writeregion3" class="md-nav__link">
+    writeRegion3
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writeenum" class="md-nav__link">
+    writeEnum
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writenumberrange" class="md-nav__link">
+    writeNumberRange
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writenumbersequence" class="md-nav__link">
+    writeNumberSequence
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writecolorsequence" class="md-nav__link">
+    writeColorSequence
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#read-functions" class="md-nav__link">
+    Read functions
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#readbrickcolor" class="md-nav__link">
+    readBrickColor
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#readcolor3" class="md-nav__link">
+    readColor3
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#readcframe" class="md-nav__link">
+    readCFrame
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#readvector3" class="md-nav__link">
+    readVector3
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#readvector2" class="md-nav__link">
+    readVector2
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#readudim2" class="md-nav__link">
+    readUDim2
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#readudim" class="md-nav__link">
+    readUDim
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#readray" class="md-nav__link">
+    readRay
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#readrect" class="md-nav__link">
+    readRect
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#readregion3" class="md-nav__link">
+    readRegion3
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#readenum" class="md-nav__link">
+    readEnum
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#readnumberrange" class="md-nav__link">
+    readNumberRange
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#readnumbersequence" class="md-nav__link">
+    readNumberSequence
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#readcolorsequence" class="md-nav__link">
+    readColorSequence
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+    
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#write-functions" class="md-nav__link">
+    Write functions
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#writebrickcolor" class="md-nav__link">
+    writeBrickColor
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writecolor3" class="md-nav__link">
+    writeColor3
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writecframe" class="md-nav__link">
+    writeCFrame
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writevector3" class="md-nav__link">
+    writeVector3
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writevector2" class="md-nav__link">
+    writeVector2
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writeudim2" class="md-nav__link">
+    writeUDim2
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writeudim" class="md-nav__link">
+    writeUDim
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writeray" class="md-nav__link">
+    writeRay
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writerect" class="md-nav__link">
+    writeRect
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writeregion3" class="md-nav__link">
+    writeRegion3
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writeenum" class="md-nav__link">
+    writeEnum
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writenumberrange" class="md-nav__link">
+    writeNumberRange
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writenumbersequence" class="md-nav__link">
+    writeNumberSequence
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writecolorsequence" class="md-nav__link">
+    writeColorSequence
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#read-functions" class="md-nav__link">
+    Read functions
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#readbrickcolor" class="md-nav__link">
+    readBrickColor
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#readcolor3" class="md-nav__link">
+    readColor3
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#readcframe" class="md-nav__link">
+    readCFrame
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#readvector3" class="md-nav__link">
+    readVector3
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#readvector2" class="md-nav__link">
+    readVector2
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#readudim2" class="md-nav__link">
+    readUDim2
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#readudim" class="md-nav__link">
+    readUDim
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#readray" class="md-nav__link">
+    readRay
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#readrect" class="md-nav__link">
+    readRect
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#readregion3" class="md-nav__link">
+    readRegion3
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#readenum" class="md-nav__link">
+    readEnum
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#readnumberrange" class="md-nav__link">
+    readNumberRange
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#readnumbersequence" class="md-nav__link">
+    readNumberSequence
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#readcolorsequence" class="md-nav__link">
+    readColorSequence
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/dekkonot/bitbuffer/edit/master/docs/api-roblox.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
+                
+                
+                  <h1>Roblox Functions</h1>
+                
+                <p>This page covers all of the functions specific to the Roblox version of the BitBuffer. These functions allow for reading and writing Roblox specific datatypes to and from the BitBuffer.</p>
+<p>For the main functions, including the constructor and export functions, see <a href="../api-main/"><em>Main Functions</em></a>. The abstract BitBuffer functions are documented in <a href="../api-base/"><em>Abstract Functions</em></a>.</p>
+<h2 id="write-functions">Write functions<a class="headerlink" href="#write-functions" title="Permanent link">&para;</a></h2>
+<h3 id="writebrickcolor">writeBrickColor<a class="headerlink" href="#writebrickcolor" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.writeBrickColor(n: BrickColor) -&gt; nil
+</pre></div>
+
+
+<p>Writes a BrickColor to the BitBuffer as a 16-bit unsigned integer.</p>
+<h3 id="writecolor3">writeColor3<a class="headerlink" href="#writecolor3" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.writeColor3(n: Color3) -&gt; nil
+</pre></div>
+
+
+<p>Writes a Color3 to the BitBuffer as a 24-bit integer. Colors with RGB components outside of <code>[0, 255]</code> are not saved properly and may throw.</p>
+<h3 id="writecframe">writeCFrame<a class="headerlink" href="#writecframe" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.writeCFrame(n: CFrame) -&gt; nil
+</pre></div>
+
+
+<p>Writes a CFrame to the BitBuffer. If the CFrame is axis aligned (all of its faces are aligned with an axis), it takes up 13 bytes. Otherwise, it takes up 49.</p>
+<h3 id="writevector3">writeVector3<a class="headerlink" href="#writevector3" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.writeVector3(n: Vector3) -&gt; nil
+</pre></div>
+
+
+<p>Writes a Vector3 to the BitBuffer as three 32-bit floats. The written size is 12 bytes.</p>
+<h3 id="writevector2">writeVector2<a class="headerlink" href="#writevector2" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.writeVector2(n: Vector2) -&gt; nil
+</pre></div>
+
+
+<p>Writes a Vector2 to the BitBuffer as two 32-bit floats. The written size is 8 bytes.</p>
+<h3 id="writeudim2">writeUDim2<a class="headerlink" href="#writeudim2" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.writeUDim2(u2: UDim2) -&gt; nil
+</pre></div>
+
+
+<p>Writes a UDim2 to the BitBuffer as two 32-bit floats and two signed 32-bit integers. The written size is 16 bytes.</p>
+<h3 id="writeudim">writeUDim<a class="headerlink" href="#writeudim" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.writeUDim(u: UDim) -&gt; nil
+</pre></div>
+
+
+<p>Writes a UDim to the BitBuffer as a 32-bit float and a 32-bit signed integer. The written size is 8 bytes.</p>
+<h3 id="writeray">writeRay<a class="headerlink" href="#writeray" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.writeRay(ray: Ray) -&gt; nil
+</pre></div>
+
+
+<p>Writes a Ray to the BitBuffer as two Vector3s representing the <code>Origin</code> and <code>Direction</code>. The written size is 24 bytes.</p>
+<h3 id="writerect">writeRect<a class="headerlink" href="#writerect" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.writeRay(rect: Rect) -&gt; nil
+</pre></div>
+
+
+<p>Writes a Rect to the BitBuffer as two Vector2s representing the <code>Min</code> and <code>Max</code>. The written size is 16 bytes.</p>
+<h3 id="writeregion3">writeRegion3<a class="headerlink" href="#writeregion3" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.writeRegion3(region: Region3) -&gt; nil
+</pre></div>
+
+
+<p>Writes a Region3 to the BitBuffer as two Vector3s representing the <code>Min</code> and <code>Max</code>. The written size is 24 bytes.</p>
+<p>Region3s do not have properties indicating their minimums and maximums, so they are determined using arithmetic. As a result, the value stores is subject to floating point errors.</p>
+<h3 id="writeenum">writeEnum<a class="headerlink" href="#writeenum" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.writeEnum(enum: EnumItem) -&gt; nil
+</pre></div>
+
+
+<p>Writes any EnumItem to the BitBuffer as a null-terminated string and a 16-bit unsigned integer. Due to the nature of this datatype, the written size varies. The size in bytes can be determined with <code>#tostring(enum.EnumType) + 3</code>.</p>
+<h3 id="writenumberrange">writeNumberRange<a class="headerlink" href="#writenumberrange" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.writeNumberRange(range: NumberRange) -&gt; nil
+</pre></div>
+
+
+<p>Writes a NumberRange to the BitBuffer as two 32-bit floats. The written size is 8 bytes.</p>
+<h3 id="writenumbersequence">writeNumberSequence<a class="headerlink" href="#writenumbersequence" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.writeNumberSequence(sequence: NumberSequence) -&gt; nil
+</pre></div>
+
+
+<p>Writes a NumberSequence to the BitBuffer as an array of NumberSequenceKeypoints. Due to the nature of the datatype, the written size varies. The size in bytes can be determined with <code>(#sequence.Keypoints*12)+4</code>.</p>
+<h3 id="writecolorsequence">writeColorSequence<a class="headerlink" href="#writecolorsequence" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.writeColorSequence(sequence: ColorSequence) -&gt; nil
+</pre></div>
+
+
+<p>Writes a ColorSequence to the BitBuffer as an array of ColorSequenceKeypoints. Due to the nature of the datatype, the written size varies. The size in bytes can be determined with <code>(#sequence.Keypoints*7)+4</code>.</p>
+<h2 id="read-functions">Read functions<a class="headerlink" href="#read-functions" title="Permanent link">&para;</a></h2>
+<h3 id="readbrickcolor">readBrickColor<a class="headerlink" href="#readbrickcolor" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.readBrickColor() -&gt; BrickColor
+</pre></div>
+
+
+<p>Reads a BrickColor from the BitBuffer and returns it.</p>
+<h3 id="readcolor3">readColor3<a class="headerlink" href="#readcolor3" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.readColor3() -&gt; Color3
+</pre></div>
+
+
+<p>Reads a Color3 from the BitBuffer and returns it.</p>
+<h3 id="readcframe">readCFrame<a class="headerlink" href="#readcframe" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.readCFrame() -&gt; CFrame
+</pre></div>
+
+
+<p>Reads a CFrame from the BitBuffer and returns it.</p>
+<h3 id="readvector3">readVector3<a class="headerlink" href="#readvector3" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.readVector3() -&gt; Vector3
+</pre></div>
+
+
+<p>Reads a Vector3 from the BitBuffer and returns it.</p>
+<h3 id="readvector2">readVector2<a class="headerlink" href="#readvector2" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.readVector2() -&gt; Vector2
+</pre></div>
+
+
+<p>Reads a Vector2 from the BitBuffer and returns it.</p>
+<h3 id="readudim2">readUDim2<a class="headerlink" href="#readudim2" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.readUDim2() -&gt; UDim2
+</pre></div>
+
+
+<p>Reads a UDim2 from the BitBuffer and returns it.</p>
+<h3 id="readudim">readUDim<a class="headerlink" href="#readudim" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.readUDim() -&gt; UDim
+</pre></div>
+
+
+<p>Reads a UDim from the BitBuffer and returns it</p>
+<h3 id="readray">readRay<a class="headerlink" href="#readray" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.readRay() -&gt; Ray
+</pre></div>
+
+
+<p>Reads a Ray from the BitBuffer and returns it.</p>
+<h3 id="readrect">readRect<a class="headerlink" href="#readrect" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.readRect() -&gt; Rect
+</pre></div>
+
+
+<p>Reads a Rect from the BitBuffer and returns it.</p>
+<h3 id="readregion3">readRegion3<a class="headerlink" href="#readregion3" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.readRegion3() -&gt; Region3
+</pre></div>
+
+
+<p>Reads a Region3 from the BitBuffer and returns it. Note that because of limitations with the Roblox API, the Region3 will have lost precision over what was originally written.</p>
+<h3 id="readenum">readEnum<a class="headerlink" href="#readenum" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.readEnum() -&gt; EnumItem
+</pre></div>
+
+
+<p>Reads an EnumItem from the BitBuffer and returns it.</p>
+<h3 id="readnumberrange">readNumberRange<a class="headerlink" href="#readnumberrange" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.readNumberRange() -&gt; NumberRange
+</pre></div>
+
+
+<p>Reads a NumberRange from the BitBuffer and returns it.</p>
+<h3 id="readnumbersequence">readNumberSequence<a class="headerlink" href="#readnumbersequence" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.readNumberSequence() -&gt; NumberSequence
+</pre></div>
+
+
+<p>Reads a NumberSequence from the BitBuffer and returns it.</p>
+<h3 id="readcolorsequence">readColorSequence<a class="headerlink" href="#readcolorsequence" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.readColorSequence() -&gt; ColorSequence
+</pre></div>
+
+
+<p>Reads a ColorSequence from the BitBuffer and returns it.</p>
+                
+                  
+                
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid">
+        
+          <a href="../api-base/" title="Abstract Functions" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
+            </div>
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Abstract Functions
+              </span>
+            </div>
+          </a>
+        
+        
+      </nav>
+    </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        powered by
+        <a href="https://www.mkdocs.org">MkDocs</a>
+        and
+        <a href="https://squidfunk.github.io/mkdocs-material/">
+          Material for MkDocs</a>
+      </div>
+      
+  <div class="md-footer-social">
+    <link rel="stylesheet" href="../assets/fonts/font-awesome.css">
+    
+      <a href="https://github.com/dekkonot" class="md-footer-social__link fa fa-"></a>
+    
+      <a href="https://twitter.com/dekkonot" class="md-footer-social__link fa fa-"></a>
+    
+  </div>
+
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../assets/javascripts/application.808e90bb.js"></script>
+      
+      <script>app.initialize({version:"1.0.4",url:{base:".."}})</script>
+      
+    
+  </body>
+</html>

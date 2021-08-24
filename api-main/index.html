@@ -1,0 +1,1589 @@
+
+
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      <meta http-equiv="x-ua-compatible" content="ie=edge">
+      
+      
+        <link rel="canonical" href="https://dekkonot.github.io/bitbuffer/api-main/">
+      
+      
+        <meta name="author" content="Dekkonot">
+      
+      
+        <meta name="lang:clipboard.copy" content="Copy to clipboard">
+      
+        <meta name="lang:clipboard.copied" content="Copied to clipboard">
+      
+        <meta name="lang:search.language" content="en">
+      
+        <meta name="lang:search.pipeline.stopwords" content="True">
+      
+        <meta name="lang:search.pipeline.trimmer" content="True">
+      
+        <meta name="lang:search.result.none" content="No matching documents">
+      
+        <meta name="lang:search.result.one" content="1 matching document">
+      
+        <meta name="lang:search.result.other" content="# matching documents">
+      
+        <meta name="lang:search.tokenizer" content="[\s\-]+">
+      
+      <link rel="shortcut icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.6.0">
+    
+    
+      
+        <title>Main Functions - BitBuffer Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/application.1b62728e.css">
+      
+        <link rel="stylesheet" href="../assets/stylesheets/application-palette.a8b3c06d.css">
+      
+      
+        
+        
+        <meta name="theme-color" content="#009688">
+      
+    
+    
+      <script src="../assets/javascripts/modernizr.268332fc.js"></script>
+    
+    
+      
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
+      
+    
+    <link rel="stylesheet" href="../assets/fonts/material-icons.css">
+    
+    
+    
+      
+    
+    
+  </head>
+  
+    
+    
+    <body dir="ltr" data-md-color-primary="teal" data-md-color-accent="amber">
+  
+    <svg class="md-svg">
+      <defs>
+        
+        
+          <svg xmlns="http://www.w3.org/2000/svg" width="416" height="448" viewBox="0 0 416 448" id="__github"><path fill="currentColor" d="M160 304q0 10-3.125 20.5t-10.75 19T128 352t-18.125-8.5-10.75-19T96 304t3.125-20.5 10.75-19T128 256t18.125 8.5 10.75 19T160 304zm160 0q0 10-3.125 20.5t-10.75 19T288 352t-18.125-8.5-10.75-19T256 304t3.125-20.5 10.75-19T288 256t18.125 8.5 10.75 19T320 304zm40 0q0-30-17.25-51T296 232q-10.25 0-48.75 5.25Q229.5 240 208 240t-39.25-2.75Q130.75 232 120 232q-29.5 0-46.75 21T56 304q0 22 8 38.375t20.25 25.75 30.5 15 35 7.375 37.25 1.75h42q20.5 0 37.25-1.75t35-7.375 30.5-15 20.25-25.75T360 304zm56-44q0 51.75-15.25 82.75-9.5 19.25-26.375 33.25t-35.25 21.5-42.5 11.875-42.875 5.5T212 416q-19.5 0-35.5-.75t-36.875-3.125-38.125-7.5-34.25-12.875T37 371.5t-21.5-28.75Q0 312 0 260q0-59.25 34-99-6.75-20.5-6.75-42.5 0-29 12.75-54.5 27 0 47.5 9.875t47.25 30.875Q171.5 96 212 96q37 0 70 8 26.25-20.5 46.75-30.25T376 64q12.75 25.5 12.75 54.5 0 21.75-6.75 42 34 40 34 99.5z"/></svg>
+        
+      </defs>
+    </svg>
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
+    
+      <a href="#bitbuffer" tabindex="1" class="md-skip">
+        Skip to content
+      </a>
+    
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid">
+    <div class="md-flex">
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <a href="https://dekkonot.github.io/bitbuffer/" title="BitBuffer Documentation" class="md-header-nav__button md-logo">
+          
+            <i class="md-icon"></i>
+          
+        </a>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <label class="md-icon md-icon--menu md-header-nav__button" for="__drawer"></label>
+      </div>
+      <div class="md-flex__cell md-flex__cell--stretch">
+        <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
+          
+            <span class="md-header-nav__topic">
+              BitBuffer Documentation
+            </span>
+            <span class="md-header-nav__topic">
+              
+                Main Functions
+              
+            </span>
+          
+        </div>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        
+          <label class="md-icon md-icon--search md-header-nav__button" for="__search"></label>
+          
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
+      <label class="md-icon md-search__icon" for="__search"></label>
+      <button type="reset" class="md-icon md-search__icon" data-md-component="reset" tabindex="-1">
+        &#xE5CD;
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="result">
+          <div class="md-search-result__meta">
+            Type to start searching
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+        
+      </div>
+      
+        <div class="md-flex__cell md-flex__cell--shrink">
+          <div class="md-header-nav__source">
+            
+
+
+  
+
+<a href="https://github.com/dekkonot/bitbuffer/" title="Go to repository" class="md-source" data-md-source="github">
+  
+    <div class="md-source__icon">
+      <svg viewBox="0 0 24 24" width="24" height="24">
+        <use xlink:href="#__github" width="24" height="24"></use>
+      </svg>
+    </div>
+  
+  <div class="md-source__repository">
+    dekkonot/bitbuffer
+  </div>
+</a>
+          </div>
+        </div>
+      
+    </div>
+  </nav>
+</header>
+    
+    <div class="md-container">
+      
+        
+      
+      
+      <main class="md-main" role="main">
+        <div class="md-main__inner md-grid" data-md-component="container">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <nav class="md-nav md-nav--primary" data-md-level="0">
+  <label class="md-nav__title md-nav__title--site" for="__drawer">
+    <a href="https://dekkonot.github.io/bitbuffer/" title="BitBuffer Documentation" class="md-nav__button md-logo">
+      
+        <i class="md-icon"></i>
+      
+    </a>
+    BitBuffer Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      
+
+
+  
+
+<a href="https://github.com/dekkonot/bitbuffer/" title="Go to repository" class="md-source" data-md-source="github">
+  
+    <div class="md-source__icon">
+      <svg viewBox="0 0 24 24" width="24" height="24">
+        <use xlink:href="#__github" width="24" height="24"></use>
+      </svg>
+    </div>
+  
+  <div class="md-source__repository">
+    dekkonot/bitbuffer
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href=".." title="Home" class="md-nav__link">
+      Home
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2">
+    
+    <label class="md-nav__link" for="nav-2">
+      Use
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-2">
+        Use
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../installation/" title="Installation" class="md-nav__link">
+      Installation
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../writing/" title="Writing" class="md-nav__link">
+      Writing
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../reading/" title="Reading" class="md-nav__link">
+      Reading
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../customization/" title="Customization" class="md-nav__link">
+      Customization
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3" checked>
+    
+    <label class="md-nav__link" for="nav-3">
+      API Reference
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-3">
+        API Reference
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        Main Functions
+      </label>
+    
+    <a href="./" title="Main Functions" class="md-nav__link md-nav__link--active">
+      Main Functions
+    </a>
+    
+      
+<nav class="md-nav md-nav--secondary">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#bitbuffer" class="md-nav__link">
+    BitBuffer
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#constructor" class="md-nav__link">
+    Constructor
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getpointer" class="md-nav__link">
+    getPointer
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#setpointer" class="md-nav__link">
+    setPointer
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#setpointerfromend" class="md-nav__link">
+    setPointerFromEnd
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getpointerbyte" class="md-nav__link">
+    getPointerByte
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#setpointerbyte" class="md-nav__link">
+    setPointerByte
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#setpointerbytefromend" class="md-nav__link">
+    setPointerByteFromEnd
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getlength" class="md-nav__link">
+    getLength
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getbytelength" class="md-nav__link">
+    getByteLength
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#isfinished" class="md-nav__link">
+    isFinished
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#export-functions" class="md-nav__link">
+    Export functions
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dumpbinary" class="md-nav__link">
+    dumpBinary
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dumpstring" class="md-nav__link">
+    dumpString
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dumpbase64" class="md-nav__link">
+    dumpBase64
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dumphex" class="md-nav__link">
+    dumpHex
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exportchunk" class="md-nav__link">
+    exportChunk
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exportbase64chunk" class="md-nav__link">
+    exportBase64Chunk
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exporthexchunk" class="md-nav__link">
+    exportHexChunk
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#crc32" class="md-nav__link">
+    crc32
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#write-functions" class="md-nav__link">
+    Write functions
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#writeuint8" class="md-nav__link">
+    writeUInt8
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writeuint16" class="md-nav__link">
+    writeUInt16
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writeuint32" class="md-nav__link">
+    writeUInt32
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writeint8" class="md-nav__link">
+    writeInt8
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writeint16" class="md-nav__link">
+    writeInt16
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writeint32" class="md-nav__link">
+    writeInt32
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writefloat16" class="md-nav__link">
+    writeFloat16
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writefloat32" class="md-nav__link">
+    writeFloat32
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writefloat64" class="md-nav__link">
+    writeFloat64
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writebase64" class="md-nav__link">
+    writeBase64
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writestring" class="md-nav__link">
+    writeString
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writeterminatedstring" class="md-nav__link">
+    writeTerminatedString
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writesetlengthstring" class="md-nav__link">
+    writeSetLengthString
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writefield" class="md-nav__link">
+    writeField
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#read-functions" class="md-nav__link">
+    Read functions
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#readuint8" class="md-nav__link">
+    readUInt8
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#readuint16" class="md-nav__link">
+    readUInt16
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#readuint32" class="md-nav__link">
+    readUInt32
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#readint8" class="md-nav__link">
+    readInt8
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#readint16" class="md-nav__link">
+    readInt16
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#readint32" class="md-nav__link">
+    readInt32
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#readfloat16" class="md-nav__link">
+    readFloat16
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#readfloat32" class="md-nav__link">
+    readFloat32
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#readfloat64" class="md-nav__link">
+    readFloat64
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#readstring" class="md-nav__link">
+    readString
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#readterminatedstring" class="md-nav__link">
+    readTerminatedString
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#readsetlengthstring" class="md-nav__link">
+    readSetLengthString
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#readfield" class="md-nav__link">
+    readField
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+    
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../api-base/" title="Abstract Functions" class="md-nav__link">
+      Abstract Functions
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../api-roblox/" title="Roblox Functions" class="md-nav__link">
+      Roblox Functions
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#bitbuffer" class="md-nav__link">
+    BitBuffer
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#constructor" class="md-nav__link">
+    Constructor
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getpointer" class="md-nav__link">
+    getPointer
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#setpointer" class="md-nav__link">
+    setPointer
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#setpointerfromend" class="md-nav__link">
+    setPointerFromEnd
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getpointerbyte" class="md-nav__link">
+    getPointerByte
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#setpointerbyte" class="md-nav__link">
+    setPointerByte
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#setpointerbytefromend" class="md-nav__link">
+    setPointerByteFromEnd
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getlength" class="md-nav__link">
+    getLength
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getbytelength" class="md-nav__link">
+    getByteLength
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#isfinished" class="md-nav__link">
+    isFinished
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#export-functions" class="md-nav__link">
+    Export functions
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dumpbinary" class="md-nav__link">
+    dumpBinary
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dumpstring" class="md-nav__link">
+    dumpString
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dumpbase64" class="md-nav__link">
+    dumpBase64
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dumphex" class="md-nav__link">
+    dumpHex
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exportchunk" class="md-nav__link">
+    exportChunk
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exportbase64chunk" class="md-nav__link">
+    exportBase64Chunk
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exporthexchunk" class="md-nav__link">
+    exportHexChunk
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#crc32" class="md-nav__link">
+    crc32
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#write-functions" class="md-nav__link">
+    Write functions
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#writeuint8" class="md-nav__link">
+    writeUInt8
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writeuint16" class="md-nav__link">
+    writeUInt16
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writeuint32" class="md-nav__link">
+    writeUInt32
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writeint8" class="md-nav__link">
+    writeInt8
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writeint16" class="md-nav__link">
+    writeInt16
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writeint32" class="md-nav__link">
+    writeInt32
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writefloat16" class="md-nav__link">
+    writeFloat16
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writefloat32" class="md-nav__link">
+    writeFloat32
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writefloat64" class="md-nav__link">
+    writeFloat64
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writebase64" class="md-nav__link">
+    writeBase64
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writestring" class="md-nav__link">
+    writeString
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writeterminatedstring" class="md-nav__link">
+    writeTerminatedString
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writesetlengthstring" class="md-nav__link">
+    writeSetLengthString
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#writefield" class="md-nav__link">
+    writeField
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#read-functions" class="md-nav__link">
+    Read functions
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#readuint8" class="md-nav__link">
+    readUInt8
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#readuint16" class="md-nav__link">
+    readUInt16
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#readuint32" class="md-nav__link">
+    readUInt32
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#readint8" class="md-nav__link">
+    readInt8
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#readint16" class="md-nav__link">
+    readInt16
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#readint32" class="md-nav__link">
+    readInt32
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#readfloat16" class="md-nav__link">
+    readFloat16
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#readfloat32" class="md-nav__link">
+    readFloat32
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#readfloat64" class="md-nav__link">
+    readFloat64
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#readstring" class="md-nav__link">
+    readString
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#readterminatedstring" class="md-nav__link">
+    readTerminatedString
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#readsetlengthstring" class="md-nav__link">
+    readSetLengthString
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#readfield" class="md-nav__link">
+    readField
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/dekkonot/bitbuffer/edit/master/docs/api-main.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
+                
+                
+                  <h1>Main Functions</h1>
+                
+                <p>This page covers all of the main functions of the BitBuffer. These include the constructor, functions to get the data out of the BitBuffer, and its main read/write functions. Abstract functions, like <code>writeUnsigned</code> (which allows writing an integer of arbitrary size) aren't documented on this page since they shouldn't generally see use in a normal project.</p>
+<p>However, they're still useful and are thus documented in <a href="../api-base/"><em>Abstract Functions</em></a>. Functions that are specific to the Roblox version of the BitBuffer are documented in <a href="../api-roblox/"><em>Roblox Functions</em></a>.</p>
+<details class="abstract"><summary>Type Information</summary><p>This API reference provides the argument and return types for the various functions. They will hopefully be self-explanatory, but as a brief overview, the type of arguments look like this: <code>x: number</code> and means that <code>x</code> is a <code>number</code>. If an argument's type is followed by a <code>?</code>, it means the argument is optional. The return type of a function follows a <code>-&gt;</code>.</p>
+<p>Thus, <code>BitBuffer(stream: string?) -&gt; BitBuffer</code> means that the function <code>BitBuffer</code> optionally takes a string as an argument and returns a BitBuffer.</p>
+</details>
+<h2 id="bitbuffer">BitBuffer<a class="headerlink" href="#bitbuffer" title="Permanent link">&para;</a></h2>
+<h3 id="constructor">Constructor<a class="headerlink" href="#constructor" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer(stream: string?) -&gt; BitBuffer
+</pre></div>
+
+
+<p>Creates a new BitBuffer object and fills it with <code>stream</code> if it's provided. Otherwise, returns an empty BitBuffer.</p>
+<h3 id="getpointer">getPointer<a class="headerlink" href="#getpointer" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.getPointer() -&gt; integer
+</pre></div>
+
+
+<p>Returns where the pointer is in the stream. The pointer is the bit from which the various <a href="#read-functions">Read functions</a> operate.</p>
+<h3 id="setpointer">setPointer<a class="headerlink" href="#setpointer" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.setPointer(n: integer) -&gt; nil
+</pre></div>
+
+
+<p>Sets where the pointer is in the stream in bits.</p>
+<h3 id="setpointerfromend">setPointerFromEnd<a class="headerlink" href="#setpointerfromend" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.setPointerFromEnd(n: integer) -&gt; nil
+</pre></div>
+
+
+<p>Sets the pointer in bits from the end of the stream. Equivalent to <code>setPointer(getBitLength()-n)</code>.</p>
+<h3 id="getpointerbyte">getPointerByte<a class="headerlink" href="#getpointerbyte" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.getPointerByte() -&gt; integer
+</pre></div>
+
+
+<p>Returns the byte the pointer is at in the stream.</p>
+<h3 id="setpointerbyte">setPointerByte<a class="headerlink" href="#setpointerbyte" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.setPointerByte(n: integer) -&gt; nil
+</pre></div>
+
+
+<p>Sets where the pointer is in the stream in bytes.</p>
+<h3 id="setpointerbytefromend">setPointerByteFromEnd<a class="headerlink" href="#setpointerbytefromend" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.setPointerByteFromEnd(n: integer) -&gt; nil
+</pre></div>
+
+
+<p>Sets the pointer in bytes from the end of the stream. Equivalent to <code>setPointerByte(getLength()-n)</code>.</p>
+<h3 id="getlength">getLength<a class="headerlink" href="#getlength" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.getLength() -&gt; integer
+</pre></div>
+
+
+<p>Returns the length of the internal buffer in bits.</p>
+<h3 id="getbytelength">getByteLength<a class="headerlink" href="#getbytelength" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.getByteLength() -&gt; integer
+</pre></div>
+
+
+<p>Returns the length of the internal buffer in bytes.</p>
+<h3 id="isfinished">isFinished<a class="headerlink" href="#isfinished" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.isFinished() -&gt; boolean
+</pre></div>
+
+
+<p>Returns whether or not the buffer has data left in it to read.</p>
+<h2 id="export-functions">Export functions<a class="headerlink" href="#export-functions" title="Permanent link">&para;</a></h2>
+<p>The following functions are all intended to get data <em>out</em> of the BitBuffer in some way.</p>
+<h3 id="dumpbinary">dumpBinary<a class="headerlink" href="#dumpbinary" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.dumpBinary() -&gt; string
+</pre></div>
+
+
+<p>Returns a string of binary digits that represents the content of the BitBuffer. This is primarily intended for debugging or testing purposes.</p>
+<h3 id="dumpstring">dumpString<a class="headerlink" href="#dumpstring" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.dumpString() -&gt; string
+</pre></div>
+
+
+<p>Returns the raw binary content of the BitBuffer. This function is one of the main methods for getting things out of the buffer, and outputs the raw binary data.</p>
+<h3 id="dumpbase64">dumpBase64<a class="headerlink" href="#dumpbase64" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.dumpBase64() -&gt; string
+</pre></div>
+
+
+<p>Returns the base64 encoded content of the BitBuffer. This function doesn't add linebreaks to the data.</p>
+<p>To write base64 data to the BitBuffer, use <a href="#writebase64"><code>writeBase64</code></a></p>
+<h3 id="dumphex">dumpHex<a class="headerlink" href="#dumphex" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.dumpHex() -&gt; string
+</pre></div>
+
+
+<p>Returns a string of hex characters representing the contents of the BitBuffer.</p>
+<h3 id="exportchunk">exportChunk<a class="headerlink" href="#exportchunk" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.exportChunk(chunkLength: integer) -&gt; iterator() -&gt; i: integer, chunk: string
+</pre></div>
+
+
+<p>Returns an iterator function that can be used to get individual chunks and their position in the Buffer.</p>
+<div class="codehilite"><pre><span></span><span class="kd">local</span> <span class="n">buffer</span> <span class="o">=</span> <span class="n">BitBuffer</span><span class="p">(</span><span class="s2">&quot;foo|bar|baz&quot;</span><span class="p">)</span>
+<span class="kr">for</span> <span class="n">position</span><span class="p">,</span> <span class="n">chunk</span> <span class="kr">in</span> <span class="n">buffer</span><span class="p">.</span><span class="n">exportChunk</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span> <span class="kr">do</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">position</span><span class="p">,</span> <span class="n">chunk</span><span class="p">)</span>
+<span class="kr">end</span>
+</pre></div>
+
+
+<p>Would output:</p>
+<div class="codehilite"><pre><span></span>1   foo|
+5   bar|
+9   baz
+</pre></div>
+
+
+<h3 id="exportbase64chunk">exportBase64Chunk<a class="headerlink" href="#exportbase64chunk" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.exportBase64Chunk(chunkLength: integer)- &gt; iterator() -&gt; chunk: string
+</pre></div>
+
+
+<p>Returns an iterator function that can be used to get individual chunks of the Buffer, encoded to Base64. The <code>chunkLength</code> argument is the size of the Base64 output, not the size of the chunk pre-encoding.</p>
+<div class="codehilite"><pre><span></span><span class="kd">local</span> <span class="n">buffer</span> <span class="o">=</span> <span class="n">BitBuffer</span><span class="p">(</span><span class="s2">&quot;foo|bar|baz&quot;</span><span class="p">)</span>
+<span class="kr">for</span> <span class="n">chunk</span> <span class="kr">in</span> <span class="n">buffer</span><span class="p">.</span><span class="n">exportBase64Chunk</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span> <span class="kr">do</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
+<span class="kr">end</span>
+</pre></div>
+
+
+<p>Would output:</p>
+<div class="codehilite"><pre><span></span>Zm9v
+fGJh
+cnxi
+YXo=
+</pre></div>
+
+
+<h3 id="exporthexchunk">exportHexChunk<a class="headerlink" href="#exporthexchunk" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.exportHexChunk(chunkLength: integer)- &gt; iterator() -&gt; chunk: string
+</pre></div>
+
+
+<p>Returns an iterator function that can be used to get individual chunks of the Buffer with their bytes in hex. The <code>chunkLength</code> argument is the size of the hex output, not the size of the chunk pre-encoding.</p>
+<div class="codehilite"><pre><span></span><span class="kd">local</span> <span class="n">buffer</span> <span class="o">=</span> <span class="n">BitBuffer</span><span class="p">(</span><span class="s2">&quot;foo|bar|baz&quot;</span><span class="p">)</span>
+<span class="kr">for</span> <span class="n">chunk</span> <span class="kr">in</span> <span class="n">buffer</span><span class="p">.</span><span class="n">exportHexChunk</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span> <span class="kr">do</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
+<span class="kr">end</span>
+</pre></div>
+
+
+<p>Would output:</p>
+<div class="codehilite"><pre><span></span>666f6f7c
+6261727c
+62617a
+</pre></div>
+
+
+<h3 id="crc32">crc32<a class="headerlink" href="#crc32" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.crc32() -&gt; integer
+</pre></div>
+
+
+<p>Returns the CRC-32 checksum of the BitBuffer's contents.</p>
+<h2 id="write-functions">Write functions<a class="headerlink" href="#write-functions" title="Permanent link">&para;</a></h2>
+<p>The following functions are all intended to write data to the BitBuffer. With little exception, they're more efficient than calling their abstract equivalents and should be used over them.</p>
+<h3 id="writeuint8">writeUInt8<a class="headerlink" href="#writeuint8" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.writeUInt8(n: integer) -&gt; nil
+</pre></div>
+
+
+<p>Writes the unsigned 8-bit integer <code>n</code> to the BitBuffer. Directly calls <code>BitBuffer.writeByte</code>, but included for the sake of completion.</p>
+<h3 id="writeuint16">writeUInt16<a class="headerlink" href="#writeuint16" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.writeUInt16(n: integer) -&gt; nil
+</pre></div>
+
+
+<p>Writes the unsigned 16-bit integer <code>n</code> to the BitBuffer.</p>
+<h3 id="writeuint32">writeUInt32<a class="headerlink" href="#writeuint32" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.writeUInt32(n: integer) -&gt; nil
+</pre></div>
+
+
+<p>Writes the unsigned 32-bit integer <code>n</code> to the BitBuffer.</p>
+<h3 id="writeint8">writeInt8<a class="headerlink" href="#writeint8" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.writeUInt8(n: integer) -&gt; nil
+</pre></div>
+
+
+<p>Writes the signed 8-bit integer <code>n</code> to the BitBuffer.</p>
+<h3 id="writeint16">writeInt16<a class="headerlink" href="#writeint16" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.writeUInt16(n: integer) -&gt; nil
+</pre></div>
+
+
+<p>Writes the signed 16-bit integer <code>n</code> to the BitBuffer.</p>
+<h3 id="writeint32">writeInt32<a class="headerlink" href="#writeint32" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.writeUInt32(n: integer) -&gt; nil
+</pre></div>
+
+
+<p>Writes the signed 32-bit integer <code>n</code> to the BitBuffer.</p>
+<h3 id="writefloat16">writeFloat16<a class="headerlink" href="#writefloat16" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.writeFloat16(n: number) -&gt; nil
+</pre></div>
+
+
+<p>Writes a <a href="https://en.wikipedia.org/wiki/Half-precision_floating-point_format">half-precision</a> (16-bit) floating point number to the BitBuffer.</p>
+<h3 id="writefloat32">writeFloat32<a class="headerlink" href="#writefloat32" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.writeFloat32(n: number) -&gt; nil
+</pre></div>
+
+
+<p>Writes a <a href="https://en.wikipedia.org/wiki/Single-precision_floating-point_format">single-precision</a> (32-bit) floating point number to the BitBuffer.</p>
+<h3 id="writefloat64">writeFloat64<a class="headerlink" href="#writefloat64" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.writeFloat64(n: number) -&gt; nil
+</pre></div>
+
+
+<p>Writes a <a href="https://en.wikipedia.org/wiki/Double-precision_floating-point_format">double-precision</a> (64-bit) floating point number to the BitBuffer. In most installs of Lua (including Roblox), all Lua numbers are doubles, so this should be used if the precision of a number is important.</p>
+<h3 id="writebase64">writeBase64<a class="headerlink" href="#writebase64" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.writeBase64(input: string) -&gt; nil
+</pre></div>
+
+
+<p>Writes a sequence of base64 bytes to the BitBuffer, decoding them in the process. Padding is optional, and non-base64 characters will cause an error.</p>
+<p>To retrieve base64 output, use <a href="#dumpbase64"><code>dumpBase64</code></a>.</p>
+<h3 id="writestring">writeString<a class="headerlink" href="#writestring" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.writeString(str: string) -&gt; nil
+</pre></div>
+
+
+<p>Writes a length-prefixed string to the BitBuffer. The length is written as a 24-bit unsigned integer before the bytes of the string.</p>
+<h3 id="writeterminatedstring">writeTerminatedString<a class="headerlink" href="#writeterminatedstring" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.writeTerminatedString(str: string) -&gt; nil
+</pre></div>
+
+
+<p>Writes a null-terminated string to the BitBuffer. For efficiency's sake, this function doesn't check to see if <code>str</code> contains an embedded <code>\0</code> character, so plan accordingly.</p>
+<h3 id="writesetlengthstring">writeSetLengthString<a class="headerlink" href="#writesetlengthstring" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.writeSetLengthString(str: string) -&gt; nil
+</pre></div>
+
+
+<p>Writes a set-length string to the BitBuffer. No information is stored about the length of the string -- readSetLengthString requires the length of the written string to read.</p>
+<h3 id="writefield">writeField<a class="headerlink" href="#writefield" title="Permanent link">&para;</a></h3>
+<div class="admonition warning">
+<p class="admonition-title">Potential Performance Issue</p>
+<p>Although this function allows for writing fields that aren't a multiple of 8 bits long, it can cause performance problems for subsequent writes because of the math involved. You should try to keep writeField calls to the end of the file or make sure they're multiples of 8.</p>
+</div>
+<div class="codehilite"><pre><span></span>BitBuffer.writeField(...: any) -&gt; nil
+</pre></div>
+
+
+<p>Writes a bitfield with a bit for every argument passed. If the argument is truthy, the bit is <code>1</code>. Otherwise, it's <code>false</code>. The max number of arguments able to be passed to this function is 53 (see <a href="..#limitations">the section on limitations</a>).</p>
+<h2 id="read-functions">Read functions<a class="headerlink" href="#read-functions" title="Permanent link">&para;</a></h2>
+<p>The following functions are all intended to read data from the BitBuffer. With little exception, they're more efficient than calling their abstract equivalents and should be used over them.</p>
+<h3 id="readuint8">readUInt8<a class="headerlink" href="#readuint8" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.readUInt8() -&gt; integer
+</pre></div>
+
+
+<p>Reads an 8-bit unsigned integer from the BitBuffer and returns it.</p>
+<h3 id="readuint16">readUInt16<a class="headerlink" href="#readuint16" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.readUInt16() -&gt; integer
+</pre></div>
+
+
+<p>Reads a 16-bit unsigned integer from the BitBuffer and returns it.</p>
+<h3 id="readuint32">readUInt32<a class="headerlink" href="#readuint32" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.readUInt32() -&gt; integer
+</pre></div>
+
+
+<p>Reads a 32-bit unsigned integer from the BitBuffer and returns it.</p>
+<h3 id="readint8">readInt8<a class="headerlink" href="#readint8" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.readInt8() -&gt; integer
+</pre></div>
+
+
+<p>Reads an 8-bit signed integer from the BitBuffer and returns it.</p>
+<h3 id="readint16">readInt16<a class="headerlink" href="#readint16" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.readInt16() -&gt; integer
+</pre></div>
+
+
+<p>Reads a 16-bit signed integer from the BitBuffer and returns it.</p>
+<h3 id="readint32">readInt32<a class="headerlink" href="#readint32" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.readInt32() -&gt; integer
+</pre></div>
+
+
+<p>Reads an 32-bit signed integer from the BitBuffer and returns it.</p>
+<h3 id="readfloat16">readFloat16<a class="headerlink" href="#readfloat16" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.readFloat16() -&gt; number
+</pre></div>
+
+
+<p>Reads a <a href="https://en.wikipedia.org/wiki/Half-precision_floating-point_format">half-precision</a> (16-bit) floating point number from the BitBuffer and returns it.</p>
+<h3 id="readfloat32">readFloat32<a class="headerlink" href="#readfloat32" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.readFloat32() -&gt; number
+</pre></div>
+
+
+<p>Reads a <a href="https://en.wikipedia.org/wiki/Single-precision_floating-point_format">single-precision</a> (32-bit) floating point number from the BitBuffer and returns it.</p>
+<h3 id="readfloat64">readFloat64<a class="headerlink" href="#readfloat64" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.readFloat64() -&gt; number
+</pre></div>
+
+
+<p>Reads a <a href="https://en.wikipedia.org/wiki/Double-precision_floating-point_format">double-precision</a> (64-bit) floating point number from the BitBuffer and returns it.</p>
+<h3 id="readstring">readString<a class="headerlink" href="#readstring" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.readString() -&gt; string
+</pre></div>
+
+
+<p>Reads a length-prefixed string from the BitBuffer and returns it.</p>
+<h3 id="readterminatedstring">readTerminatedString<a class="headerlink" href="#readterminatedstring" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.readTerminatedString() -&gt; string
+</pre></div>
+
+
+<p>Reads a null-terminated string from the BitBuffer and returns it.</p>
+<h3 id="readsetlengthstring">readSetLengthString<a class="headerlink" href="#readsetlengthstring" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span>BitBuffer.readSetLengthString(length: integer) -&gt; string
+</pre></div>
+
+
+<p>Reads a <code>length</code> byte string from the BitBuffer and returns it.</p>
+<h3 id="readfield">readField<a class="headerlink" href="#readfield" title="Permanent link">&para;</a></h3>
+<div class="admonition warning">
+<p class="admonition-title">Potential Performance Issue</p>
+<p>Although this function allows for reading fields that aren't a multiple of 8 bits long, it can cause performance problems for subsequent reads because of the math involved. You should try to keep readField calls to the end of the file or make sure they're multiples of 8.</p>
+</div>
+<div class="codehilite"><pre><span></span>BitBuffer.readField(n: integer) -&gt; Array&lt;boolean&gt;
+</pre></div>
+
+
+<p>Reads an <code>n</code> width bitfield from the BitBuffer and returns an array of bools that represent its bits.</p>
+                
+                  
+                
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid">
+        
+          <a href="../customization/" title="Customization" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
+            </div>
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Customization
+              </span>
+            </div>
+          </a>
+        
+        
+          <a href="../api-base/" title="Abstract Functions" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                Abstract Functions
+              </span>
+            </div>
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        powered by
+        <a href="https://www.mkdocs.org">MkDocs</a>
+        and
+        <a href="https://squidfunk.github.io/mkdocs-material/">
+          Material for MkDocs</a>
+      </div>
+      
+  <div class="md-footer-social">
+    <link rel="stylesheet" href="../assets/fonts/font-awesome.css">
+    
+      <a href="https://github.com/dekkonot" class="md-footer-social__link fa fa-"></a>
+    
+      <a href="https://twitter.com/dekkonot" class="md-footer-social__link fa fa-"></a>
+    
+  </div>
+
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../assets/javascripts/application.808e90bb.js"></script>
+      
+      <script>app.initialize({version:"1.0.4",url:{base:".."}})</script>
+      
+    
+  </body>
+</html>
