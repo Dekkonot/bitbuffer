@@ -1,13 +1,13 @@
--- The standard base64 alphabet as codepoints rather than characters.
+local CHAR_SET = [[ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/]]
 
--- stylua: ignore
-local BASE64_CHAR_SET = { [0] =
-    0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4a, 0x4b, 0x4c, 0x4d,
-    0x4e, 0x4f, 0x50, 0x51, 0x52, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58, 0x59, 0x5a,
-    0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6a, 0x6b, 0x6c, 0x6d,
-    0x6e, 0x6f, 0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78, 0x79, 0x7a,
-    0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x2b, 0x2f
-}
+-- Tradition is to use chars for the lookup table instead of codepoints.
+-- But due to how we're running the encode function, it's faster to use codepoints.
+local encode_char_set = {}
+local decode_char_set = {}
+for i = 1, 64 do
+    encode_char_set[i - 1] = string.byte(CHAR_SET, i, i)
+    decode_char_set[string.byte(CHAR_SET, i, i)] = i - 1
+end
 
 -- stylua: ignore
 local HEX_TO_BIN = {
@@ -141,10 +141,10 @@ local function bitBuffer(stream)
 
             -- This can be done with bit32.extract (and/or bit32.lshift, bit32.band, bit32.rshift)
             -- But bit masking and shifting is more eloquent in my opinion.
-            output[c] = BASE64_CHAR_SET[bit32.rshift(bit32.band(packed, 0xfc0000), 0x12)]
-            output[c + 1] = BASE64_CHAR_SET[bit32.rshift(bit32.band(packed, 0x3f000), 0xc)]
-            output[c + 2] = b2 and BASE64_CHAR_SET[bit32.rshift(bit32.band(packed, 0xfc0), 0x6)] or 0x3d -- 0x3d == "="
-            output[c + 3] = b3 and BASE64_CHAR_SET[bit32.band(packed, 0x3f)] or 0x3d
+            output[c] = encode_char_set[bit32.rshift(bit32.band(packed, 0xfc0000), 0x12)]
+            output[c + 1] = encode_char_set[bit32.rshift(bit32.band(packed, 0x3f000), 0xc)]
+            output[c + 2] = b2 and encode_char_set[bit32.rshift(bit32.band(packed, 0xfc0), 0x6)] or 0x3d -- 0x3d == "="
+            output[c + 3] = b3 and encode_char_set[bit32.band(packed, 0x3f)] or 0x3d
 
             c = c + 4
         end
@@ -191,10 +191,10 @@ local function bitBuffer(stream)
             local b1, b2, b3 = bytes[i], bytes[i + 1], bytes[i + 2]
             local packed = bit32.lshift(b1, 16) + bit32.lshift(b2 or 0, 8) + (b3 or 0)
 
-            output[c] = BASE64_CHAR_SET[bit32.rshift(bit32.band(packed, 0xfc0000), 0x12)]
-            output[c + 1] = BASE64_CHAR_SET[bit32.rshift(bit32.band(packed, 0x3f000), 0xc)]
-            output[c + 2] = b2 and BASE64_CHAR_SET[bit32.rshift(bit32.band(packed, 0xfc0), 0x6)] or 0x3d
-            output[c + 3] = b3 and BASE64_CHAR_SET[bit32.band(packed, 0x3f)] or 0x3d
+            output[c] = encode_char_set[bit32.rshift(bit32.band(packed, 0xfc0000), 0x12)]
+            output[c + 1] = encode_char_set[bit32.rshift(bit32.band(packed, 0x3f000), 0xc)]
+            output[c + 2] = b2 and encode_char_set[bit32.rshift(bit32.band(packed, 0xfc0), 0x6)] or 0x3d
+            output[c + 3] = b3 and encode_char_set[bit32.band(packed, 0x3f)] or 0x3d
 
             c = c + 4
         end
@@ -562,6 +562,35 @@ local function bitBuffer(stream)
         -- 0.00101 = 1.01 >> 3, or 0.15625 = 1.25*2^-3
         -- A small but important distinction that has made writing this module frustrating because no documentation notates this.
         writeUnsigned(mantissaWidth, mantissa)
+    end
+
+    local function writeBase64(input)
+        assert(type(input) == "string", "argument #1 to BitBuffer.writeBase64 should be a string")
+        assert(
+            not string.find(input, "[^%w%+/=]"),
+            "argument #1 to BitBuffer.writeBase64 should only contain valid base64 characters"
+        )
+
+        for i = 1, #input, 4 do
+            local b1, b2, b3, b4 = string.byte(input, i, i + 3)
+
+            b1 = decode_char_set[b1]
+            b2 = decode_char_set[b2]
+            b3 = decode_char_set[b3]
+            b4 = decode_char_set[b4]
+
+            local packed = bit32.bor(bit32.lshift(b1, 18), bit32.lshift(b2, 12), bit32.lshift(b3 or 0, 6), b4 or 0)
+
+            writeByte(bit32.rshift(packed, 16))
+            if not b3 then
+                break
+            end
+            writeByte(bit32.band(bit32.rshift(packed, 8), 0xff))
+            if not b4 then
+                break
+            end
+            writeByte(bit32.band(packed, 0xff))
+        end
     end
 
     local function writeString(str)
@@ -1682,6 +1711,7 @@ local function bitBuffer(stream)
         writeUnsigned = writeUnsigned,
         writeSigned = writeSigned,
         writeFloat = writeFloat,
+        writeBase64 = writeBase64,
         writeString = writeString,
         writeTerminatedString = writeTerminatedString,
         writeSetLengthString = writeSetLengthString,

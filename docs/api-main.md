@@ -105,6 +105,8 @@ BitBuffer.dumpBase64() -> string
 ```
 Returns the base64 encoded content of the BitBuffer. This function doesn't add linebreaks to the data.
 
+To write base64 data to the BitBuffer, use [`writeBase64`](#writebase64)
+
 ### dumpHex
 
 ```
@@ -249,6 +251,15 @@ Writes a [single-precision](https://en.wikipedia.org/wiki/Single-precision_float
 BitBuffer.writeFloat64(n: number) -> nil
 ```
 Writes a [double-precision](https://en.wikipedia.org/wiki/Double-precision_floating-point_format) (64-bit) floating point number to the BitBuffer. In most installs of Lua (including Roblox), all Lua numbers are doubles, so this should be used if the precision of a number is important.
+
+### writeBase64
+
+```
+BitBuffer.writeBase64(input: string) -> nil
+```
+Writes a sequence of base64 bytes to the BitBuffer, decoding them in the process. Padding is optional, and non-base64 characters will cause an error.
+
+To retrieve base64 output, use [`dumpBase64`](#dumpbase64).
 
 ### writeString
 

@@ -7,6 +7,7 @@ return {
     "unsigned",
     "signed",
     "float",
+    "writeBase64",
     "string",
     "terminatedstring",
     "setlengthstring",
