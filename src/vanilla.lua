@@ -483,7 +483,7 @@ local function bitBuffer(stream)
 
         local sign = n < 0 -- The sign of a number is important.
         -- In this case, since we're using a lookup table for the sign bit, we want `sign` to indicate if the number is negative or not.
-        n = math.abs(n) -- It's annoying to work with negative numbers and the sign isn't important for decomposition.
+        n = math.abs(n) -- But it's annoying to work with negative numbers and the sign isn't important for decomposition.
 
         -- Lua has a function specifically for decomposing (or taking apart) a floating point number into its pieces.
         -- These pieces, as listed above, are the mantissa and exponent.
