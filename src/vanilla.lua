@@ -123,7 +123,7 @@ local function bitBuffer(stream)
         local c = 1
         for i = 1, byteCount, 3 do
             local b1, b2, b3 = bytes[i], bytes[i + 1], bytes[i + 2]
-            local packed = bit32.lshift(b1, 16) + bit32.lshift(b2 or 0, 8) + (b3 or 0)
+            local packed = bit32.bor(bit32.lshift(b1, 16), bit32.lshift(b2 or 0, 8), b3 or 0)
 
             -- This can be done with bit32.extract (and/or bit32.lshift, bit32.band, bit32.rshift)
             -- But bit masking and shifting is more eloquent in my opinion.
@@ -175,7 +175,7 @@ local function bitBuffer(stream)
         local c = 1
         for i = 1, byteCount, 3 do
             local b1, b2, b3 = bytes[i], bytes[i + 1], bytes[i + 2]
-            local packed = bit32.lshift(b1, 16) + bit32.lshift(b2 or 0, 8) + (b3 or 0)
+            local packed = bit32.bor(bit32.lshift(b1, 16), bit32.lshift(b2 or 0, 8), b3 or 0)
 
             output[c] = encode_char_set[bit32.rshift(bit32.band(packed, 0xfc0000), 0x12)]
             output[c + 1] = encode_char_set[bit32.rshift(bit32.band(packed, 0x3f000), 0xc)]
