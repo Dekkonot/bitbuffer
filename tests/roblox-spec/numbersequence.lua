@@ -14,7 +14,7 @@ local function makeTests(try, BitBuffer)
 
         buffer.writeNumberSequence(NumberSequence.new(-1776.0406, 87))
 
-        assert(buffer.dumpHex() == "0000000200000000c4de014dc4de014d3f80000042ae000000000000", "")
+        assert(buffer.dumpHex() == "0000000200000000c4de014d000000003f80000042ae000000000000", "")
     end).pass()
 
     writeTest("Should write two keypoints to the stream with custom envelopes properly", function()
@@ -22,7 +22,7 @@ local function makeTests(try, BitBuffer)
 
         buffer.writeNumberSequence(NumberSequence.new({NumberSequenceKeypoint.new(0, -1776.0406, 0), NumberSequenceKeypoint.new(1, 87, 5)}))
 
-        assert(buffer.dumpHex() == "0000000200000000c4de014dc4de014d3f80000042ae000040a00000", "")
+        assert(buffer.dumpHex() == "0000000200000000c4de014d000000003f80000042ae000040a00000", "")
     end).pass()
 
     writeTest("Should write 10 keypoints to the stream properly", function()
@@ -35,7 +35,7 @@ local function makeTests(try, BitBuffer)
             NumberSequenceKeypoint.new(1, 0)
         }))
 
-        assert(buffer.dumpHex() == "0000000a00000000c4de014dc4de014d3dcccccd42ae0000000000003e4ccccdc2d20000c2d200003e99999a44a72000000000003ecccccdc4a72000c4a720003f00000043e28000000000003f19999ac2ae0000c2ae00003f33333342d20000000000003f4ccccdc3e28000c3e280003f8000000000000000000000", "")
+        assert(buffer.dumpHex() == "0000000a00000000c4de014d000000003dcccccd42ae0000000000003e4ccccdc2d20000000000003e99999a44a72000000000003ecccccdc4a72000000000003f00000043e28000000000003f19999ac2ae0000000000003f33333342d20000000000003f4ccccdc3e28000000000003f8000000000000000000000", "")
     end).pass()
 
     writeTest("Should write two keypoints to the stream properly after a bit", function()
@@ -44,7 +44,7 @@ local function makeTests(try, BitBuffer)
         buffer.writeBits(1)
         buffer.writeNumberSequence(NumberSequence.new(-1776.0406, 87))
 
-        assert(buffer.dumpHex() == "8000000100000000626f00a6e26f00a69fc00000215700000000000000", "")
+        assert(buffer.dumpHex() == "8000000100000000626f00a6800000001fc00000215700000000000000", "")
     end).pass()
 
     writeTest("Should write two keypoints to the stream with custom envelopes properly after a bit", function()
@@ -53,7 +53,7 @@ local function makeTests(try, BitBuffer)
         buffer.writeBits(1)
         buffer.writeNumberSequence(NumberSequence.new({NumberSequenceKeypoint.new(0, -1776.0406, 0), NumberSequenceKeypoint.new(1, 87, 5)}))
 
-        assert(buffer.dumpHex() == "8000000100000000626f00a6e26f00a69fc00000215700002050000000", "")
+        assert(buffer.dumpHex() == "8000000100000000626f00a6800000001fc00000215700002050000000", "")
     end).pass()
 
     writeTest("Should write 10 keypoints to the stream properly after a bit", function()
@@ -67,7 +67,7 @@ local function makeTests(try, BitBuffer)
             NumberSequenceKeypoint.new(1, 0)
         }))
 
-        assert(buffer.dumpHex() == "8000000500000000626f00a6e26f00a69ee66666a1570000000000001f266666e1690000616900001f4ccccd22539000000000001f666666e2539000625390001f80000021f14000000000001f8ccccd61570000615700001f999999a1690000000000001fa66666e1f1400061f140001fc00000000000000000000000", "")
+        assert(buffer.dumpHex() == "8000000500000000626f00a6800000001ee66666a1570000000000001f266666e1690000000000001f4ccccd22539000000000001f666666e2539000000000001f80000021f14000000000001f8ccccd61570000000000001f999999a1690000000000001fa66666e1f14000000000001fc00000000000000000000000", "")
     end).pass()
 
     writeTest("Should write a bit to the stream properly after two keypoints", function()
@@ -76,7 +76,7 @@ local function makeTests(try, BitBuffer)
         buffer.writeNumberSequence(NumberSequence.new(-1776.0406, 87))
         buffer.writeBits(1)
 
-        assert(buffer.dumpHex() == "0000000200000000c4de014dc4de014d3f80000042ae00000000000080", "")
+        assert(buffer.dumpHex() == "0000000200000000c4de014d000000003f80000042ae00000000000080", "")
     end).pass()
 
     writeTest("Should write a bit to the stream properly after two keypoints with custom envelopes", function()
@@ -85,7 +85,7 @@ local function makeTests(try, BitBuffer)
         buffer.writeNumberSequence(NumberSequence.new({NumberSequenceKeypoint.new(0, -1776.0406, 0), NumberSequenceKeypoint.new(1, 87, 5)}))
         buffer.writeBits(1)
 
-        assert(buffer.dumpHex() == "0000000200000000c4de014dc4de014d3f80000042ae000040a0000080", "")
+        assert(buffer.dumpHex() == "0000000200000000c4de014d000000003f80000042ae000040a0000080", "")
     end).pass()
 
     writeTest("Should write a bit to the stream properly after 10 keypoints", function()
@@ -99,7 +99,7 @@ local function makeTests(try, BitBuffer)
         }))
         buffer.writeBits(1)
 
-        assert(buffer.dumpHex() == "0000000a00000000c4de014dc4de014d3dcccccd42ae0000000000003e4ccccdc2d20000c2d200003e99999a44a72000000000003ecccccdc4a72000c4a720003f00000043e28000000000003f19999ac2ae0000c2ae00003f33333342d20000000000003f4ccccdc3e28000c3e280003f800000000000000000000080", "")
+        assert(buffer.dumpHex() == "0000000a00000000c4de014d000000003dcccccd42ae0000000000003e4ccccdc2d20000000000003e99999a44a72000000000003ecccccdc4a72000000000003f00000043e28000000000003f19999ac2ae0000000000003f33333342d20000000000003f4ccccdc3e28000000000003f800000000000000000000080", "")
     end).pass()
 
     readTest("Should require no arguments", function()
