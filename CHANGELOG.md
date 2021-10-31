@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## Unreleased
+## Version 1.1.0
 
 - Added `writeBase64` as a companion to `dumpBase64`
 - Fixed a bug where `dumpBase64` was allocating 25% of the actual used space in the Roblox version of the module
