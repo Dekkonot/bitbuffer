@@ -132,7 +132,7 @@ local function bitBuffer(stream)
         -- And 2^6 is a mere 64, far less than the number of printable characters.
         -- If there are any missing bytes, `=` is added to the end as padding.
         -- Base64 increases the size of its input by 33%.
-        local output = table.create(math.ceil(byteCount * 0.333)) --!
+        local output = table.create(math.ceil(byteCount * 1.333)) --!
 
         local c = 1
         for i = 1, byteCount, 3 do
