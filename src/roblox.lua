@@ -152,7 +152,7 @@ local function bitBuffer(stream)
 
         local realOutput = table.create(math.ceil(c / 0x1000)) --!
         local k = 1
-        for i = 1, byteCount, 0x1000 do
+        for i = 1, c, 0x1000 do
             realOutput[k] = string.char(table.unpack(output, i, math.min(c, i + 0xfff)))
             k = k + 1
         end
