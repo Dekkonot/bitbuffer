@@ -1,0 +1,16 @@
+[package]
+name = "dekkonot/bitbuffer"
+
+version = "1.1.1"
+
+description = "Binary data packing and unpacking in pure Luau"
+
+authors = ["Dekkonot"]
+
+license = "MIT"
+realm = "shared"
+registry = "https://github.com/upliftgames/wally-index"
+
+# I wish `include` worked.
+
+exclude = [".github", "docs", "rojo", "scripts", "tests", "*.toml", "*.yml", "src/vanilla.lua"]
