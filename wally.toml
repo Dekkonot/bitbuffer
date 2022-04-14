@@ -13,4 +13,4 @@ registry = "https://github.com/upliftgames/wally-index"
 
 # I wish `include` worked.
 
-exclude = [".github", "docs", "rojo", "scripts", "tests", "*.toml", "*.yml", "src/vanilla.lua"]
+exclude = [".github", "docs", "rojo", "scripts", "tests", "*.yml", "src/vanilla.lua"]
