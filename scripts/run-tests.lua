@@ -10,7 +10,7 @@ local try = require(ReplicatedStorage.try)
 
 local function runTestModule(name, parent)
     local testModule = parent:FindFirstChild(name)
-    assert(testModule, 'unable to find spec file: ' .. name)
+    assert(testModule, "unable to find spec file: " .. name)
     local test = require(testModule)
     test(try.new, BitBuffer)
 end
