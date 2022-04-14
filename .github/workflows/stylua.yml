@@ -1,0 +1,19 @@
+name: StyLua
+on:
+  push:
+    paths: '**.lua'
+    branches: 'main'
+  pull_request:
+    paths: '**.lua'
+jobs:
+  Lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: JohnnyMorganz/stylua-action@1.0.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          # CLI arguments
+          args: --check .
+          # Version
+          version: v0.13.1
