@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## Version 1.1.1
+
+- Fixed a bug where `dumpBase64` wouldn't output properly for large buffers (PR #35)
+
 ## Version 1.1.0
 
 - Added `writeBase64` as a companion to `dumpBase64`
