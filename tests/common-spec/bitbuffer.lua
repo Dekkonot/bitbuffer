@@ -32,6 +32,12 @@ local function makeTests(try, BitBuffer)
         assert(buffer.dumpBinary() == "01001000 01100101 01101100 01101100 01101111 00101100 00100000 01110111 01101111 01110010 01101100 01100100 00100001", "")
     end).pass()
 
+    tests("dumpBase64 output should be the expected length", function()
+        local buffer = BitBuffer(string.rep("e", 12345))
+
+        assert(#buffer.dumpBase64() == math.ceil(12345 / 3) * 4)
+    end).pass()
+
     tests("dumpBase64 should dump the base64 of the buffer's contents", function()
         local buffer = BitBuffer("Hello, world!")
 
@@ -42,6 +48,12 @@ local function makeTests(try, BitBuffer)
         local buffer = BitBuffer(string.rep("e", 5000))
 
         assert(buffer.dumpBase64() == string.rep("ZWVl", 1666) .. "ZWU=")
+    end).pass()
+
+    tests("dumpBase64 should handle large output", function()
+        local buffer = BitBuffer(string.rep("e", 13337))
+
+        assert(buffer.dumpBase64() == string.rep("ZWVl", 4445) .. "ZWU=")
     end).pass()
 
     tests("dumpHex should dump the hex of the buffer's contents", function()
