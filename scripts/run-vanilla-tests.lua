@@ -1,3 +1,5 @@
+--# selene: allow(incorrect_standard_library_use)
+
 local try = require("tests.try")
 
 local BitBuffer = require("src.vanilla")
