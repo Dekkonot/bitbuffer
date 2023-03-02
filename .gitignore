@@ -1,6 +1,7 @@
 .vscode/
 site/
 roblox.toml
+sourcemap.json
 TODO
 
 **.rbxmx
