@@ -28,8 +28,6 @@ extra:
   social:
     - icon: fontawesome/brands/github-alt
       link: https://github.com/dekkonot
-    - icon: fontawesome/brands/twitter
-      link: https://twitter.com/dekkonot
 
 markdown_extensions:
   - admonition
