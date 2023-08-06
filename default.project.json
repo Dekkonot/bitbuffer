@@ -1,6 +1,6 @@
 {
-    "name": "bitbuffer",
-    "tree": {
-      "$path": "src/roblox.lua"
-    }
+  "name": "bitbuffer",
+  "tree": {
+    "$path": "src/bitbuffer2.lua"
   }
+}
