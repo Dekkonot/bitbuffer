@@ -158,20 +158,92 @@ function BitBuffer.readInt(self: BitBuffer, width: number): number
     end
 end
 
+--- Writes a standard 32-bit floating point number to the buffer.
+--- Due to limitations with Luau, negative 0 is not supported and the bits
+--- of NaNs are not preserved but it otherwise handes special cases as expected.
+---
+--- @param float The number to write to the buffer
+function BitBuffer.writeFloat32(self: BitBuffer, float: number)
+    -- "Welcome to the salty spatoon, how tough are ya?"
+    -- "I write floats to a binary stream"
+    -- "So?"
+    -- "By decomposing them."
+    -- "Oh uh, right this way."
+
+    local bias = 0x7F -- 32-bit floats have a bias of 127
+    local is_neg = float < 0
+    float = math.abs(float)
+
+    local mantissa, exponent = math.frexp(float)
+
+    -- This is a raw implementation of serializing floats that works
+    -- via packing the values into a 32 bit integer
+    -- The initial state is only the sign bit
+    local written = if is_neg then 0x8000_0000 else 0x0000_0000
+    if float == math.huge then
+        -- infinity with no sign bit, so that we respect the sign
+        written = bit32.bor(written, 0x7F80_0000)
+    elseif float ~= float then
+        -- Arbitrary nan
+        written = 0xFF80_1337
+    elseif float == 0 then
+        written = 0
+    elseif exponent + bias <= 1 then
+        written = bit32.bor(written, math.floor(mantissa * 2 ^ 23 + 0.5))
+    else
+        written = bit32.bor(written, bit32.lshift(exponent + bias - 1, 23), math.floor((mantissa - 0.5) * 2 ^ 24 + 0.5))
+    end
+    self:writeUInt(32, written)
+end
+
+--- Reads a 32-bit floating point number from the buffer and returns it.
+--- If attempting to read past the end of the buffer, an error will be raised.
+---
+--- @return The float read from the buffer
+function BitBuffer.readFloat32(self: BitBuffer): number
+    local read = self:readUInt(32)
+    local sign = bit32.btest(read, 0x8000_0000)
+    local exponent = bit32.band(bit32.rshift(read, 23), MASKS[8])
+    local mantissa = bit32.band(read, MASKS[23])
+
+    local bias = 0x7F
+
+    if exponent == 0xFF then
+        -- This is either infinity or nan
+        if mantissa ~= 0 then
+            return 0 / 0
+        else
+            return sign and -math.huge or math.huge
+        end
+    elseif exponent == 0 then
+        -- This is either 0 or a subnormal number
+        if mantissa == 0 then
+            return 0
+        else
+            return if sign then -math.ldexp(mantissa / 2 ^ 23, -bias + 1) else math.ldexp(mantissa / 2 ^ 23, -bias + 1)
+        end
+    else
+        return if sign
+            then -math.ldexp((mantissa / 2 ^ 23) + 1, exponent - bias)
+            else math.ldexp((mantissa / 2 ^ 23) + 1, exponent - bias)
+    end
+end
+
 local b = BitBuffer.new()
-b:writeInt(32, 1834045464)
-b:writeInt(32, -1834045464)
-b:writeInt(32, 0)
-b:writeInt(32, -1)
-b:writeInt(32, 2147483647)
-b:writeInt(32, -2147483648)
+b:writeFloat32(math.huge)
+b:writeFloat32(-math.huge)
+b:writeFloat32(0 / 0)
+b:writeFloat32(10e-39)
+b:writeFloat32(1337)
+b:writeFloat32(0)
 print(b:dumpHex())
+print("------------------------------")
 b:setPointer(0)
-print(b:readInt(32), 1834045464)
-print(b:readInt(32), -1834045464)
-print(b:readInt(32), 0)
-print(b:readInt(32), -1)
-print(b:readInt(32), 2147483647)
-print(b:readInt(32), -2147483648)
+print(b:readFloat32())
+print(b:readFloat32())
+print(b:readFloat32())
+print(b:readFloat32())
+print(b:readFloat32())
+print(b:readFloat32())
 
 return BitBuffer
