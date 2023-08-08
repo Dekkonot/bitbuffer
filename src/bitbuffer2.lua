@@ -75,8 +75,8 @@ function BitBuffer.writeUInt(self: BitBuffer, width: number, word: number)
     -- Lua is 1 based, not 0
     local pntr = math.floor(rawPntr / 32) + 1
     local bitsInWord = rawPntr % 32
-    print(`raw: {rawPntr}, pntr: {pntr}, bits: {bitsInWord}`)
-    printf("word: %08x, width: %d, new width: %d", word, width, bitsInWord + width)
+    self.size += width
+    self.pntr += width
 
     --- The current word we're writing to
     local current = buffer[pntr] or 0
@@ -85,20 +85,14 @@ function BitBuffer.writeUInt(self: BitBuffer, width: number, word: number)
     -- Happy days, we can just stuff `word` into the current word
     if remainingBits >= width then
         buffer[pntr] = bit32.bor(current, bit32.lshift(word, remainingBits - width))
-        printf("no new, %08x becomes %08x", current, buffer[pntr])
     else
-        --- How many bits
+        --- How many bits we're putting into the next word
         local excess = width - remainingBits
         -- Pack `remainingBits` bits of `word` into the buffer
         buffer[pntr] = bit32.bor(current, bit32.rshift(word, excess))
-        printf(`wrote {remainingBits} to pointer, left us with {excess}`)
         -- Pack `width - remainingBits` bits of word into a new byte
         buffer[pntr + 1] = bit32.lshift(word, 32 - excess)
-        printf("new, %08x becomes %08x and %08x", current, buffer[pntr], buffer[pntr + 1])
     end
-
-    self.size += width
-    self.pntr += width
 end
 
 --- Reads `width` bits from the buffer. If attempting to read past the end of
@@ -118,7 +112,6 @@ function BitBuffer.readUInt(self: BitBuffer, width: number): number
     local current = buffer[pntr]
     --- The number of bits from `current` that can be read
     local readable = 32 - (rawPntr % 32)
-    print(`can read {readable} bits, trying to read {width}`)
     if readable >= width then
         return bit32.rshift(bit32.band(current, MASKS[readable]), readable - width)
     else
