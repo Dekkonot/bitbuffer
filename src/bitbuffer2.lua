@@ -1,6 +1,11 @@
 --!strict
 -- If bitbuffer is so good, why isn't there a bitbuffer 2?
 
+local MASKS = table.create(32)
+for i = 1, 32 do
+    MASKS[i] = (2 ^ i) - 1
+end
+
 local function printf(fmt: string, ...: any)
     print(string.format(fmt, ...))
 end
@@ -52,6 +57,13 @@ function BitBuffer.dumpHex(self: BitBuffer): string
     return table.concat(bytes, " ")
 end
 
+--- Sets the internal pointer to bit number `n`.
+---
+--- @param n The place in bits to set the pointer to
+function BitBuffer.setPointer(self: BitBuffer, n: number)
+    self.pntr = n
+end
+
 --- Writes an unsigned number `word` to the buffer, assuming it to be `width`
 --- bits in size.
 ---
@@ -89,10 +101,36 @@ function BitBuffer.writeUInt(self: BitBuffer, width: number, word: number)
     self.pntr += width
 end
 
--- Reads `width` bits from the buffer. If attempting to read past the end of
--- the buffer, an error will be raised.
+--- Reads `width` bits from the buffer. If attempting to read past the end of
+--- the buffer, an error will be raised.
+---
+--- @param width The size of the number to read from the buffer. Must be in the range [1, 32].
+---
+--- @return The read number
 function BitBuffer.readUInt(self: BitBuffer, width: number): number
-    error("unimplemented", 2)
+    local buffer = self.buffer
+    local rawPntr = self.pntr
+    -- Lua is 1 based, not 0
+    local pntr = math.floor(rawPntr / 32) + 1
+    self.pntr += width
+
+    --- The word we're reading from
+    local current = buffer[pntr]
+    --- The number of bits from `current` that can be read
+    local readable = 32 - (rawPntr % 32)
+    print(`can read {readable} bits, trying to read {width}`)
+    if readable >= width then
+        return bit32.rshift(bit32.band(current, MASKS[readable]), readable - width)
+    else
+        local excess = width - readable
+        return bit32.bor(
+            -- Mask out any bits more significant than what we're reading
+            -- and then move them up so the second word fits
+            bit32.lshift(bit32.band(current, MASKS[readable]), excess),
+            -- Shift out the LSBs from the new word because they're not necessary
+            bit32.rshift(buffer[pntr + 1], excess)
+        )
+    end
 end
 
 local b = BitBuffer.new()
@@ -107,5 +145,16 @@ b:writeUInt(8, 0x09)
 b:writeUInt(4, 0x0)
 b:writeUInt(4, 0x8)
 print(b:dumpHex())
+print("--------------------------")
+b:setPointer(0)
+printf("%08x", b:readUInt(8))
+printf("%08x", b:readUInt(8))
+printf("%08x", b:readUInt(8))
+printf("%08x", b:readUInt(24))
+printf("%08x", b:readUInt(8))
+printf("%08x", b:readUInt(8))
+printf("%08x", b:readUInt(8))
+printf("%08x", b:readUInt(4))
+printf("%08x", b:readUInt(4))
 
 return BitBuffer
