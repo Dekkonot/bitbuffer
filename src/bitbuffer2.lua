@@ -2,8 +2,10 @@
 -- If bitbuffer is so good, why isn't there a bitbuffer 2?
 
 local MASKS = table.create(32)
+local TWO_POWS = table.create(32)
 for i = 1, 32 do
     MASKS[i] = (2 ^ i) - 1
+    TWO_POWS[i] = 2 ^ (i - 1)
 end
 
 local function printf(fmt: string, ...: any)
@@ -126,28 +128,50 @@ function BitBuffer.readUInt(self: BitBuffer, width: number): number
     end
 end
 
-local b = BitBuffer.new()
+--- Writes `word` as a signed integer that is `width` bits wide to the buffer.
+---
+--- @param width The size of `word` in bits. Must be in the range [1, 32].
+--- @param word The value that will be written to the buffer.
+function BitBuffer.writeInt(self: BitBuffer, width: number, word: number)
+    if word >= 0 then
+        self:writeUInt(width, word)
+    else
+        -- There is likely a more efficient way to do this, but I don't know it
+        -- Something something (!word + 1) | 2^(width - 1)
+        self:writeUInt(width, bit32.bor(TWO_POWS[width], TWO_POWS[width] + word))
+    end
+end
 
-b:writeUInt(8, 0x17)
-b:writeUInt(8, 0x16)
-b:writeUInt(8, 0x15)
-b:writeUInt(24, 0x141312)
-b:writeUInt(8, 0x11)
-b:writeUInt(8, 0x10)
-b:writeUInt(8, 0x09)
-b:writeUInt(4, 0x0)
-b:writeUInt(4, 0x8)
+--- Reads a `width` bit signed integer from the buffer.
+--- If attempting to read past the end of the buffer, an error will be raised.
+---
+--- @param width The size of the number to read from the buffer. Must be in the range [1, 32].
+---
+--- @return The read number
+function BitBuffer.readInt(self: BitBuffer, width: number): number
+    local n = self:readUInt(width)
+    if bit32.btest(n, TWO_POWS[width]) then
+        -- n is a negative number
+        return -(bit32.bnot(n) + 1)
+    else
+        return bit32.band(n, MASKS[width - 1])
+    end
+end
+
+local b = BitBuffer.new()
+b:writeInt(32, 1834045464)
+b:writeInt(32, -1834045464)
+b:writeInt(32, 0)
+b:writeInt(32, -1)
+b:writeInt(32, 2147483647)
+b:writeInt(32, -2147483648)
 print(b:dumpHex())
-print("--------------------------")
 b:setPointer(0)
-printf("%08x", b:readUInt(8))
-printf("%08x", b:readUInt(8))
-printf("%08x", b:readUInt(8))
-printf("%08x", b:readUInt(24))
-printf("%08x", b:readUInt(8))
-printf("%08x", b:readUInt(8))
-printf("%08x", b:readUInt(8))
-printf("%08x", b:readUInt(4))
-printf("%08x", b:readUInt(4))
+print(b:readInt(32), 1834045464)
+print(b:readInt(32), -1834045464)
+print(b:readInt(32), 0)
+print(b:readInt(32), -1)
+print(b:readInt(32), 2147483647)
+print(b:readInt(32), -2147483648)
 
 return BitBuffer
