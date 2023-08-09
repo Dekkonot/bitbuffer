@@ -123,7 +123,7 @@ function BitBuffer.readUInt(self: BitBuffer, width: number): number
             -- and then move them up so the second word fits
             bit32.lshift(bit32.band(current, MASKS[readable]), excess),
             -- Shift out the LSBs from the new word because they're not necessary
-            bit32.rshift(buffer[pntr + 1], excess)
+            bit32.rshift(buffer[pntr + 1], readable)
         )
     end
 end
@@ -229,21 +229,51 @@ function BitBuffer.readFloat32(self: BitBuffer): number
     end
 end
 
+function BitBuffer.writeString(self: BitBuffer, str: string)
+    local len = #str
+    self:writeUInt(24, len)
+    local offset = 1
+    local word: number
+    for _ = 1, len / 4 do
+        word, offset = string.unpack(">I4", str, offset)
+        self:writeUInt(32, word)
+    end
+    if len % 4 ~= 0 then
+        local accum = 0
+        for i = -(len % 4), -1 do
+            accum = bit32.bor(bit32.lshift(accum, 8), string.byte(str, i))
+        end
+        self:writeUInt((len % 4) * 8, accum)
+    end
+end
+
+function BitBuffer.readString(self: BitBuffer): string
+    local len = self:readUInt(24)
+    local size = math.floor(len / 4)
+    local bytes = table.create(size + len % 4)
+    local read
+    for i = 1, size do
+        read = self:readUInt(32)
+        bytes[i] = string.char(
+            bit32.extract(read, 24, 8),
+            bit32.extract(read, 16, 8),
+            bit32.extract(read, 8, 8),
+            bit32.extract(read, 0, 8)
+        )
+    end
+    for i = 1, len % 4 do
+        bytes[size + i] = string.char(self:readUInt(8))
+    end
+
+    return table.concat(bytes)
+end
+
 local b = BitBuffer.new()
-b:writeFloat32(math.huge)
-b:writeFloat32(-math.huge)
-b:writeFloat32(0 / 0)
-b:writeFloat32(10e-39)
-b:writeFloat32(1337)
-b:writeFloat32(0)
+b:writeString("12345")
+b:writeFloat32(10)
 print(b:dumpHex())
-print("------------------------------")
 b:setPointer(0)
-print(b:readFloat32())
-print(b:readFloat32())
-print(b:readFloat32())
-print(b:readFloat32())
-print(b:readFloat32())
+print(b:readString())
 print(b:readFloat32())
 
 return BitBuffer
