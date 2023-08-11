@@ -238,6 +238,84 @@ function BitBuffer.readFloat32(self: BitBuffer): number
     end
 end
 
+--- Writes a standard 64-bit floating point number to the buffer.
+--- Due to limitations with Luau, negative 0 is not supported and the bits
+--- of NaNs are not preserved but it otherwise handes special cases as expected.
+---
+--- @param float The number to write to the buffer
+function BitBuffer.writeFloat64(self: BitBuffer, float: number)
+    local bias = 0x3FF -- 64-bit floats have a bias of 1023
+    local is_neg = float < 0
+    float = math.abs(float)
+
+    local mantissa, exponent = math.frexp(float)
+
+    -- 64-bit floats are, obviously, too big to handle with 32 bit numbers
+    -- So, we do it in two parts!
+    local front = if is_neg then 0x8000_0000 else 0x0000_0000
+    local back = 0x0000_0000
+    if float == math.huge then
+        -- infinity with no sign bit, so that we respect the sign
+        front = bit32.bor(front, 0x7FF0_0000)
+        -- back = 0x0000_0000
+    elseif float ~= float then
+        -- Arbitrary nan
+        front = 0x7FF0_1337
+    elseif float == 0 then
+        front = 0
+    elseif exponent + bias <= 1 then
+        mantissa = math.floor(mantissa * 2 ^ 52 + 0.5)
+        front = bit32.bor(front, math.floor(mantissa / 2 ^ 32))
+        back = mantissa % 2 ^ 32
+    else
+        mantissa = math.floor((mantissa - 0.5) * 2 ^ 53 + 0.5)
+        --- layout of float64:
+        -- seeeeeeeeeeemmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+        -- split into parts:
+        -- seeeeeeeeeeemmmmmmmmmmmmmmmmmmmm mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+        -- so, we need to pack the front bytes and set the back appropriately
+        front = bit32.bor(front, bit32.lshift(exponent + bias - 1, 20), math.floor(mantissa / 2 ^ 32))
+        back = mantissa % 2 ^ 32
+    end
+    printf("%g: %08x%08x", float, front, back)
+    self:writeUInt(32, front)
+    self:writeUInt(32, back)
+end
+
+--- Reads a 64-bit floating point number from the buffer and returns it.
+--- If attempting to read past the end of the buffer, an error will be raised.
+---
+--- @return The float read from the buffer
+function BitBuffer.readFloat64(self: BitBuffer)
+    local front = self:readUInt(32)
+    local back = self:readUInt(32)
+    local sign = bit32.btest(front, 0x8000_0000)
+    local exponent = bit32.band(bit32.rshift(front, 20), MASKS[11])
+    local mantissa = bit32.band(front, MASKS[20]) * 2 ^ 32 + back
+
+    local bias = 0x3FF
+
+    if exponent == 0x7FF then
+        -- This is either infinity or nan
+        if mantissa ~= 0 then
+            return 0 / 0
+        else
+            return sign and -math.huge or math.huge
+        end
+    elseif exponent == 0 then
+        -- This is either 0 or a subnormal number
+        if mantissa == 0 then
+            return 0
+        else
+            return if sign then -math.ldexp(mantissa / 2 ^ 52, -bias + 1) else math.ldexp(mantissa / 2 ^ 52, -bias + 1)
+        end
+    else
+        return if sign
+            then -math.ldexp((mantissa / 2 ^ 52) + 1, exponent - bias)
+            else math.ldexp((mantissa / 2 ^ 52) + 1, exponent - bias)
+    end
+end
+
 --- Writes a string to the buffer. The length of the string is written
 --- as a 24-bit integer before the bytes, so the max supported length is
 --- `16777215` but any encoding is supported, including embedded `0`
@@ -288,11 +366,19 @@ function BitBuffer.readString(self: BitBuffer): string
 end
 
 -- local b = BitBuffer.new()
--- b:writeString("12345")
--- b:writeFloat32(10)
+-- b:writeFloat64(math.huge)
+-- b:writeFloat64(-math.huge)
+-- b:writeFloat64(0 / 0)
+-- b:writeFloat64(2.2e-308)
+-- b:writeFloat64(1337)
+-- b:writeFloat64(0)
 -- print(b:dumpHex())
+-- print("------------------------------")
 -- b:setPointer(0)
--- print(b:readString())
--- print(b:readFloat32())
-
+-- print(b:readFloat64())
+-- print(b:readFloat64())
+-- print(b:readFloat64())
+-- print(b:readFloat64())
+-- print(b:readFloat64())
+-- print(b:readFloat64())
 return BitBuffer
