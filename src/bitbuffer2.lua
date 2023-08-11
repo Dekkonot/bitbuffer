@@ -261,8 +261,10 @@ function BitBuffer.writeFloat64(self: BitBuffer, float: number)
     elseif float ~= float then
         -- Arbitrary nan
         front = 0x7FF0_1337
+        -- back = 0xDEAD_BEEF
     elseif float == 0 then
-        front = 0
+        front = 0x0000_0000
+        -- back = 0x0000_0000
     elseif exponent + bias <= 1 then
         mantissa = math.floor(mantissa * 2 ^ 52 + 0.5)
         front = bit32.bor(front, math.floor(mantissa / 2 ^ 32))
@@ -363,6 +365,51 @@ function BitBuffer.readString(self: BitBuffer): string
 
     -- TODO fast concat
     return table.concat(bytes)
+end
+
+--- Writes an 8-bit unsigned integer to the buffer.
+---
+--- @param n The number to write to the buffer
+function BitBuffer.writeUInt8(self: BitBuffer, n: number)
+    self:writeUInt(8, n)
+end
+
+--- Reads an 8-bit unsigned integer from the buffer.
+--- If attempting to read past the end of the buffer, an error will be raised.
+---
+--- @return The read integer
+function BitBuffer.readUInt8(self: BitBuffer): number
+    return self:readUInt(8)
+end
+
+--- Writes a 16-bit unsigned integer to the buffer.
+---
+--- @param n The number to write to the buffer
+function BitBuffer.writeUInt16(self: BitBuffer, n: number)
+    self:writeUInt(16, n)
+end
+
+--- Reads a 16-bit unsigned integer from the buffer.
+--- If attempting to read past the end of the buffer, an error will be raised.
+---
+--- @return The read integer
+function BitBuffer.readUInt16(self: BitBuffer): number
+    return self:readUInt(16)
+end
+
+--- Writes a 32-bit unsigned integer to the buffer.
+---
+--- @param n The number to write to the buffer
+function BitBuffer.writeUInt32(self: BitBuffer, n: number)
+    self:writeUInt(32, n)
+end
+
+--- Reads a 32-bit unsigned integer from the buffer.
+--- If attempting to read past the end of the buffer, an error will be raised.
+---
+--- @return The read integer
+function BitBuffer.readUInt32(self: BitBuffer): number
+    return self:readUInt(32)
 end
 
 -- local b = BitBuffer.new()
