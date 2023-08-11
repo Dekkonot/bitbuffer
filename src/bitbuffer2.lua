@@ -64,9 +64,54 @@ end
 
 --- Sets the internal pointer to bit number `n`.
 ---
---- @param n The place in bits to set the pointer to
+--- @param n The place in bits to set the pointer to.
 function BitBuffer.setPointer(self: BitBuffer, n: number)
     self.pntr = n
+end
+
+--- Sets the internal pointer to be `n` bits away from the end of the buffer.
+---
+--- @param n The number of bits away from the end of the buffer to set the pointer to.
+function BitBuffer.setPointerFromEnd(self: BitBuffer, n: number)
+    self.pntr = self.size - n
+end
+
+--- Gets the internal pointer in terms of bits.
+---
+--- @return The bit the buffer is reading and writing from.
+function BitBuffer.getPointer(self: BitBuffer): number
+    return self.pntr
+end
+
+--- Returns the size of the buffer in bits. To get the size in bytes,
+--- use `getLengthBytes`.
+---
+--- @return The size of the buffer in bits.
+function BitBuffer.getLength(self: BitBuffer): number
+    return self.size
+end
+
+--- Returns the size of the buffer in bytes. This value will be rounded up
+--- in cases where the buffer's length is not exactly aligned to bytes.
+---
+--- @return The size of the buffer in bytes, rounding up.
+function BitBuffer.getLengthBytes(self: BitBuffer): number
+    return math.ceil(self.size / 8)
+end
+
+--- Returns how many bits there are left in the buffer.
+---
+--- @return The number of bits left to read from the buffer.
+function BitBuffer.getRemaining(self: BitBuffer): number
+    return self.size - self.pntr
+end
+
+--- Returns whether the pointer is at the end of the buffer. That is,
+--- whether calling a read function will result in an error.
+---
+--- @return Whether the buffer is finished being read
+function BitBuffer.isFinished(self: BitBuffer): boolean
+    return self.pntr == self.size
 end
 
 --- Writes an unsigned number `word` to the buffer, assuming it to be `width`
