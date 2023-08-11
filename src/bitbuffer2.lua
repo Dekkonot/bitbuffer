@@ -241,18 +241,17 @@ end
 function BitBuffer.writeString(self: BitBuffer, str: string)
     local len = #str
     self:writeUInt(24, len)
-    local offset = 1
-    local word: number
-    for _ = 1, len / 4 do
-        word, offset = string.unpack(">I4", str, offset)
-        self:writeUInt(32, word)
+    for i = 1, len / 4, 4 do
+        local b0, b1, b2, b3 = string.byte(str, i, i + 3)
+        self:writeUInt(32, bit32.bor(bit32.lshift(b0, 24), bit32.lshift(b1, 16), bit32.lshift(b2, 8), b3))
     end
-    if len % 4 ~= 0 then
+    local remainder = len % 4
+    if remainder ~= 0 then
         local accum = 0
-        for i = -(len % 4), -1 do
+        for i = -remainder, -1 do
             accum = bit32.bor(bit32.lshift(accum, 8), string.byte(str, i))
         end
-        self:writeUInt((len % 4) * 8, accum)
+        self:writeUInt(remainder * 8, accum)
     end
 end
 
@@ -274,6 +273,7 @@ function BitBuffer.readString(self: BitBuffer): string
         bytes[size + i] = string.char(self:readUInt(8))
     end
 
+    -- TODO fast concat
     return table.concat(bytes)
 end
 
