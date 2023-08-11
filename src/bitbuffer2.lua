@@ -238,6 +238,12 @@ function BitBuffer.readFloat32(self: BitBuffer): number
     end
 end
 
+--- Writes a string to the buffer. The length of the string is written
+--- as a 24-bit integer before the bytes, so the max supported length is
+--- `16777215` but any encoding is supported, including embedded `0`
+--- characters.
+---
+--- @param str The string to write to the buffer.
 function BitBuffer.writeString(self: BitBuffer, str: string)
     local len = #str
     self:writeUInt(24, len)
@@ -255,6 +261,10 @@ function BitBuffer.writeString(self: BitBuffer, str: string)
     end
 end
 
+--- Reads a string from the buffer and returns it.
+--- If attempting to read past the end of the buffer, an error will be raised.
+---
+--- @return The string read from the buffer
 function BitBuffer.readString(self: BitBuffer): string
     local len = self:readUInt(24)
     local size = math.floor(len / 4)
