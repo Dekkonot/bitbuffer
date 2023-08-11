@@ -40,6 +40,25 @@ function BitBuffer.new(): BitBuffer
     return self
 end
 
+--- Emits the buffer as a string of binary data.
+---
+--- @return The contents of the buffer
+function BitBuffer.dumpString(self: BitBuffer): string
+    local output = table.create(math.ceil(self.size / 32))
+    for i, v in self.buffer do
+        output[i] = string.format(
+            "%c%c%c%c",
+            bit32.extract(v, 24, 8),
+            bit32.extract(v, 16, 8),
+            bit32.extract(v, 8, 8),
+            bit32.extract(v, 0, 8)
+        )
+    end
+
+    -- TODO fast concat
+    return table.concat(output, "")
+end
+
 --- Dumps the internal buffer as a sequence of 8-bit hexadecimal digits.
 --- Useful for debugging the contents of the buffer. This does not trim
 --- any excess bits from the final word, so it will not be 100% accurate
