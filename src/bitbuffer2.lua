@@ -412,6 +412,51 @@ function BitBuffer.readUInt32(self: BitBuffer): number
     return self:readUInt(32)
 end
 
+--- Writes an 8-bit signed integer to the buffer.
+---
+--- @param n The number to write to the buffer
+function BitBuffer.writeInt8(self: BitBuffer, n: number)
+    self:writeInt(8, n)
+end
+
+--- Reads an 8-bit signed integer from the buffer.
+--- If attempting to read past the end of the buffer, an error will be raised.
+---
+--- @return The read integer
+function BitBuffer.readInt8(self: BitBuffer): number
+    return self:readInt(8)
+end
+
+--- Writes a 16-bit signed integer to the buffer.
+---
+--- @param n The number to write to the buffer
+function BitBuffer.writeInt16(self: BitBuffer, n: number)
+    self:writeInt(16, n)
+end
+
+--- Reads a 16-bit signed integer from the buffer.
+--- If attempting to read past the end of the buffer, an error will be raised.
+---
+--- @return The read integer
+function BitBuffer.readInt16(self: BitBuffer): number
+    return self:readInt(16)
+end
+
+--- Writes a 32-bit signed integer to the buffer.
+---
+--- @param n The number to write to the buffer
+function BitBuffer.writeInt32(self: BitBuffer, n: number)
+    self:writeInt(32, n)
+end
+
+--- Reads a 32-bit signed integer from the buffer.
+--- If attempting to read past the end of the buffer, an error will be raised.
+---
+--- @return The read integer
+function BitBuffer.readInt32(self: BitBuffer): number
+    return self:readInt(32)
+end
+
 -- local b = BitBuffer.new()
 -- b:writeFloat64(math.huge)
 -- b:writeFloat64(-math.huge)
