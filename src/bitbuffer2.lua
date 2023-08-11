@@ -15,11 +15,14 @@ end
 local BitBuffer = {}
 BitBuffer.__index = BitBuffer
 
-type BitBuffer = typeof(setmetatable({} :: {
-    buffer: { number },
-    size: number,
-    pntr: number,
-}, BitBuffer))
+export type BitBuffer = typeof(setmetatable(
+    {} :: {
+        buffer: { number },
+        size: number,
+        pntr: number,
+    },
+    BitBuffer
+))
 
 --- Returns a new `BitBuffer` instance, optionally placing `source` inside of it
 function BitBuffer.new(): BitBuffer
