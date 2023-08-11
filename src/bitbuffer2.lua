@@ -80,20 +80,29 @@ function BitBuffer.writeUInt(self: BitBuffer, width: number, word: number)
     self.size += width
     self.pntr += width
 
-    --- The current word we're writing to
-    local current = buffer[pntr] or 0
-    --- How many bits can we put in current word
-    local remainingBits = 32 - bitsInWord
-    -- Happy days, we can just stuff `word` into the current word
-    if remainingBits >= width then
-        buffer[pntr] = bit32.bor(current, bit32.lshift(word, remainingBits - width))
+    -- Fast track for if we're writing for the first time in a given word
+    if bitsInWord == 0 then
+        if width == 32 then
+            buffer[pntr] = word
+        else
+            buffer[pntr] = bit32.lshift(word, 32 - width)
+        end
     else
-        --- How many bits we're putting into the next word
-        local excess = width - remainingBits
-        -- Pack `remainingBits` bits of `word` into the buffer
-        buffer[pntr] = bit32.bor(current, bit32.rshift(word, excess))
-        -- Pack `width - remainingBits` bits of word into a new byte
-        buffer[pntr + 1] = bit32.lshift(word, 32 - excess)
+        --- The current word we're writing to
+        local current = buffer[pntr] or 0
+        --- How many bits can we put in current word
+        local remainingBits = 32 - bitsInWord
+        -- Happy days, we can just stuff `word` into the current word
+        if remainingBits >= width then
+            buffer[pntr] = bit32.bor(current, bit32.lshift(word, remainingBits - width))
+        else
+            --- How many bits we're putting into the next word
+            local excess = width - remainingBits
+            -- Pack `remainingBits` bits of `word` into the buffer
+            buffer[pntr] = bit32.bor(current, bit32.rshift(word, excess))
+            -- Pack `width - remainingBits` bits of word into a new byte
+            buffer[pntr + 1] = bit32.lshift(word, 32 - excess)
+        end
     end
 end
 
@@ -268,12 +277,12 @@ function BitBuffer.readString(self: BitBuffer): string
     return table.concat(bytes)
 end
 
-local b = BitBuffer.new()
-b:writeString("12345")
-b:writeFloat32(10)
-print(b:dumpHex())
-b:setPointer(0)
-print(b:readString())
-print(b:readFloat32())
+-- local b = BitBuffer.new()
+-- b:writeString("12345")
+-- b:writeFloat32(10)
+-- print(b:dumpHex())
+-- b:setPointer(0)
+-- print(b:readString())
+-- print(b:readFloat32())
 
 return BitBuffer
