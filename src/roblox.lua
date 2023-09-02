@@ -314,7 +314,7 @@ local function bitBuffer(stream)
         assert(n % 1 == 0, "argument #1 to BitBuffer.setPointerByte should be an integer")
         assert(n <= byteCount, "argument #1 to BitBuffer.setPointerByte should be within range of the buffer")
         -- Sets the value of the pointer in bytes instead of bits
-        pointer = n * 8
+        pointer = (n-1) * 8
         pointerByte = n
     end
 
