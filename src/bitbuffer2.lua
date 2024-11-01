@@ -138,6 +138,7 @@ end
 ---
 --- @param width The size of `word` in bits. Must be in the range [1, 32].
 --- @param word The value that will be written to the buffer.
+@native
 function BitBuffer.writeUInt(self: BitBuffer, width: number, word: number)
     local buffer = self.buffer
     local rawPntr = self.pntr
@@ -179,6 +180,7 @@ end
 --- @param width The size of the number to read from the buffer. Must be in the range [1, 32].
 ---
 --- @return The read number
+@native
 function BitBuffer.readUInt(self: BitBuffer, width: number): number
     local buffer = self.buffer
     local rawPntr = self.pntr
@@ -208,6 +210,7 @@ end
 ---
 --- @param width The size of `word` in bits. Must be in the range [1, 32].
 --- @param word The value that will be written to the buffer.
+@native
 function BitBuffer.writeInt(self: BitBuffer, width: number, word: number)
     if word >= 0 then
         self:writeUInt(width, word)
@@ -224,6 +227,7 @@ end
 --- @param width The size of the number to read from the buffer. Must be in the range [1, 32].
 ---
 --- @return The read number
+@native
 function BitBuffer.readInt(self: BitBuffer, width: number): number
     local n = self:readUInt(width)
     if bit32.btest(n, TWO_POWS[width]) then
@@ -239,6 +243,7 @@ end
 --- of NaNs are not preserved but it otherwise handes special cases as expected.
 ---
 --- @param float The number to write to the buffer
+@native
 function BitBuffer.writeFloat32(self: BitBuffer, float: number)
     -- "Welcome to the salty spatoon, how tough are ya?"
     -- "I write floats to a binary stream"
@@ -276,6 +281,7 @@ end
 --- If attempting to read past the end of the buffer, an error will be raised.
 ---
 --- @return The float read from the buffer
+@native
 function BitBuffer.readFloat32(self: BitBuffer): number
     local read = self:readUInt(32)
     local sign = bit32.btest(read, 0x8000_0000)
@@ -310,6 +316,7 @@ end
 --- of NaNs are not preserved but it otherwise handes special cases as expected.
 ---
 --- @param float The number to write to the buffer
+@native
 function BitBuffer.writeFloat64(self: BitBuffer, float: number)
     local bias = 0x3FF -- 64-bit floats have a bias of 1023
     local is_neg = float < 0
@@ -346,7 +353,6 @@ function BitBuffer.writeFloat64(self: BitBuffer, float: number)
         front = bit32.bor(front, bit32.lshift(exponent + bias - 1, 20), math.floor(mantissa / 2 ^ 32))
         back = mantissa % 2 ^ 32
     end
-    printf("%g: %08x%08x", float, front, back)
     self:writeUInt(32, front)
     self:writeUInt(32, back)
 end
@@ -355,6 +361,7 @@ end
 --- If attempting to read past the end of the buffer, an error will be raised.
 ---
 --- @return The float read from the buffer
+@native
 function BitBuffer.readFloat64(self: BitBuffer)
     local front = self:readUInt(32)
     local back = self:readUInt(32)
@@ -391,6 +398,7 @@ end
 --- characters.
 ---
 --- @param str The string to write to the buffer.
+@native
 function BitBuffer.writeString(self: BitBuffer, str: string)
     local len = #str
     self:writeUInt(24, len)
@@ -412,6 +420,7 @@ end
 --- If attempting to read past the end of the buffer, an error will be raised.
 ---
 --- @return The string read from the buffer
+@native
 function BitBuffer.readString(self: BitBuffer): string
     local len = self:readUInt(24)
     local size = math.floor(len / 4)
